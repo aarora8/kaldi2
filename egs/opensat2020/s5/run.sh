@@ -51,11 +51,11 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  #rm -rf data/lang data/local/lang data/local/dict
-  #local/get_cmu_dict.sh
-  #utils/prepare_lang.sh data/local/dict '<UNK>' data/local/lang data/lang
-  #utils/validate_lang.pl data/lang
-  true
+  rm -rf data/lang data/local/lang data/local/dict
+  local/get_cmu_dict.sh
+  utils/prepare_lang.sh data/local/dict '<UNK>' data/local/lang data/lang
+  utils/validate_lang.pl data/lang
+  #true
 fi
 
 
