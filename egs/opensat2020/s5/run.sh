@@ -28,7 +28,7 @@ SSSF_TEXTS=/export/corpora/LDC/LDC2020E08
 
 
 UNK='<UNK>'
-
+nj=32
 
 local/check_tools.sh || exit 1
 
@@ -78,7 +78,7 @@ fi
 
 if [ $stage -le 3 ]; then
   for f in data/safe_t_dev1 data/safe_t_r20 data/safe_t_r11 ; do
-    steps/make_mfcc.sh --cmd "$train_cmd" --nj 8 $f
+    steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj $f
     steps/compute_cmvn_stats.sh $f
   done
 fi
@@ -103,11 +103,11 @@ fi
 
 if [ $stage -le 7 ] ; then
   echo "Starting triphone training."
-  steps/train_mono.sh --nj 8 --cmd "$cmd" data/train_sub1 data/lang exp/mono
+  steps/train_mono.sh --nj $nj --cmd "$cmd" data/train_sub1 data/lang exp/mono
   echo "Monophone training done."
 fi
 
-nj=16
+nj=32
 dev_nj=16
 if [ $stage -le 8 ]; then
   ### Triphone
@@ -230,66 +230,16 @@ if [ $stage -le 12 ]; then
   ) &
 fi
 
-#if we see improvement, we can add more steps
-exit
-if [ $stage -le 10 ]; then
-  ### Triphone + LDA and MLLT + SAT and FMLLR
-  # Training
-  echo "Starting SAT+FMLLR training."
-  steps/align_si.sh --nj $nj --cmd "$cmd" \
-      --use-graphs true data/train data/lang exp/tri5b exp/tri5b_ali
-  steps/train_sat.sh --cmd "$cmd" 4500 50000 \
-      data/train data/lang exp/tri5b_ali exp/tri6b
-  echo "SAT+FMLLR training done."
-
-  (
-  echo "Decoding the dev set using SAT+FMLLR models."
-  utils/mkgraph.sh data/lang_test  exp/tri6b exp/tri6b/graph
-  steps/decode_fmllr_extra.sh --nj $dev_nj --cmd "$cmd" \
-      exp/tri6b/graph  data/dev exp/tri6b/decode_dev
-
-  echo "SAT+FMLLR decoding done."
-  ) &
+if [ $stage -le 13 ]; then
+  # this does some data-cleaning.  It actually degrades the GMM-level results
+  # slightly, but the cleaned data should be useful when we add the neural net and chain
+  # systems.  If not we'll remove this stage.
+  local/run_cleanup_segmentation.sh
 fi
 
-if [ $stage -le 11 ]; then
-  ### Triphone + LDA and MLLT + SAT and FMLLR
-  # Training
-  echo "Starting SAT+FMLLR training."
-  steps/align_si.sh --nj $nj --cmd "$cmd" \
-      --use-graphs true data/train data/lang exp/tri6b exp/tri6b_ali
-  steps/train_sat.sh --cmd "$cmd" 4500 50000 \
-      data/train data/lang exp/tri6b_ali exp/tri7b
-  echo "SAT+FMLLR training done."
-
-  (
-  echo "Decoding the dev set using SAT+FMLLR models."
-  utils/mkgraph.sh data/lang_test  exp/tri7b exp/tri7b/graph
-  steps/decode_fmllr_extra.sh --nj $dev_nj --cmd "$cmd" \
-      exp/tri7b/graph  data/dev exp/tri7b/decode_dev
-
-  echo "SAT+FMLLR decoding done."
-  ) &
+if [ $stage -le 14 ]; then
+  # This will only work if you have GPUs on your system (and note that it requires
+  # you to have the queue set up the right way... see kaldi-asr.org/doc/queue.html)
+  local/chain/run_tdnn.sh
 fi
-
-if [ $stage -le 12 ]; then
-  ### Triphone + LDA and MLLT + SAT and FMLLR
-  # Training
-  echo "Starting SAT+FMLLR training."
-  steps/align_si.sh --nj $nj --cmd "$cmd" \
-      --use-graphs true data/train data/lang exp/tri7b exp/tri7b_ali
-  steps/train_sat.sh --cmd "$cmd" 4500 50000 \
-      data/train data/lang exp/tri7b_ali exp/tri8b
-  echo "SAT+FMLLR training done."
-
-  (
-  echo "Decoding the dev set using SAT+FMLLR models."
-  utils/mkgraph.sh data/lang_test  exp/tri8b exp/tri8b/graph
-  steps/decode_fmllr_extra.sh --nj $dev_nj --cmd "$cmd" \
-      exp/tri8b/graph  data/dev exp/tri8b/decode_dev
-
-  echo "SAT+FMLLR decoding done."
-  ) &
-fi
-
 
