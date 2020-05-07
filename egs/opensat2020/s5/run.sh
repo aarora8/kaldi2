@@ -122,7 +122,7 @@ if [ $stage -le 8 ]; then
     echo "Decoding the dev set using triphone models."
     utils/mkgraph.sh data/lang_test  exp/tri1 exp/tri1/graph
     steps/decode.sh --nj $dev_nj --cmd "$cmd"  \
-        exp/tri1/graph  data/dev exp/tri1/decode_dev
+        exp/tri1/graph  data/safe_t_dev1 exp/tri1/decode_dev
     echo "Triphone decoding done."
   ) &
 fi
@@ -141,7 +141,7 @@ if [ $stage -le 9 ]; then
     echo "Decoding the dev set using triphone(large) models."
     utils/mkgraph.sh data/lang_test exp/tri2a exp/tri2a/graph
     steps/decode.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri2a/graph data/dev exp/tri2a/decode_dev
+        exp/tri2a/graph data/safe_t_dev1 exp/tri2a/decode_dev
   ) &
 fi
 
@@ -161,7 +161,7 @@ if [ $stage -le 10 ]; then
     echo "Decoding the dev set using LDA+MLLT models."
     utils/mkgraph.sh data/lang_test exp/tri2b exp/tri2b/graph
     steps/decode.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri2b/graph data/dev exp/tri2b/decode_dev
+        exp/tri2b/graph data/safe_t_dev1 exp/tri2b/decode_dev
   ) &
 fi
 
@@ -180,7 +180,7 @@ if [ $stage -le 11 ]; then
     echo "Decoding the dev set using SAT+FMLLR models."
     utils/mkgraph.sh data/lang_test  exp/tri3b exp/tri3b/graph
     steps/decode_fmllr.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri3b/graph  data/dev exp/tri3b/decode_dev
+        exp/tri3b/graph  data/safe_t_dev1 exp/tri3b/decode_dev
 
     echo "SAT+FMLLR decoding done."
   ) &
@@ -200,7 +200,7 @@ if [ $stage -le 12 ]; then
     echo "Decoding the dev set using SAT+FMLLR models."
     utils/mkgraph.sh data/lang_test  exp/tri4b exp/tri4b/graph
     steps/decode_fmllr.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri4b/graph  data/dev exp/tri4b/decode_dev
+        exp/tri4b/graph  data/safe_t_dev1 exp/tri4b/decode_dev
 
     echo "SAT+FMLLR decoding done."
   ) &
@@ -224,7 +224,7 @@ if [ $stage -le 12 ]; then
     echo "Decoding the dev set using SAT+FMLLR models."
     utils/mkgraph.sh data/lang_test  exp/tri5b exp/tri5b/graph
     steps/decode_fmllr.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri5b/graph  data/dev exp/tri5b/decode_dev
+        exp/tri5b/graph  data/safe_t_dev1 exp/tri5b/decode_dev
 
     echo "SAT+FMLLR decoding done."
   ) &
