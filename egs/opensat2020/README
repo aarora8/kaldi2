@@ -1,0 +1,15 @@
+Summary
+OpenSAT20 is the second in the OpenSAT Series for speech analytic systems evaluations. OpenSAT provides an opportunity for participants to compare 
+their system performance against a pool of systems performances for each task and is intended to encourage cross-learning among developers.
+
+Simulated Public Safety Communications (PSC)
+The OpenSAT20 evaluation will include the ASR, SAD, and KWS tasks for simulated first responder public safety communications. 
+Participants can participate with one, two, or all three tasks.
+The simulated public safety communications dataset was created by LDC and funded by the Department of Homeland Security (DHS) 
+to advance first responder assistant technologies in first responder noisy and stressed environments including its effects on speech. 
+The public safety communications dataset includes simulated first responder communications with and without the Lombard effect in 
+speech and moments in speech with expression of urgency. The audio also includes low-level and loud background sounds typical 
+in first responder events.
+
+The simulated first responder communications is intended to be a precursor in advancing assistive technologies for real-world 
+operational communications. Real-world operational data is expected to be made available in future evaluations
