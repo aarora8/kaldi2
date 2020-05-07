@@ -230,12 +230,12 @@ if [ $stage -le 12 ]; then
   ) &
 fi
 
-if [ $stage -le 13 ]; then
-  # this does some data-cleaning.  It actually degrades the GMM-level results
-  # slightly, but the cleaned data should be useful when we add the neural net and chain
-  # systems.  If not we'll remove this stage.
-  local/run_cleanup_segmentation.sh
-fi
+#if [ $stage -le 13 ]; then
+#  # this does some data-cleaning.  It actually degrades the GMM-level results
+#  # slightly, but the cleaned data should be useful when we add the neural net and chain
+#  # systems.  If not we'll remove this stage.
+#  local/run_cleanup_segmentation.sh
+#fi
 
 if [ $stage -le 14 ]; then
   # This will only work if you have GPUs on your system (and note that it requires
