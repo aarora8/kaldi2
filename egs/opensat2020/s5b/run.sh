@@ -239,10 +239,6 @@ if [ $stage -le 13 ]; then
 fi
 
 if [ $stage -le 14 ]; then
-  local/chain/run_tdnn.sh --stage 19
-fi
-exit
-if [ $stage -le 14 ]; then
   local/chain/multi_condition/run_tdnn_aug_1a.sh
 fi
 
