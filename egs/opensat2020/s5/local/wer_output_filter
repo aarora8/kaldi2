@@ -5,7 +5,12 @@ import sys
 
 if __name__ == '__main__':
     for line in sys.stdin:
-        utt, text = line.split(' ', 1)
+        if len(line.strip()) == 1:
+            continue
+        try:
+            utt, text = line.split(' ', 1)
+        except:
+            continue
         text = text.lower()
         text = re.sub(r'[.,?]', ' ', text)
         text = re.sub(r'{[^}]+}', '<UNK>', text)
@@ -17,5 +22,5 @@ if __name__ == '__main__':
         text = re.sub('\s+', ' ', text)
         text = re.sub('\s+$', '', text)
 
-
-        print("{} {}".format(utt, text))
+        if text:
+            print("{} {}".format(utt, text))
