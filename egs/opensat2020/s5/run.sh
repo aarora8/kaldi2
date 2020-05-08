@@ -81,6 +81,7 @@ if [ $stage -le 3 ]; then
     steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj $f
     steps/compute_cmvn_stats.sh $f
   done
+  cp -r data/safe_t_dev1 data/dev
 fi
 
 if [ $stage -le 4 ] ; then
@@ -121,7 +122,7 @@ if [ $stage -le 8 ]; then
   (
     echo "Decoding the dev set using triphone models."
     utils/mkgraph.sh data/lang_test  exp/tri1 exp/tri1/graph
-    steps/decode.sh --nj $dev_nj --cmd "$cmd"  \
+    steps/decode.sh --nj $dev_nj --cmd "$cmd" \
         exp/tri1/graph  data/safe_t_dev1 exp/tri1/decode_dev
     echo "Triphone decoding done."
   ) &
@@ -238,8 +239,5 @@ fi
 #fi
 
 if [ $stage -le 14 ]; then
-  # This will only work if you have GPUs on your system (and note that it requires
-  # you to have the queue set up the right way... see kaldi-asr.org/doc/queue.html)
   local/chain/run_tdnn.sh
 fi
-
