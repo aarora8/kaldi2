@@ -18,5 +18,4 @@ if __name__ == '__main__':
         text = re.sub('\s+$', '', text)
 
 
-        line = f'{utt} {text}'
-        print(line, file=sys.stdout)
+        print("{} {}".format(utt, text))
