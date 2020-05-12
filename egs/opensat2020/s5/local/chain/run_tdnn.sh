@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
-
-# 1d is like 1c, while it introduces 'apply-cmvn-online' that does
-# cmn normalization both for i-extractor and TDNN input.
 set -e -o pipefail
 stage=0
 
 nj=96
-decode_nj=15
 xent_regularize=0.1
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 
@@ -14,6 +10,9 @@ train_set=train_cleaned
 gmm=tri5b  # the gmm for the target data
 num_threads_ubm=8
 nnet3_affix=_org_1d  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
+
+# 1d is like 1c, while it introduces 'apply-cmvn-online' that does
+# cmn normalization both for i-extractor and TDNN input.
 
 # Setting 'online_cmvn' to true replaces 'apply-cmvn' by
 # 'apply-cmvn-online' both for i-vector extraction and TDNN input.
@@ -211,7 +210,7 @@ if [ $stage -le 20 ]; then
   rm $dir/.error 2>/dev/null || true
   for dset in dev; do
       (
-      steps/nnet3/decode.sh --num-threads 4 --nj $decode_nj --cmd "$decode_cmd" \
+      steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
           --acwt 1.0 --post-decode-acwt 10.0 \
           --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${dset}_hires \
           --scoring-opts "--min-lmwt 5 " \
