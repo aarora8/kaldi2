@@ -22,7 +22,8 @@ def read_transcript(wav_id, f):
             text = ''
 
         if spk.startswith('background'):
-            spk = 'BKGR'
+            continue
+            #spk = 'BKGR'
 
         if spk[-1] == ':':
             spk = spk[:-1]

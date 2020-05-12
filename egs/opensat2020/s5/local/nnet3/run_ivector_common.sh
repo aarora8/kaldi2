@@ -64,12 +64,6 @@ if [ $stage -le 3 ]; then
 fi
 
 
-if [ $stage -le 5 ] && [ -f data/${train_set}_sp_hires/feats.scp ]; then
-  echo "$0: data/${train_set}_sp_hires/feats.scp already exists."
-  echo " ... Please either remove it, or rerun this script with stage > 2."
-  exit 1
-fi
-
 if [ $stage -le 5 ]; then
   echo "$0: creating high-resolution MFCC features"
 
@@ -126,7 +120,7 @@ if [ $stage -le 7 ]; then
   # Train the iVector extractor. µUse all of the speed-perturbed data since iVector extractors
   # can be sensitive to the amount of data. The script defaults to an iVector dimension of 100.
   echo "$0: training the iVector extractor"
-  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj 15 \
+  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj 20 \
     --num-threads 4 --num-processes 2 \
     --online-cmvn-iextractor $online_cmvn_extractor \
     data/${train_set}_sp_hires exp/nnet3${nnet3_affix}/diag_ubm \
@@ -153,14 +147,14 @@ if [ $stage -le 8 ]; then
   utils/data/modify_speaker_info.sh --utts-per-spk-max 2 \
     data/${train_set}_sp_hires ${temp_data_root}/${train_set}_sp_hires_max2
 
-  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj $nj \
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
     ${temp_data_root}/${train_set}_sp_hires_max2 \
     exp/nnet3${nnet3_affix}/extractor $ivectordir
 
   # Also extract iVectors for the test data, but in this case we don't need the speed
   # perturbation (sp) or small-segment concatenation (comb).
   for data in dev; do
-    steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj "$nj" \
+    steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
       data/${data}_hires exp/nnet3${nnet3_affix}/extractor \
       exp/nnet3${nnet3_affix}/ivectors_${data}_hires
   done

@@ -17,10 +17,11 @@ if __name__ == '__main__':
         text = re.sub('<unk>', '<UNK>', text)
         text = re.sub('\s+\)\)', '))', text)
         text = re.sub('%[a-z]+', '<UNK>', text)
+        text = re.sub('<noise>', '<UNK>', text)
         text = re.sub(' -- ', ' ', text)
         text = re.sub(' --$', '', text)
         text = re.sub('\s+', ' ', text)
         text = re.sub('\s+$', '', text)
-
+        text = re.sub('<UNK>', ' ', text)
         if text:
             print("{} {}".format(utt, text))

@@ -10,7 +10,7 @@ decode_nj=15
 xent_regularize=0.1
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 
-train_set=train
+train_set=train_cleaned
 gmm=tri5b  # the gmm for the target data
 num_threads_ubm=8
 nnet3_affix=_org_1d  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
@@ -64,7 +64,6 @@ dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}_sp
 train_data_dir=data/${train_set}_sp_hires
 lores_train_data_dir=data/${train_set}_sp
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
-
 
 for f in $gmm_dir/final.mdl $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp \
     $lores_train_data_dir/feats.scp $ali_dir/ali.1.gz $gmm_dir/final.mdl; do
