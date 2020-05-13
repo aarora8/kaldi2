@@ -58,8 +58,6 @@ if [ $stage -le 1 ]; then
   #true
 fi
 
-
-
 if [ $stage -le 2 ]; then
   mkdir -p exp/cleanup_stage_1
   (
@@ -94,7 +92,7 @@ if [ $stage -le 5 ]; then
     --train_text data/train/text --dev_text data/safe_t_dev1/text  \
     data/ data/local/srilm
 
-  utils/format_lm.sh  data/lang/ data/local/srilm/lm.gz\
+  utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
     data/local/lexicon.txt  data/lang_test
 fi
 
@@ -207,23 +205,35 @@ if [ $stage -le 12 ]; then
   ) &
 fi
 
-#NB: This does not add more complexity or fanciness... But my personal finding
-# in Fearless Steps was that repeating the training helps with getting better
-# alignments for DNNs
+LM=data/local/srilm/lm.gz
+if [ $stage -le 12 ]; then
+  # Now we compute the pronunciation and silence probabilities from training data,
+  # and re-create the lang directory.
+  steps/get_prons.sh --cmd "$train_cmd" data/train data/lang exp/tri4b
+  utils/dict_dir_add_pronprobs.sh --max-normalize true \
+    data/local/dict exp/tri4b/pron_counts_nowb.txt \
+    exp/tri4b/sil_counts_nowb.txt \
+    exp/tri4b/pron_bigram_counts_nowb.txt data/local/dict_sp
+
+  echo "$0:  prepare new lang with pronunciation and silence modeling..."
+  utils/prepare_lang.sh data/local/dict_sp "<unk>" data/local/lang_sp data/lang_tmp
+  utils/format_lm.sh \
+    data/lang_tmp $LM data/local/dict_nosp/lexicon.txt data/lang_sp_test
+fi
 
 if [ $stage -le 12 ]; then
   ### Triphone + LDA and MLLT + SAT and FMLLR
   # Training
   echo "Starting SAT+FMLLR training."
   steps/align_si.sh --nj $nj --cmd "$cmd" \
-      --use-graphs true data/train data/lang exp/tri4b exp/tri4b_ali
+      --use-graphs true data/train data/lang_sp_test exp/tri4b exp/tri4b_ali
   steps/train_sat.sh --cmd "$cmd" 4500 50000 \
-      data/train data/lang exp/tri4b_ali exp/tri5b
+      data/train data/lang_sp_test exp/tri4b_ali exp/tri5b
   echo "SAT+FMLLR training done."
 
   (
     echo "Decoding the dev set using SAT+FMLLR models."
-    utils/mkgraph.sh data/lang_test  exp/tri5b exp/tri5b/graph
+    utils/mkgraph.sh data/lang_sp_test  exp/tri5b exp/tri5b/graph
     steps/decode_fmllr.sh --nj $dev_nj --cmd "$cmd" \
         exp/tri5b/graph  data/safe_t_dev1 exp/tri5b/decode_dev
 

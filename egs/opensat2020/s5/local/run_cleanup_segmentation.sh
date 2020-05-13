@@ -41,17 +41,17 @@ cleaned_dir=${srcdir}_${cleanup_affix}
 if [ $stage -le 1 ]; then
   # This does the actual data cleanup.
   steps/cleanup/clean_and_segment_data.sh --stage $cleanup_stage --nj $nj --cmd "$train_cmd" \
-    $data data/lang $srcdir $dir $cleaned_data
+    $data data/lang_sp_test $srcdir $dir $cleaned_data
 fi
 
 if [ $stage -le 2 ]; then
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    $cleaned_data data/lang $srcdir ${srcdir}_ali_${cleanup_affix}
+    $cleaned_data data/lang_sp_test $srcdir ${srcdir}_ali_${cleanup_affix}
 fi
 
 if [ $stage -le 3 ]; then
   steps/train_sat.sh --cmd "$train_cmd" \
-    5000 100000 $cleaned_data data/lang ${srcdir}_ali_${cleanup_affix} ${cleaned_dir}
+    5000 100000 $cleaned_data data/lang_sp_test ${srcdir}_ali_${cleanup_affix} ${cleaned_dir}
 fi
 
 #if [ $stage -le 4 ]; then

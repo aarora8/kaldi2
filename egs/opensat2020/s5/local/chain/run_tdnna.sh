@@ -81,7 +81,7 @@ if [ $stage -le 14 ]; then
       exit 1;
     fi
   else
-    cp -r data/lang data/lang_chain
+    cp -r data/lang_sp_test data/lang_chain
     silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
     nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
     # Use our special topology... note that later on may have to tune this
@@ -94,7 +94,7 @@ if [ $stage -le 15 ]; then
   # Get the alignments as lattices (gives the chain training more freedom).
   # use the same num-jobs as the alignments
   steps/align_fmllr_lats.sh --nj 96 --cmd "$train_cmd" ${lores_train_data_dir} \
-    data/lang $gmm_dir $lat_dir
+    data/lang_sp_test $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz # save space
 fi
 
@@ -216,7 +216,7 @@ if [ $stage -le 19 ]; then
   # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
   # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
   # the lang directory.
-  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_test $dir $dir/graph
+  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_sp_test $dir $dir/graph
 fi
 
 if [ $stage -le 20 ]; then
