@@ -239,5 +239,5 @@ if [ $stage -le 13 ]; then
 fi
 
 if [ $stage -le 14 ]; then
-  local/chain/run_tdnn.sh
+  local/chain/run_tdnna.sh --stage 20
 fi
