@@ -34,8 +34,8 @@ fi
 
 mkdir -p $OUTPUT/dict_nosp
 echo -e "SIL <sil>\n<UNK> <unk>" |  cat - local/hesitations.txt $OUTPUT/lexicon.txt | sort -u > $OUTPUT/dict_nosp/lexicon.txt
-echo '<UNK>' > $OUTPUT/dict/oov.txt
-#echo ''  > $OUTPUT/dict/extra_questions.txt
+echo '<UNK>' > $OUTPUT/dict_nosp/oov.txt
+#echo ''  > $OUTPUT/dict_nosp/extra_questions.txt
 echo '<sil>' > $OUTPUT/dict_nosp/optional_silence.txt
 cat $OUTPUT/lexicon.txt | cut -d ' ' -f 2- | sed 's/ /\n/g' | \
   sort -u | sed '/^ *$/d' > $OUTPUT/dict_nosp/nonsilence_phones.txt
