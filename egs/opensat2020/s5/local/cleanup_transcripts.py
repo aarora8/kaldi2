@@ -35,6 +35,7 @@ def process_line(line):
             while old_x and not w.endswith('))'):
                 w2 = old_x.pop(0)
                 w += ' ' + w2
+                #print(w, file=sys.stderr)
             x.append(w)
             if old_x:
                 w = old_x.pop(0)
@@ -48,7 +49,9 @@ def process_line(line):
             if old_x:
                 w = old_x.pop(0)
         elif w.endswith(r'))'):
-            print('error', file=sys.stderr)
+            print('error ' + w, file=sys.stderr)
+            if old_x:
+                w = old_x.pop(0)
         else:
             x.append(w)
             if old_x:
@@ -98,6 +101,7 @@ def main(lexicon, transcript_file, output_file):
     s = sorted(((v, k) for k, v in OOV_WORDS.items()), reverse=True)
     for v, k in s:
         print('{v} {k}')
+        #print(f'{v} {k}')
     #s = sorted(((v, k) for k, v in WORDLIST.items()), reverse=True)
     #for v, k in s:
     #    print(f'{k} : {v}')

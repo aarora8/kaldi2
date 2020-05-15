@@ -28,7 +28,7 @@ SSSF_TEXTS=/export/corpora/LDC/LDC2020E08
 
 
 UNK='<UNK>'
-nj=32
+
 
 local/check_tools.sh || exit 1
 
@@ -48,6 +48,13 @@ if [ $stage -le 0 ]; then
   # we will need dev and test splits -- apparently they won't be provided
   # lexicon is cmudict
   # LM from SAFE_T + some additional?
+  local/spine_data_prep.sh /export/corpora/LDC/LDC2000S96  /export/corpora/LDC/LDC2000T54 data/spine_eval
+  local/spine_data_prep.sh /export/corpora/LDC/LDC2000S87  /export/corpora/LDC/LDC2000T49 data/spine_train
+
+  local/spine_data_prep.sh /export/corpora/LDC/LDC2001S04  /export/corpora/LDC/LDC2001T05 data/spine2_train1
+  local/spine_data_prep.sh /export/corpora/LDC/LDC2001S06  /export/corpora/LDC/LDC2001T07 data/spine2_train2
+  local/spine_data_prep.sh /export/corpora/LDC/LDC2001S08  /export/corpora/LDC/LDC2001T09 data/spine2_train3
+
 fi
 
 if [ $stage -le 1 ]; then
@@ -58,31 +65,46 @@ if [ $stage -le 1 ]; then
   #true
 fi
 
+
+
 if [ $stage -le 2 ]; then
   mkdir -p exp/cleanup_stage_1
   (
     local/cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r11/transcripts data/safe_t_r11/transcripts.clean
     local/cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r20/transcripts data/safe_t_r20/transcripts.clean
+
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine2_train1/transcripts data/spine2_train1/transcripts.clean
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine2_train2/transcripts data/spine2_train2/transcripts.clean
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine2_train3/transcripts data/spine2_train3/transcripts.clean
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine_train/transcripts   data/spine_train//transcripts.clean
   ) | sort > exp/cleanup_stage_1/oovs
 
   # avoid adding the dev OOVs to lexicon!
   local/cleanup_transcripts.py  --no-unk-replace  data/local/lexicon.txt \
     data/safe_t_dev1/transcripts data/safe_t_dev1/transcripts.clean > exp/cleanup_stage_1/oovs.dev1
+  local/cleanup_transcripts.py  --no-unk-replace  data/local/lexicon.txt \
+    data/spine_eval/transcripts data/spine_eval/transcripts.clean > exp/cleanup_stage_1/oovs.spine_eval
 
   local/build_data_dir.sh data/safe_t_r11/ data/safe_t_r11/transcripts.clean
   local/build_data_dir.sh data/safe_t_r20/ data/safe_t_r20/transcripts.clean
   local/build_data_dir.sh data/safe_t_dev1/ data/safe_t_dev1/transcripts
+
+  local/build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
+  local/build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
+  local/build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
+  local/build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
+  local/build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
 fi
 
 if [ $stage -le 3 ]; then
-  for f in data/safe_t_dev1 data/safe_t_r20 data/safe_t_r11 ; do
-    steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj $f
+  for f in data/safe_t_dev1 data/safe_t_r20 data/safe_t_r11 data/train data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train data/spine_eval ; do
+    steps/make_mfcc.sh --cmd "$train_cmd" --nj 8 $f
     steps/compute_cmvn_stats.sh $f
   done
 fi
 
 if [ $stage -le 4 ] ; then
-  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
+  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11  data/train data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
   steps/compute_cmvn_stats.sh data/train
 fi
 
@@ -105,7 +127,7 @@ if [ $stage -le 7 ] ; then
   echo "Monophone training done."
 fi
 
-nj=32
+nj=16
 dev_nj=16
 if [ $stage -le 8 ]; then
   ### Triphone

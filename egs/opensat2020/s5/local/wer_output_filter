@@ -5,23 +5,20 @@ import sys
 
 if __name__ == '__main__':
     for line in sys.stdin:
-        if len(line.strip()) == 1:
-            continue
-        try:
-            utt, text = line.split(' ', 1)
-        except:
-            continue
+        utt, text = line.split(' ', 1)
         text = text.lower()
         text = re.sub(r'[.,?]', ' ', text)
         text = re.sub(r'{[^}]+}', '<UNK>', text)
         text = re.sub('<unk>', '<UNK>', text)
-        text = re.sub('\s+\)\)', '))', text)
-        text = re.sub('%[a-z]+', '<UNK>', text)
         text = re.sub('<noise>', '<UNK>', text)
+        text = re.sub('\s+\)\)', '))', text)
+        text = re.sub('\(\(<UNK>\)\)', '<UNK>', text)
+        text = re.sub('%[a-z]+', '<UNK>', text)
         text = re.sub(' -- ', ' ', text)
         text = re.sub(' --$', '', text)
         text = re.sub('\s+', ' ', text)
         text = re.sub('\s+$', '', text)
-        text = re.sub('<UNK>', ' ', text)
-        if text:
-            print("{} {}".format(utt, text))
+
+
+        line = f'{utt} {text}'
+        print(line, file=sys.stdout)

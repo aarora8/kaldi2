@@ -29,7 +29,7 @@ while IFS= read -r line ; do
   base=$(echo $base | sed 's/_dev//g')
   wavid="${base}_xxxxxxx"
   wavid="${wavid:0:35}"  #35 found by experimenation
-  echo "$wavid flac -s -c -d $line |"
+  echo "$wavid flac -s -c -d $line | sox - -b 16 -t wav -r 16000 - |"
 done < <(find -L ${AUDIO_DIR} -name "*.flac" ) | sort -u > $OUTPUT/wav.scp
 
 if [  "${TEXTS_DIR:-x}" == "x"  ]; then
