@@ -51,10 +51,10 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  rm -rf data/lang data/local/lang data/local/dict
+  rm -rf data/lang_nosp data/local/lang_nosp data/local/dict_nosp
   local/get_cmu_dict.sh
-  utils/prepare_lang.sh data/local/dict '<UNK>' data/local/lang data/lang
-  utils/validate_lang.pl data/lang
+  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
+  utils/validate_lang.pl data/lang_nosp
   #true
 fi
 
@@ -79,7 +79,6 @@ if [ $stage -le 3 ]; then
     steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj $f
     steps/compute_cmvn_stats.sh $f
   done
-  cp -r data/safe_t_dev1 data/dev
 fi
 
 if [ $stage -le 4 ] ; then
@@ -93,7 +92,7 @@ if [ $stage -le 5 ]; then
     data/ data/local/srilm
 
   utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
-    data/local/lexicon.txt  data/lang_test
+    data/local/lexicon.txt  data/lang_nosp_test
 fi
 
 if [ $stage -le 6 ] ; then
@@ -102,7 +101,7 @@ fi
 
 if [ $stage -le 7 ] ; then
   echo "Starting triphone training."
-  steps/train_mono.sh --nj $nj --cmd "$cmd" data/train_sub1 data/lang exp/mono
+  steps/train_mono.sh --nj $nj --cmd "$cmd" data/train_sub1 data/lang_nosp exp/mono
   echo "Monophone training done."
 fi
 
@@ -112,16 +111,16 @@ if [ $stage -le 8 ]; then
   ### Triphone
   echo "Starting triphone training."
   steps/align_si.sh --nj $nj --cmd "$cmd" \
-      data/train data/lang exp/mono exp/mono_ali
+      data/train data/lang_nosp exp/mono exp/mono_ali
   steps/train_deltas.sh --boost-silence 1.25 --cmd "$cmd"  \
-      3200 30000 data/train data/lang exp/mono_ali exp/tri1
+      3200 30000 data/train data/lang_nosp exp/mono_ali exp/tri1
   echo "Triphone training done."
 
   (
     echo "Decoding the dev set using triphone models."
-    utils/mkgraph.sh data/lang_test  exp/tri1 exp/tri1/graph
+    utils/mkgraph.sh data/lang_nosp_test  exp/tri1 exp/tri1/graph
     steps/decode.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri1/graph  data/safe_t_dev1 exp/tri1/decode_dev
+        exp/tri1/graph  data/safe_t_dev1 exp/tri1/decode_safe_t_dev1
     echo "Triphone decoding done."
   ) &
 fi
@@ -131,16 +130,16 @@ if [ $stage -le 9 ]; then
   # Training
   echo "Starting (larger) triphone training."
   steps/align_si.sh --nj $nj --cmd "$cmd" --use-graphs true \
-       data/train data/lang exp/tri1 exp/tri1_ali
+       data/train data/lang_nosp exp/tri1 exp/tri1_ali
   steps/train_deltas.sh --cmd "$cmd"  \
-      4200 40000 data/train data/lang exp/tri1_ali exp/tri2a
+      4200 40000 data/train data/lang_nosp exp/tri1_ali exp/tri2a
   echo "Triphone (large) training done."
 
   (
     echo "Decoding the dev set using triphone(large) models."
-    utils/mkgraph.sh data/lang_test exp/tri2a exp/tri2a/graph
+    utils/mkgraph.sh data/lang_nosp_test exp/tri2a exp/tri2a/graph
     steps/decode.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri2a/graph data/safe_t_dev1 exp/tri2a/decode_dev
+        exp/tri2a/graph data/safe_t_dev1 exp/tri2a/decode_safe_t_dev1
   ) &
 fi
 
@@ -149,18 +148,18 @@ if [ $stage -le 10 ]; then
   # Training
   echo "Starting LDA+MLLT training."
   steps/align_si.sh --nj $nj --cmd "$cmd"  \
-      data/train data/lang exp/tri2a exp/tri2a_ali
+      data/train data/lang_nosp exp/tri2a exp/tri2a_ali
 
   steps/train_lda_mllt.sh --cmd "$cmd"  \
     --splice-opts "--left-context=3 --right-context=3" \
-    4200 40000 data/train data/lang exp/tri2a_ali exp/tri2b
+    4200 40000 data/train data/lang_nosp exp/tri2a_ali exp/tri2b
   echo "LDA+MLLT training done."
 
   (
     echo "Decoding the dev set using LDA+MLLT models."
-    utils/mkgraph.sh data/lang_test exp/tri2b exp/tri2b/graph
+    utils/mkgraph.sh data/lang_nosp_test exp/tri2b exp/tri2b/graph
     steps/decode.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri2b/graph data/safe_t_dev1 exp/tri2b/decode_dev
+        exp/tri2b/graph data/safe_t_dev1 exp/tri2b/decode_safe_t_dev1
   ) &
 fi
 
@@ -170,16 +169,16 @@ if [ $stage -le 11 ]; then
   # Training
   echo "Starting SAT+FMLLR training."
   steps/align_si.sh --nj $nj --cmd "$cmd" \
-      --use-graphs true data/train data/lang exp/tri2b exp/tri2b_ali
+      --use-graphs true data/train data/lang_nosp exp/tri2b exp/tri2b_ali
   steps/train_sat.sh --cmd "$cmd" 4200 40000 \
-      data/train data/lang exp/tri2b_ali exp/tri3b
+      data/train data/lang_nosp exp/tri2b_ali exp/tri3b
   echo "SAT+FMLLR training done."
 
   (
     echo "Decoding the dev set using SAT+FMLLR models."
-    utils/mkgraph.sh data/lang_test  exp/tri3b exp/tri3b/graph
+    utils/mkgraph.sh data/lang_nosp_test  exp/tri3b exp/tri3b/graph
     steps/decode_fmllr.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri3b/graph  data/safe_t_dev1 exp/tri3b/decode_dev
+        exp/tri3b/graph  data/safe_t_dev1 exp/tri3b/decode_safe_t_dev1
 
     echo "SAT+FMLLR decoding done."
   ) &
@@ -190,16 +189,16 @@ if [ $stage -le 12 ]; then
   # Training
   echo "Starting SAT+FMLLR training."
   steps/align_si.sh --nj $nj --cmd "$cmd" \
-      --use-graphs true data/train data/lang exp/tri3b exp/tri3b_ali
+      --use-graphs true data/train data/lang_nosp exp/tri3b exp/tri3b_ali
   steps/train_sat.sh --cmd "$cmd" 4500 50000 \
-      data/train data/lang exp/tri3b_ali exp/tri4b
+      data/train data/lang_nosp exp/tri3b_ali exp/tri4b
   echo "SAT+FMLLR training done."
 
   (
     echo "Decoding the dev set using SAT+FMLLR models."
-    utils/mkgraph.sh data/lang_test  exp/tri4b exp/tri4b/graph
+    utils/mkgraph.sh data/lang_nosp_test  exp/tri4b exp/tri4b/graph
     steps/decode_fmllr.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri4b/graph  data/safe_t_dev1 exp/tri4b/decode_dev
+        exp/tri4b/graph  data/safe_t_dev1 exp/tri4b/decode_safe_t_dev1
 
     echo "SAT+FMLLR decoding done."
   ) &
@@ -209,16 +208,16 @@ LM=data/local/srilm/lm.gz
 if [ $stage -le 12 ]; then
   # Now we compute the pronunciation and silence probabilities from training data,
   # and re-create the lang directory.
-  steps/get_prons.sh --cmd "$train_cmd" data/train data/lang exp/tri4b
+  steps/get_prons.sh --cmd "$train_cmd" data/train data/lang_nosp exp/tri4b
   utils/dict_dir_add_pronprobs.sh --max-normalize true \
     data/local/dict exp/tri4b/pron_counts_nowb.txt \
     exp/tri4b/sil_counts_nowb.txt \
-    exp/tri4b/pron_bigram_counts_nowb.txt data/local/dict_sp
+    exp/tri4b/pron_bigram_counts_nowb.txt data/local/dict
 
   echo "$0:  prepare new lang with pronunciation and silence modeling..."
-  utils/prepare_lang.sh data/local/dict_sp "<unk>" data/local/lang_sp data/lang_tmp
+  utils/prepare_lang.sh data/local/dict "<unk>" data/local/lang data/lang_tmp
   utils/format_lm.sh \
-    data/lang_tmp $LM data/local/dict_nosp/lexicon.txt data/lang_sp_test
+    data/lang_tmp $LM data/local/dict/lexicon.txt data/lang_test
 fi
 
 if [ $stage -le 12 ]; then
@@ -226,16 +225,16 @@ if [ $stage -le 12 ]; then
   # Training
   echo "Starting SAT+FMLLR training."
   steps/align_si.sh --nj $nj --cmd "$cmd" \
-      --use-graphs true data/train data/lang_sp_test exp/tri4b exp/tri4b_ali
+      --use-graphs true data/train data/lang_test exp/tri4b exp/tri4b_ali
   steps/train_sat.sh --cmd "$cmd" 4500 50000 \
-      data/train data/lang_sp_test exp/tri4b_ali exp/tri5b
+      data/train data/lang_test exp/tri4b_ali exp/tri5b
   echo "SAT+FMLLR training done."
 
   (
     echo "Decoding the dev set using SAT+FMLLR models."
-    utils/mkgraph.sh data/lang_sp_test  exp/tri5b exp/tri5b/graph
+    utils/mkgraph.sh data/lang_test  exp/tri5b exp/tri5b/graph
     steps/decode_fmllr.sh --nj $dev_nj --cmd "$cmd" \
-        exp/tri5b/graph  data/safe_t_dev1 exp/tri5b/decode_dev
+        exp/tri5b/graph  data/safe_t_dev1 exp/tri5b/decode_safe_t_dev1
 
     echo "SAT+FMLLR decoding done."
   ) &

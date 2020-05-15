@@ -216,12 +216,12 @@ if [ $stage -le 19 ]; then
   # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
   # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
   # the lang directory.
-  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_sp_test $dir $dir/graph
+  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_test $dir $dir/graph
 fi
 
 if [ $stage -le 20 ]; then
   rm $dir/.error 2>/dev/null || true
-  for dset in dev; do
+  for dset in safe_t_dev1; do
       (
       steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
           --acwt 1.0 --post-decode-acwt 10.0 \
