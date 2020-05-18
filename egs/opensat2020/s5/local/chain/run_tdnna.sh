@@ -46,13 +46,13 @@ local/nnet3/run_ivector_common.sh --stage $stage \
 
 
 gmm_dir=exp/$gmm
-ali_dir=exp/${gmm}_ali_${train_set}_sp
+ali_dir=exp/${gmm}_ali_${train_set}_sp_comb
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-lat_dir=exp/chain${nnet3_affix}/${gmm}_${train_set}_sp_lats
+lat_dir=exp/chain${nnet3_affix}/${gmm}_${train_set}_sp_comb_lats
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}_sp
-train_data_dir=data/${train_set}_sp_hires
-lores_train_data_dir=data/${train_set}_sp
-train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
+train_data_dir=data/${train_set}_sp_hires_comb
+lores_train_data_dir=data/${train_set}_sp_comb
+train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires_comb
 lang=data/lang_chain
 
 num_epochs=6

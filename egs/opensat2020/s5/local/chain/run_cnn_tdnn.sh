@@ -46,13 +46,13 @@ local/nnet3/run_ivector_common.sh --stage $stage \
 
 
 gmm_dir=exp/$gmm
-ali_dir=exp/${gmm}_ali_${train_set}_sp
+ali_dir=exp/${gmm}_ali_${train_set}_sp_comb
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-lat_dir=exp/chain${nnet3_affix}/${gmm}_${train_set}_sp_lats
+lat_dir=exp/chain${nnet3_affix}/${gmm}_${train_set}_sp_comb_lats
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}_sp
-train_data_dir=data/${train_set}_sp_hires
-lores_train_data_dir=data/${train_set}_sp
-train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
+train_data_dir=data/${train_set}_sp_hires_comb
+lores_train_data_dir=data/${train_set}_sp_comb
+train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires_comb
 lang=data/lang_chain
 
 num_epochs=6
@@ -81,7 +81,7 @@ if [ $stage -le 14 ]; then
       exit 1;
     fi
   else
-    cp -r data/lang_sp_test data/lang_chain
+    cp -r data/lang_test data/lang_chain
     silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
     nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
     # Use our special topology... note that later on may have to tune this
@@ -94,7 +94,7 @@ if [ $stage -le 15 ]; then
   # Get the alignments as lattices (gives the chain training more freedom).
   # use the same num-jobs as the alignments
   steps/align_fmllr_lats.sh --nj 96 --cmd "$train_cmd" ${lores_train_data_dir} \
-    data/lang_sp_test $gmm_dir $lat_dir
+    data/lang_test $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz # save space
 fi
 
@@ -214,6 +214,31 @@ if [ $stage -le 18 ]; then
 
 fi
 
+## create big LM for decoding and get HCLG
+#if [ $stage -le 19 ]; then
+#  echo "$0:  prepare new lang with pronunciation and silence modeling..."
+#  LM=/export/c03/pzelasko/opensat/pocolm/egs/opensat/data/srilm/combined.3g.kn.gz
+#  rm -rf data/lang_tmp
+#  utils/prepare_lang.sh data/local/dict "<UNK>" data/local/lang data/lang_tmp
+#  utils/format_lm.sh \
+#    data/lang_tmp $LM data/local/dict/lexicon.txt data/lang_os_srilm3g_test
+#
+#  # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
+#  # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
+#  # the lang directory.
+#  #utils/mkgraph.sh --self-loop-scale 1.0 data/lang_os_srilm3g_test $dir $dir/graph_os_srilm3g
+#fi
+#
+## decode with big HCLG
+#if [ $stage -le 20 ]; then
+#  for dset in safe_t_dev1; do
+#      steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
+#          --acwt 1.0 --post-decode-acwt 10.0 \
+#          --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${dset}_hires \
+#         $dir/graph_os_srilm3g data/${dset}_hires $dir/decode_${dset} || exit 1;
+#  done
+#fi
+
 if [ $stage -le 19 ]; then
   # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
   # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
@@ -221,22 +246,32 @@ if [ $stage -le 19 ]; then
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_test $dir $dir/graph
 fi
 
-two_stage_decoding=true
-if [ $two_stage_decoding ]; then stage=21; fi
-
 if [ $stage -le 20 ]; then
-  if [ $two_stage_decoding ]; then
-    local/decode.sh \
-      --ivector-dir exp/nnet3${nnet3_affix}/ \
-      data/safe_t_dev1 data/lang_test \
-      $dir/graph $dir
-  else
-    steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
-      --acwt 1.0 --post-decode-acwt 10.0 \
-      --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
-      --scoring-opts "--min-lmwt 5 " \
-      $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
-  fi
+  for dset in safe_t_dev1; do
+      steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
+          --acwt 1.0 --post-decode-acwt 10.0 \
+          --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${dset}_hires \
+         $dir/graph data/${dset}_hires $dir/decode_${dset} || exit 1;
+  done
 fi
+
+
+## create big LM for rescoring
+#LM=/export/c03/pzelasko/opensat/pocolm/egs/opensat/data/srilm/combined.3g.kn.gz
+#test=data/lang_os_srilm3g_rescore_test
+#if [ $stage -le 20 ]; then
+#  mkdir -p $test
+#  utils/build_const_arpa_lm.sh $LM data/lang_test $test
+#  utils/validate_lang.pl --skip-determinization-check $test || exit 1;
+#fi
+#
+## rescore with big LM
+#if [ $stage -le 21 ]; then
+#  for decode_set in safe_t_dev1; do
+#    steps/lmrescore_const_arpa.sh --cmd "$decode_cmd" \
+#      data/lang_test $test data/${decode_set}_hires \
+#      $dir/decode_${decode_set} $dir/decode_${decode_set}_rescore || exit 1;
+#  done
+#fi
 
 exit 0
