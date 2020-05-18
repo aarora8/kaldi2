@@ -58,7 +58,7 @@ if [ $stage -le 4 ]; then
   # Test with the models trained on cleaned-up data.
   utils/mkgraph.sh data/lang_test ${cleaned_dir} ${cleaned_dir}/graph
 
-  for dset in dev; do
+  for dset in safe_t_dev1; do
     steps/decode_fmllr.sh --nj $decode_nj --num-threads $decode_num_threads \
        --cmd "$decode_cmd"  --num-threads 4 \
        ${cleaned_dir}/graph data/${dset} ${cleaned_dir}/decode_${dset}

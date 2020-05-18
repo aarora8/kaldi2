@@ -18,7 +18,6 @@ if __name__ == '__main__':
         text = re.sub(' --$', '', text)
         text = re.sub('\s+', ' ', text)
         text = re.sub('\s+$', '', text)
+        #text = re.sub('<UNK>', ' ', text)
 
-
-        line = f'{utt} {text}'
-        print(line, file=sys.stdout)
+        print("{} {}".format(utt, text))

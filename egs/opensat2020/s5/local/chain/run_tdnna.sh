@@ -15,7 +15,7 @@ online_cmvn=true
 
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1d  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1g  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
 remove_egs=true
 get_egs_stage=-10
@@ -81,7 +81,7 @@ if [ $stage -le 14 ]; then
       exit 1;
     fi
   else
-    cp -r data/lang_sp_test data/lang_chain
+    cp -r data/lang_test data/lang_chain
     silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
     nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
     # Use our special topology... note that later on may have to tune this
@@ -94,7 +94,7 @@ if [ $stage -le 15 ]; then
   # Get the alignments as lattices (gives the chain training more freedom).
   # use the same num-jobs as the alignments
   steps/align_fmllr_lats.sh --nj 96 --cmd "$train_cmd" ${lores_train_data_dir} \
-    data/lang_sp_test $gmm_dir $lat_dir
+    data/lang_test $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz # save space
 fi
 
@@ -140,7 +140,9 @@ if [ $stage -le 17 ]; then
   linear-component name=ivector-linear $ivector_affine_opts dim=200 input=ReplaceIndex(ivector, t, 0)
   batchnorm-component name=ivector-batchnorm target-rms=0.025
   batchnorm-component name=idct-batchnorm input=idct
-  combine-feature-maps-layer name=combine_inputs input=Append(idct-batchnorm, ivector-batchnorm) num-filters1=1 num-filters2=5 height=40
+  spec-augment-layer name=idct-spec-augment freq-max-proportion=0.5 time-zeroed-proportion=0.2 time-mask-max-frames=20
+  batchnorm-component name=idct-spec-augment-batchnorm input=idct-spec-augment
+  combine-feature-maps-layer name=combine_inputs input=Append(idct-spec-augment-batchnorm, ivector-batchnorm) num-filters1=1 num-filters2=5 height=40
   conv-relu-batchnorm-layer name=cnn1 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64 
   conv-relu-batchnorm-layer name=cnn2 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
   conv-relu-batchnorm-layer name=cnn3 $cnn_opts height-in=40 height-out=20 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=128
@@ -212,6 +214,31 @@ if [ $stage -le 18 ]; then
 
 fi
 
+## create big LM for decoding and get HCLG
+#if [ $stage -le 19 ]; then
+#  echo "$0:  prepare new lang with pronunciation and silence modeling..."
+#  LM=/export/c03/pzelasko/opensat/pocolm/egs/opensat/data/srilm/combined.3g.kn.gz
+#  rm -rf data/lang_tmp
+#  utils/prepare_lang.sh data/local/dict "<UNK>" data/local/lang data/lang_tmp
+#  utils/format_lm.sh \
+#    data/lang_tmp $LM data/local/dict/lexicon.txt data/lang_os_srilm3g_test
+#
+#  # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
+#  # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
+#  # the lang directory.
+#  #utils/mkgraph.sh --self-loop-scale 1.0 data/lang_os_srilm3g_test $dir $dir/graph_os_srilm3g
+#fi
+#
+## decode with big HCLG
+#if [ $stage -le 20 ]; then
+#  for dset in safe_t_dev1; do
+#      steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
+#          --acwt 1.0 --post-decode-acwt 10.0 \
+#          --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${dset}_hires \
+#         $dir/graph_os_srilm3g data/${dset}_hires $dir/decode_${dset} || exit 1;
+#  done
+#fi
+
 if [ $stage -le 19 ]; then
   # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
   # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
@@ -220,20 +247,31 @@ if [ $stage -le 19 ]; then
 fi
 
 if [ $stage -le 20 ]; then
-  rm $dir/.error 2>/dev/null || true
   for dset in safe_t_dev1; do
-      (
       steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
           --acwt 1.0 --post-decode-acwt 10.0 \
           --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${dset}_hires \
-          --scoring-opts "--min-lmwt 5 " \
          $dir/graph data/${dset}_hires $dir/decode_${dset} || exit 1;
-    ) || touch $dir/.error &
   done
-  wait
-  if [ -f $dir/.error ]; then
-    echo "$0: something went wrong in decoding"
-    exit 1
-  fi
 fi
+
+
+## create big LM for rescoring
+#LM=/export/c03/pzelasko/opensat/pocolm/egs/opensat/data/srilm/combined.3g.kn.gz
+#test=data/lang_os_srilm3g_rescore_test
+#if [ $stage -le 20 ]; then
+#  mkdir -p $test
+#  utils/build_const_arpa_lm.sh $LM data/lang_test $test
+#  utils/validate_lang.pl --skip-determinization-check $test || exit 1;
+#fi
+#
+## rescore with big LM
+#if [ $stage -le 21 ]; then
+#  for decode_set in safe_t_dev1; do
+#    steps/lmrescore_const_arpa.sh --cmd "$decode_cmd" \
+#      data/lang_test $test data/${decode_set}_hires \
+#      $dir/decode_${decode_set} $dir/decode_${decode_set}_rescore || exit 1;
+#  done
+#fi
+
 exit 0

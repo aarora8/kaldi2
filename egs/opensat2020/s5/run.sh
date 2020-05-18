@@ -97,14 +97,14 @@ if [ $stage -le 2 ]; then
 fi
 
 if [ $stage -le 3 ]; then
-  for f in data/safe_t_dev1 data/safe_t_r20 data/safe_t_r11 data/train data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train data/spine_eval ; do
-    steps/make_mfcc.sh --cmd "$train_cmd" --nj 8 $f
+   for f in data/safe_t_dev1 data/safe_t_r20 data/safe_t_r11 data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train data/spine_eval ; do
+    steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 $f
     steps/compute_cmvn_stats.sh $f
   done
 fi
 
 if [ $stage -le 4 ] ; then
-  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11  data/train data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
+  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11 data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
   steps/compute_cmvn_stats.sh data/train
 fi
 
@@ -121,14 +121,14 @@ if [ $stage -le 6 ] ; then
 	utils/subset_data_dir.sh --shortest  data/train 1000 data/train_sub1
 fi
 
+nj=16
+dev_nj=16
 if [ $stage -le 7 ] ; then
   echo "Starting triphone training."
   steps/train_mono.sh --nj $nj --cmd "$cmd" data/train_sub1 data/lang_nosp exp/mono
   echo "Monophone training done."
 fi
 
-nj=16
-dev_nj=16
 if [ $stage -le 8 ]; then
   ### Triphone
   echo "Starting triphone training."
@@ -227,22 +227,22 @@ if [ $stage -le 12 ]; then
 fi
 
 LM=data/local/srilm/lm.gz
-if [ $stage -le 12 ]; then
+if [ $stage -le 13 ]; then
   # Now we compute the pronunciation and silence probabilities from training data,
   # and re-create the lang directory.
   steps/get_prons.sh --cmd "$train_cmd" data/train data/lang_nosp exp/tri4b
   utils/dict_dir_add_pronprobs.sh --max-normalize true \
-    data/local/dict exp/tri4b/pron_counts_nowb.txt \
+    data/local/dict_nosp exp/tri4b/pron_counts_nowb.txt \
     exp/tri4b/sil_counts_nowb.txt \
     exp/tri4b/pron_bigram_counts_nowb.txt data/local/dict
 
   echo "$0:  prepare new lang with pronunciation and silence modeling..."
-  utils/prepare_lang.sh data/local/dict "<unk>" data/local/lang data/lang_tmp
+  utils/prepare_lang.sh data/local/dict "<UNK>" data/local/lang data/lang_tmp
   utils/format_lm.sh \
     data/lang_tmp $LM data/local/dict/lexicon.txt data/lang_test
 fi
 
-if [ $stage -le 12 ]; then
+if [ $stage -le 14 ]; then
   ### Triphone + LDA and MLLT + SAT and FMLLR
   # Training
   echo "Starting SAT+FMLLR training."
@@ -262,13 +262,13 @@ if [ $stage -le 12 ]; then
   ) &
 fi
 
-if [ $stage -le 13 ]; then
+if [ $stage -le 15 ]; then
   # this does some data-cleaning.  It actually degrades the GMM-level results
   # slightly, but the cleaned data should be useful when we add the neural net and chain
   # systems.  If not we'll remove this stage.
   local/run_cleanup_segmentation.sh
 fi
 
-if [ $stage -le 14 ]; then
-  local/chain/run_tdnna.sh --stage 20
+if [ $stage -le 16 ]; then
+  local/chain/run_tdnna.sh
 fi

@@ -16,7 +16,7 @@ mkdir -p $OUTPUT
 [ -f data/cmudict-0.7b ] || \
   curl http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b > $OUTPUT/cmudict-0.7b
 
-uconv -f iso-8859-1 -t utf-8 data/cmudict-0.7b| grep -v ';;' | sed 's/([0-9])//g' | \
+uconv -f iso-8859-1 -t utf-8 $OUTPUT/cmudict-0.7b| grep -v ';;' | sed 's/([0-9])//g' | \
   perl -ne '($a, $b) = split " ", $_, 2; $b =~ s/[0-9]//g; $a = lc $a; print "$a $b";' > $OUTPUT/lexicon.txt
 
 mkdir -p $OUTPUT/g2p
