@@ -100,7 +100,7 @@ def main(lexicon, transcript_file, output_file):
 
     s = sorted(((v, k) for k, v in OOV_WORDS.items()), reverse=True)
     for v, k in s:
-        print('{v} {k}')
+        print('{} {}'.format(v,k))
         #print(f'{v} {k}')
     #s = sorted(((v, k) for k, v in WORDLIST.items()), reverse=True)
     #for v, k in s:

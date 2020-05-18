@@ -109,8 +109,10 @@ if [ $stage -le 4 ] ; then
 fi
 
 if [ $stage -le 5 ]; then
+
+  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11 data/safe_t_train
   local/train_lms_srilm.sh \
-    --train_text data/train/text --dev_text data/safe_t_dev1/text  \
+    --train_text data/safe_t_train/text --dev_text data/safe_t_dev1/text  \
     data/ data/local/srilm
 
   utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
