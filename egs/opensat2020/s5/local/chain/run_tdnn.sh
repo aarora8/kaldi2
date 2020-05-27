@@ -9,26 +9,16 @@ dropout_schedule='0,0@0.20,0.5@0.50,0'
 train_set=train_cleaned
 gmm=tri5b  # the gmm for the target data
 num_threads_ubm=8
-nnet3_affix=_org_1d  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
-
-# 1d is like 1c, while it introduces 'apply-cmvn-online' that does
-# cmn normalization both for i-extractor and TDNN input.
-
-# Setting 'online_cmvn' to true replaces 'apply-cmvn' by
-# 'apply-cmvn-online' both for i-vector extraction and TDNN input.
-# The i-vector extractor uses the config 'conf/online_cmvn.conf' for
-# both the UBM and the i-extractor. The TDNN input is configured via
-# '--feat.cmvn-opts' that is set to the same config, so we use the
-# same cmvn for i-extractor and the TDNN input.
-online_cmvn=true
+nnet3_affix=  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
+online_cmvn=false
 
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1d  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1a_minilib  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
-remove_egs=true
+remove_egs=false
 
 # End configuration section.
 echo "$0 $@"  # Print the command line for logging
@@ -54,15 +44,15 @@ local/nnet3/run_ivector_common.sh --stage $stage \
                                   --num-threads-ubm $num_threads_ubm \
                                   --nnet3-affix "$nnet3_affix"
 
-
 gmm_dir=exp/$gmm
-ali_dir=exp/${gmm}_ali_${train_set}_sp
+ali_dir=exp/${gmm}_ali_${train_set}_sp_comb
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-lat_dir=exp/chain${nnet3_affix}/${gmm}_${train_set}_sp_lats
+lat_dir=exp/chain${nnet3_affix}/${gmm}_${train_set}_sp_comb_lats
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}_sp
-train_data_dir=data/${train_set}_sp_hires
-lores_train_data_dir=data/${train_set}_sp
-train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
+train_data_dir=data/${train_set}_sp_hires_comb
+lores_train_data_dir=data/${train_set}_sp_comb
+train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires_comb
+lang=data/lang_chain
 
 for f in $gmm_dir/final.mdl $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp \
     $lores_train_data_dir/feats.scp $ali_dir/ali.1.gz $gmm_dir/final.mdl; do
@@ -83,7 +73,7 @@ if [ $stage -le 14 ]; then
       exit 1;
     fi
   else
-    cp -r data/lang data/lang_chain
+    cp -r data/lang_test data/lang_chain
     silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
     nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
     # Use our special topology... note that later on may have to tune this
@@ -93,24 +83,15 @@ if [ $stage -le 14 ]; then
 fi
 
 if [ $stage -le 15 ]; then
-  # Get the alignments as lattices (gives the chain training more freedom).
-  # use the same num-jobs as the alignments
   steps/align_fmllr_lats.sh --nj 96 --cmd "$train_cmd" ${lores_train_data_dir} \
-    data/lang $gmm_dir $lat_dir
+    data/lang_test $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz # save space
 fi
 
 if [ $stage -le 16 ]; then
-  # Build a tree using our new topology.  We know we have alignments for the
-  # speed-perturbed data (local/nnet3/run_ivector_common.sh made them), so use
-  # those.
-  if [ -f $tree_dir/final.mdl ]; then
-    echo "$0: $tree_dir/final.mdl already exists, refusing to overwrite it."
-    exit 1;
-  fi
   steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
       --context-opts "--context-width=2 --central-position=1" \
-      --cmd "$train_cmd" 4000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
+      --cmd "$train_cmd" 3000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
 fi
 
 if [ $stage -le 17 ]; then
@@ -120,11 +101,11 @@ if [ $stage -le 17 ]; then
 
   num_targets=$(tree-info $tree_dir/tree |grep num-pdfs|awk '{print $2}')
   learning_rate_factor=$(echo "print 0.5/$xent_regularize" | python)
-  affine_opts="l2-regularize=0.008 dropout-proportion=0.0 dropout-per-dim-continuous=true"
-  tdnnf_opts="l2-regularize=0.008 dropout-proportion=0.0 bypass-scale=0.66"
-  linear_opts="l2-regularize=0.008 orthonormal-constraint=-1.0"
-  prefinal_opts="l2-regularize=0.008"
-  output_opts="l2-regularize=0.002"
+  tdnn_opts="l2-regularize=0.03 dropout-proportion=0.0 dropout-per-dim-continuous=true"
+  tdnnf_opts="l2-regularize=0.03 dropout-proportion=0.0 bypass-scale=0.66"
+  linear_opts="l2-regularize=0.03 orthonormal-constraint=-1.0"
+  prefinal_opts="l2-regularize=0.03"
+  output_opts="l2-regularize=0.015"
 
   mkdir -p $dir/configs
   cat <<EOF > $dir/configs/network.xconfig
@@ -137,26 +118,29 @@ if [ $stage -le 17 ]; then
   fixed-affine-layer name=lda input=Append(-1,0,1,ReplaceIndex(ivector, t, 0)) affine-transform-file=$dir/configs/lda.mat
 
   # the first splicing is moved before the lda layer, so no splicing here
-  relu-batchnorm-dropout-layer name=tdnn1 $affine_opts dim=1024
-  tdnnf-layer name=tdnnf2 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
-  tdnnf-layer name=tdnnf3 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
-  tdnnf-layer name=tdnnf4 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
-  tdnnf-layer name=tdnnf5 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=0
-  tdnnf-layer name=tdnnf6 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf7 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf8 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf9 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf10 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf11 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf12 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf13 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  linear-component name=prefinal-l dim=256 $linear_opts
+  relu-batchnorm-dropout-layer name=tdnn1 $tdnn_opts dim=768
+  tdnnf-layer name=tdnnf2 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=1
+  tdnnf-layer name=tdnnf3 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=1
+  tdnnf-layer name=tdnnf4 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=1
+  tdnnf-layer name=tdnnf5 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=0
+  tdnnf-layer name=tdnnf6 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  tdnnf-layer name=tdnnf7 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  tdnnf-layer name=tdnnf8 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  tdnnf-layer name=tdnnf9 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  tdnnf-layer name=tdnnf10 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  tdnnf-layer name=tdnnf11 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  tdnnf-layer name=tdnnf12 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  tdnnf-layer name=tdnnf13 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  linear-component name=prefinal-l dim=192 $linear_opts
 
-  prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts big-dim=1024 small-dim=256
+  ## adding the layers for chain branch
+  prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts small-dim=192 big-dim=768
   output-layer name=output include-log-softmax=false dim=$num_targets $output_opts
 
-  prefinal-layer name=prefinal-xent input=prefinal-l $prefinal_opts big-dim=1024 small-dim=256
+  # adding the layers for xent branch
+  prefinal-layer name=prefinal-xent input=prefinal-l $prefinal_opts small-dim=192 big-dim=768
   output-layer name=output-xent dim=$num_targets learning-rate-factor=$learning_rate_factor $output_opts
+
 EOF
   steps/nnet3/xconfig_to_configs.py --xconfig-file $dir/configs/network.xconfig --config-dir $dir/configs/
 
@@ -171,7 +155,7 @@ if [ $stage -le 18 ]; then
  steps/nnet3/chain/train.py --stage $train_stage \
     --cmd "$decode_cmd" \
     --feat.online-ivector-dir $train_ivector_dir \
-    --feat.cmvn-opts="--config=conf/online_cmvn.conf" \
+    --feat.cmvn-opts="--norm-means=false --norm-vars=false" \
     --chain.xent-regularize $xent_regularize \
     --chain.leaky-hmm-coefficient 0.1 \
     --chain.l2-regularize 0.0 \
@@ -180,11 +164,11 @@ if [ $stage -le 18 ]; then
     --trainer.dropout-schedule $dropout_schedule \
     --trainer.add-option="--optimization.memory-compression-level=2" \
     --egs.dir "$common_egs_dir" \
-    --egs.opts "--frames-overlap-per-eg 0 --constrained false --online-cmvn $online_cmvn" \
+    --egs.opts "--frames-overlap-per-eg 0" \
     --egs.chunk-width 150,110,100 \
     --trainer.num-chunk-per-minibatch 64 \
-    --trainer.frames-per-iter 5000000 \
-    --trainer.num-epochs 6 \
+    --trainer.frames-per-iter 3000000 \
+    --trainer.num-epochs 10 \
     --trainer.optimization.num-jobs-initial 3 \
     --trainer.optimization.num-jobs-final 12 \
     --trainer.optimization.initial-effective-lrate 0.00025 \
@@ -198,29 +182,14 @@ if [ $stage -le 18 ]; then
 fi
 
 
-
 if [ $stage -le 19 ]; then
-  # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
-  # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
-  # the lang directory.
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_test $dir $dir/graph
 fi
 
 if [ $stage -le 20 ]; then
-  rm $dir/.error 2>/dev/null || true
-  for dset in dev; do
-      (
-      steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
-          --acwt 1.0 --post-decode-acwt 10.0 \
-          --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${dset}_hires \
-          --scoring-opts "--min-lmwt 5 " \
-         $dir/graph data/${dset}_hires $dir/decode_${dset} || exit 1;
-    ) || touch $dir/.error &
-  done
-  wait
-  if [ -f $dir/.error ]; then
-    echo "$0: something went wrong in decoding"
-    exit 1
-  fi
+    steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
+        --acwt 1.0 --post-decode-acwt 10.0 \
+        --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
+       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
 fi
 exit 0

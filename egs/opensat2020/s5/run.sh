@@ -272,5 +272,5 @@ if [ $stage -le 15 ]; then
 fi
 
 if [ $stage -le 16 ]; then
-  local/chain/run_tdnna.sh
+  local/chain/run_tdnn.sh
 fi

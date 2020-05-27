@@ -130,12 +130,10 @@ if [ $stage -le 7 ]; then
 fi
 
 if [ $stage -le 8 ]; then
-  # Train the iVector extractor. µUse all of the speed-perturbed data since iVector extractors
+  # Train the iVector extractor. Use all of the speed-perturbed data since iVector extractors
   # can be sensitive to the amount of data. The script defaults to an iVector dimension of 100.
   echo "$0: training the iVector extractor"
   steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj 20 \
-    --num-threads 4 --num-processes 2 \
-    --online-cmvn-iextractor $online_cmvn_extractor \
     data/${train_set}_sp_hires exp/nnet3${nnet3_affix}/diag_ubm \
     exp/nnet3${nnet3_affix}/extractor || exit 1;
 fi
