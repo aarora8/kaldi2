@@ -1,0 +1,5 @@
+safet and spine data, minilibrispeech recipe, hub4 spanish recipe. 
+%WER 14.36 [ 2801 / 19507, 308 ins, 1123 del, 1370 sub ] exp/chain/tdnn1a_minilib_sp/decode_safe_t_dev1/wer_10_0.0
+exp/chain/tdnn1a_minilib_sp: num-iters=72 nj=3..12 num-params=5.3M dim=40+100->2592 combine=-0.079->-0.079 (over 1) xent:train/valid[47,71,final]=(-1.65,-1.24,-1.22/-1.65,-1.28,-1.27) logprob:train/valid[47,71,final]=(-0.114,-0.081,-0.079/-0.122,-0.095,-0.095)
+Training probability close to validation probability.
+
