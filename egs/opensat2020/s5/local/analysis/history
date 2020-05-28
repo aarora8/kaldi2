@@ -1,0 +1,2 @@
+#calling analysis file
+cat meta_dexp/safet_and_spine_minilib_14.36/exp/chain/tdnn1a_minilib_sp/decode_safe_t_dev1/scoring_kaldi/wer_details/per_utt | local/analysis/get_high_error_utterance.py
