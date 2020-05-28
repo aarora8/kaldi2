@@ -16,7 +16,7 @@ online_cmvn=false
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1a_minilib  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1a_hub4  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
 remove_egs=false
 
@@ -171,8 +171,8 @@ if [ $stage -le 18 ]; then
     --trainer.num-epochs 10 \
     --trainer.optimization.num-jobs-initial 3 \
     --trainer.optimization.num-jobs-final 12 \
-    --trainer.optimization.initial-effective-lrate 0.00025 \
-    --trainer.optimization.final-effective-lrate 0.000025 \
+    --trainer.optimization.initial-effective-lrate 0.000125 \
+    --trainer.optimization.final-effective-lrate 0.0000125 \
     --trainer.max-param-change 2.0 \
     --cleanup.remove-egs $remove_egs \
     --feat-dir $train_data_dir \

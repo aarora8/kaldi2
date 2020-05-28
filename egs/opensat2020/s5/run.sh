@@ -103,8 +103,13 @@ if [ $stage -le 3 ]; then
   done
 fi
 
+#if [ $stage -le 4 ] ; then
+#  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11 data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
+#  steps/compute_cmvn_stats.sh data/train
+#fi
+
 if [ $stage -le 4 ] ; then
-  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11 data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
+  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
   steps/compute_cmvn_stats.sh data/train
 fi
 
