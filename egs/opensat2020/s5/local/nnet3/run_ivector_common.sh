@@ -16,7 +16,7 @@ nnet3_affix=_org     # affix for exp/nnet3 directory to put iVector stuff in, so
 . utils/parse_options.sh
 
 gmm_dir=exp/${gmm}
-ali_dir=exp/${gmm}_ali_${train_set}_sp_comb
+ali_dir=exp/${gmm}_ali_${train_set}_sp
 
 for f in data/${train_set}/feats.scp ${gmm_dir}/final.mdl; do
   if [ ! -f $f ]; then
@@ -67,28 +67,28 @@ if [ $stage -le 3 ]; then
   done
 fi
 
-if [ $stage -le 4 ]; then
-  echo "$0: combining short segments of low-resolution speed-perturbed  MFCC data"
-  src=data/${train_set}_sp
-  dest=data/${train_set}_sp_comb
-  utils/data/combine_short_segments.sh $src $min_seg_len $dest
-  # re-use the CMVN stats from the source directory, since it seems to be slow to
-  # re-compute them after concatenating short segments.
-  cp $src/cmvn.scp $dest/
-  utils/fix_data_dir.sh $dest
-fi
-
-if [ $stage -le 5 ]; then
-  echo "$0: combining short segments of speed-perturbed high-resolution MFCC training data"
-  # we have to combine short segments or we won't be able to train chain models
-  # on those segments.
-  utils/data/combine_short_segments.sh \
-     data/${train_set}_sp_hires $min_seg_len data/${train_set}_sp_hires_comb
-
-  # just copy over the CMVN to avoid having to recompute it.
-  cp data/${train_set}_sp_hires/cmvn.scp data/${train_set}_sp_hires_comb/
-  utils/fix_data_dir.sh data/${train_set}_sp_hires_comb/
-fi
+#if [ $stage -le 4 ]; then
+#  echo "$0: combining short segments of low-resolution speed-perturbed  MFCC data"
+#  src=data/${train_set}_sp
+#  dest=data/${train_set}_sp_comb
+#  utils/data/combine_short_segments.sh $src $min_seg_len $dest
+#  # re-use the CMVN stats from the source directory, since it seems to be slow to
+#  # re-compute them after concatenating short segments.
+#  cp $src/cmvn.scp $dest/
+#  utils/fix_data_dir.sh $dest
+#fi
+#
+#if [ $stage -le 5 ]; then
+#  echo "$0: combining short segments of speed-perturbed high-resolution MFCC training data"
+#  # we have to combine short segments or we won't be able to train chain models
+#  # on those segments.
+#  utils/data/combine_short_segments.sh \
+#     data/${train_set}_sp_hires $min_seg_len data/${train_set}_sp_hires_comb
+#
+#  # just copy over the CMVN to avoid having to recompute it.
+#  cp data/${train_set}_sp_hires/cmvn.scp data/${train_set}_sp_hires_comb/
+#  utils/fix_data_dir.sh data/${train_set}_sp_hires_comb/
+#fi
 
 if [ $stage -le 6 ]; then
   if [ -f $ali_dir/ali.1.gz ]; then
@@ -98,7 +98,7 @@ if [ $stage -le 6 ]; then
   fi
   echo "$0: aligning with the perturbed, short-segment-combined low-resolution data"
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-         data/${train_set}_sp_comb data/lang_test $gmm_dir $ali_dir
+         data/${train_set}_sp data/lang_test $gmm_dir $ali_dir
 fi
 
 if [ $stage -le 7 ]; then
@@ -143,7 +143,7 @@ if [ $stage -le 9 ]; then
   # note, we don't encode the 'max2' in the name of the ivectordir even though
   # that's the data we extract the ivectors from, as it's still going to be
   # valid for the non-'max2' data, the utterance list is the same.
-  ivectordir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires_comb
+  ivectordir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $ivectordir/storage ]; then
     utils/create_split_dir.pl /export/b0{5,6,7,8}/$USER/kaldi-data/ivectors/sprakbanken-$(date +'%m_%d_%H_%M')/s5/$ivectordir/storage $ivectordir/storage
   fi
@@ -157,14 +157,12 @@ if [ $stage -le 9 ]; then
   # handle per-utterance decoding well (iVector starts at zero).
   temp_data_root=${ivectordir}
   utils/data/modify_speaker_info.sh --utts-per-spk-max 2 \
-    data/${train_set}_sp_hires_comb ${temp_data_root}/${train_set}_sp_hires_comb_max2
+    data/${train_set}_sp_hires ${temp_data_root}/${train_set}_sp_hires_max2
 
   steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj $nj \
-    ${temp_data_root}/${train_set}_sp_hires_comb_max2 \
+    ${temp_data_root}/${train_set}_sp_hires_max2 \
     exp/nnet3${nnet3_affix}/extractor $ivectordir
 
-  # Also extract iVectors for the test data, but in this case we don't need the speed
-  # perturbation (sp) or small-segment concatenation (comb).
   for data in safe_t_dev1; do
     steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
       data/${data}_hires exp/nnet3${nnet3_affix}/extractor \
