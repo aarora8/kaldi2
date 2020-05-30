@@ -16,7 +16,7 @@ online_cmvn=false
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1a_hub4_wocomb_nj25_lr00025  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1a_hub4_wocomb_nj25_lr001  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
 remove_egs=false
 srand=0
@@ -169,8 +169,8 @@ steps/nnet3/chain/train.py --stage=$train_stage \
     --trainer.frames-per-iter 3000000 \
     --trainer.optimization.num-jobs-initial 2 \
     --trainer.optimization.num-jobs-final 5 \
-    --trainer.optimization.initial-effective-lrate 0.00025 \
-    --trainer.optimization.final-effective-lrate 0.000025 \
+    --trainer.optimization.initial-effective-lrate 0.001 \
+    --trainer.optimization.final-effective-lrate 0.0001 \
     --trainer.num-chunk-per-minibatch 256,128,64 \
     --egs.cmd="run.pl --max-jobs-run 12" \
     --egs.chunk-width 140,100,160 \
