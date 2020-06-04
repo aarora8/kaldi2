@@ -15,8 +15,8 @@ lda_mllt_ali=tri5b_ali
 clean_ali=tri4b_ali
 
 # train directories for ivectors and TDNNs
-ivector_trainset=train
-train_set=train
+ivector_trainset=train_sub1
+train_set=train_sub1
 
 . ./path.sh
 . ./utils/parse_options.sh
@@ -49,14 +49,14 @@ if [ $stage -le 0 ]; then
     --pointsource-noise-addition-probability 0 \
     --isotropic-noise-addition-probability 0 \
     --num-replications $num_reverb_copies \
-    --source-sampling-rate 16000 \
+    --source-sampling-rate 48000 \
     data/$train_set data/${train_set}_reverb
 fi
 
 if [ $stage -le 1 ]; then
   # Prepare the MUSAN corpus, which consists of music, speech, and noise
   # We will use them as additive noises for data augmentation.
-  steps/data/make_musan.sh --sampling-rate 16000 --use-vocals "true" \
+  steps/data/make_musan.sh --sampling-rate 48000 --use-vocals "true" \
         /export/corpora/JHU/musan data
 
   # Augment with musan_noise
@@ -160,27 +160,6 @@ if [ $stage -le 5 ]; then
 fi
 
 if [ "$use_ivectors" == "true" ]; then
-  if [ $stage -le 6 ]; then
-    # Take  30k utterances from MS data this will be used for the diagubm training.
-    utils/subset_data_dir.sh data/${train_set}_aug_hires 30000 data/${train_set}_aug_30k_hires
-    utils/data/remove_dup_utts.sh 200 data/${train_set}_aug_30k_hires data/${train_set}_aug_30k_nodup_hires  # 33hr
-
-    # Make a 140 hr subset of augmented data to train i-vector extractor
-    # we don't extract hi res features again for ivector training data
-    # we take it from the ms features extracted on the entire training set
-    # First augment the train_100k_nodup directory which is used to train the i-vector extractor in baseline
-    #utils/copy_data_dir.sh data/${train_set}_aug_hires data/${ivector_trainset}_aug_hires
-    utils/filter_scp.pl -f 2 data/${ivector_trainset}/utt2spk data/${train_set}_aug_hires/utt2uniq | \
-        utils/filter_scp.pl - data/${train_set}_aug_hires/utt2spk > data/${ivector_trainset}_aug_hires/utt2spk
-    utils/fix_data_dir.sh data/${ivector_trainset}_aug_hires
-
-    # Since the data size is now increased make a subset of it to bring the duration back to required size (140hr)
-    utils/subset_data_dir.sh data/${ivector_trainset}_aug_hires 100000 data/${ivector_trainset}_aug_hires_subset
-    utils/data/remove_dup_utts.sh 200 data/${ivector_trainset}_aug_hires_subset data/${ivector_trainset}_aug_hires
-    steps/compute_cmvn_stats.sh data/${ivector_trainset}_aug_hires exp/make_hires/${ivector_trainset} $mfccdir;
-    utils/fix_data_dir.sh data/${ivector_trainset}_aug_hires
-  fi
-
   # ivector extractor training
   if [ $stage -le 7 ]; then
     # First copy the clean alignments to augmented alignments to train LDA+MLLT transform

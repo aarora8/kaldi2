@@ -66,10 +66,10 @@ lores_train_data_dir=data/${train_set}_sp
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 
 
-for f in $gmm_dir/final.mdl $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp \
-    $lores_train_data_dir/feats.scp $ali_dir/ali.1.gz $gmm_dir/final.mdl; do
-  [ ! -f $f ] && echo "$0: expected file $f to exist" && exit 1
-done
+#for f in $gmm_dir/final.mdl $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp \
+#    $lores_train_data_dir/feats.scp $ali_dir/ali.1.gz $gmm_dir/final.mdl; do
+#  [ ! -f $f ] && echo "$0: expected file $f to exist" && exit 1
+#done
 
 if [ $stage -le 14 ]; then
   echo "$0: creating lang directory with one state per phone."

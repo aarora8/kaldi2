@@ -44,7 +44,7 @@ where "nvcc" is installed.
 EOF
 fi
 
-clean_set=train
+clean_set=train_sub1
 clean_ali=tri4b_ali
 train_set=$clean_set$suffix # Will be prepared by the script local/nnet3/prepare_multistyle_data.sh
 ali_dir=$clean_ali$suffix
@@ -53,10 +53,8 @@ lang=data/lang_chain
 
 # First creates augmented data and then extracts features for it data
 # The script also creates alignments for aug data by copying clean alignments
-local/nnet3/multi_condition/run_aug_common.sh --stage $stage \
-  --aug-list "$aug_list" --num-reverb-copies $num_reverb_copies \
-  --use-ivectors "$use_ivectors" \
-  --train-set $clean_set --clean-ali $clean_ali || exit 1;
+#local/nnet3/run_ivector_common.sh --stage $stage \
+#  --train-set $train_set || exit 1;
 
 if [ $stage -le 11 ]; then
   # Get the alignments as lattices (gives the LF-MMI training more freedom).
@@ -76,7 +74,7 @@ if [ $stage -le 11 ]; then
       include_original=true
     fi
   done
-  nj=$(cat exp/tri4_ali_nodup$suffix/num_jobs) || exit 1;
+  nj=$(cat exp/tri4_ali$suffix/num_jobs) || exit 1;
   steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" data/${clean_set} \
     data/lang exp/tri4b exp/tri4b_lats${suffix}_clean
   rm exp/tri4b_lats${suffix}_clean/fsts.*.gz # save space
