@@ -276,6 +276,89 @@ if [ $stage -le 15 ]; then
   local/run_cleanup_segmentation.sh
 fi
 
+
+train_set=train_cleaned
+num_reverb_copies=1
+aug_list="noise clean"  #clean refers to the original train dir
+# Alignment directories
+clean_ali=tri5b_${train_set}_ali
+
 if [ $stage -le 16 ]; then
-  local/chain/run_tdnn.sh
+  # Prepare the MUSAN corpus, which consists of music, speech, and noise
+  # We will use them as additive noises for data augmentation.
+  steps/data/make_musan.sh --sampling-rate 16000 --use-vocals "true" \
+        /export/corpora/JHU/musan data
+
+  # Augment with musan_noise
+  steps/data/augment_data_dir.py --utt-prefix "noise" --modify-spk-id "true" \
+    --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "data/musan_noise" \
+    data/${train_set} data/${train_set}_noise
+
+  # Combine all the augmentation dirs
+  # This part can be simplified once we know what noise types we will add
+  combine_str=""
+  for n in $aug_list; do
+    if [ "$n" == "clean" ]; then
+      # clean refers to original of training directory
+      combine_str+="data/$train_set "
+    else
+      combine_str+="data/${train_set}_${n} "
+    fi
+  done
+  utils/combine_data.sh data/${train_set}_aug $combine_str
+fi
+
+
+if [ $stage -le 17 ]; then
+  # obtain the alignment of augmented data from clean data
+  include_original=false
+  prefixes=""
+  for n in $aug_list; do
+    if [ "$n" == "reverb" ]; then
+      for i in `seq 1 $num_reverb_copies`; do
+        prefixes="$prefixes "reverb$i
+      done
+    elif [ "$n" != "clean" ]; then
+      prefixes="$prefixes "$n
+    else
+      # The original train directory will not have any prefix
+      # include_original flag will take care of copying the original alignments
+      include_original=true
+    fi
+  done
+
+  echo "Starting SAT+FMLLR training."
+  steps/align_si.sh --nj 80 --cmd "$cmd" \
+      --use-graphs true data/${train_set} data/lang_test exp/tri5b_cleaned exp/tri5b_cleaned_${train_set}_ali
+
+  echo "$0: Creating alignments of aug data by copying alignments of clean data"
+  steps/copy_ali_dir.sh --nj 80 --cmd "$train_cmd" \
+    --include-original "$include_original" --prefixes "$prefixes" \
+    data/${train_set}_aug exp/tri5b_cleaned_${train_set}_ali exp/tri5b_cleaned_${train_set}_ali_aug
+fi
+
+if [ $stage -le 18 ]; then
+  # Extract low-resolution MFCCs for the augmented data
+  # To be used later to generate alignments for augmented data
+  echo "$0: Extracting low-resolution MFCCs for the augmented data. Useful for generating alignments"
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 50 data/${train_set}_aug
+  steps/compute_cmvn_stats.sh data/${train_set}_aug
+  utils/fix_data_dir.sh data/${train_set}_aug
+fi
+
+if [ $stage -le 19 ]; then
+  for dataset in ${train_set}_aug; do
+    echo "$0: Creating hi resolution MFCCs for dir data/$dataset"
+    utils/copy_data_dir.sh data/$dataset data/${dataset}_hires
+    utils/data/perturb_data_dir_volume.sh data/${dataset}_hires
+
+    steps/make_mfcc.sh --nj 70 --mfcc-config conf/mfcc_hires.conf \
+        --cmd "$train_cmd" data/${dataset}_hires
+    steps/compute_cmvn_stats.sh data/${dataset}_hires
+    utils/fix_data_dir.sh data/${dataset}_hires;
+  done
+fi
+
+if [ $stage -le 20 ]; then
+  local/chain/run_tdnn_aug_1b.sh
 fi
