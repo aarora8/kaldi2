@@ -12,11 +12,9 @@ num_threads_ubm=8
 nnet3_affix=  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
 online_cmvn=false
 
-# The rest are configs specific to this script.  Most of the parameters
-# are just hardcoded at this level, in the commands below.
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1a_hub4_wocomb_nj25_lr001  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1a_lr001  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
 remove_egs=false
 srand=0
@@ -44,6 +42,10 @@ local/nnet3/run_ivector_common.sh --stage $stage \
                                   --num-threads-ubm $num_threads_ubm \
                                   --nnet3-affix "$nnet3_affix"
 
+#local/nnet3/extract_noise_vectors.sh \
+#  --stage $stage --nj $nj \
+#  --train-set ${train_set} --gmm ${gmm}_cleaned
+
 gmm_dir=exp/$gmm
 ali_dir=exp/${gmm}_ali_${train_set}_sp
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
@@ -58,6 +60,34 @@ for f in $gmm_dir/final.mdl $train_data_dir/feats.scp $train_ivector_dir/ivector
     $lores_train_data_dir/feats.scp $ali_dir/ali.1.gz $gmm_dir/final.mdl; do
   [ ! -f $f ] && echo "$0: expected file $f to exist" && exit 1
 done
+
+
+
+## Concat ivectors with noise vectors for training set
+#if [ $stage -le 15 ]; then
+#  noise_vec_dir=exp/nnet3/noise_${train_set}_sp_hires
+#  mkdir -p ${train_ivector_dir}_noise
+#  echo ${train_ivector_dir}/ivector_online.scp
+#  echo ${noise_vec_dir}/ivector_online.scp
+#  paste-feats scp:${train_ivector_dir}/ivector_online.scp scp:${noise_vec_dir}/ivector_online.scp \
+#    ark,scp:${train_ivector_dir}_noise/ivector_online.ark,${train_ivector_dir}_noise/ivector_online.scp
+#  echo 10 > ${train_ivector_dir}_noise/ivector_period
+#fi
+#
+## Concat ivectors with noise vectors for test set
+#if [ $stage -le 16 ]; then
+#  for test_dir in safe_t_dev1; do
+#    noise_vec_dir=exp/nnet3/noise_${test_dir}_hires
+#    ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${test_dir}_hires
+#    mkdir -p ${ivector_dir}_noise
+#    echo ${ivector_dir}/ivector_online.scp
+#    echo ${noise_vec_dir}/ivector_online.scp
+#    paste-feats scp:${ivector_dir}/ivector_online.scp scp:${noise_vec_dir}/ivector_online.scp \
+#      ark,scp:${ivector_dir}_noise/ivector_online.ark,${ivector_dir}_noise/ivector_online.scp
+#    echo 10 > ${ivector_dir}_noise/ivector_period
+#  done
+#fi
+
 
 if [ $stage -le 14 ]; then
   echo "$0: creating lang directory with one state per phone."
@@ -118,27 +148,28 @@ if [ $stage -le 17 ]; then
   fixed-affine-layer name=lda input=Append(-1,0,1,ReplaceIndex(ivector, t, 0)) affine-transform-file=$dir/configs/lda.mat
 
   # the first splicing is moved before the lda layer, so no splicing here
-  relu-batchnorm-dropout-layer name=tdnn1 $tdnn_opts dim=768
-  tdnnf-layer name=tdnnf2 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=1
-  tdnnf-layer name=tdnnf3 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=1
-  tdnnf-layer name=tdnnf4 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=1
-  tdnnf-layer name=tdnnf5 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=0
-  tdnnf-layer name=tdnnf6 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
-  tdnnf-layer name=tdnnf7 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
-  tdnnf-layer name=tdnnf8 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
-  tdnnf-layer name=tdnnf9 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
-  tdnnf-layer name=tdnnf10 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
-  tdnnf-layer name=tdnnf11 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
-  tdnnf-layer name=tdnnf12 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
-  tdnnf-layer name=tdnnf13 $tdnnf_opts dim=768 bottleneck-dim=96 time-stride=3
+  relu-batchnorm-dropout-layer name=tdnn1 $tdnn_opts dim=1024
+  tdnnf-layer name=tdnnf2 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
+  tdnnf-layer name=tdnnf3 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
+  tdnnf-layer name=tdnnf4 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
+  tdnnf-layer name=tdnnf5 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=0
+
+  tdnnf-layer name=tdnnf6 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf7 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf8 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf9 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf10 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf11 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf12 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf13 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
   linear-component name=prefinal-l dim=192 $linear_opts
 
   ## adding the layers for chain branch
-  prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts small-dim=192 big-dim=768
+  prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts small-dim=192 big-dim=1024
   output-layer name=output include-log-softmax=false dim=$num_targets $output_opts
 
   # adding the layers for xent branch
-  prefinal-layer name=prefinal-xent input=prefinal-l $prefinal_opts small-dim=192 big-dim=768
+  prefinal-layer name=prefinal-xent input=prefinal-l $prefinal_opts small-dim=192 big-dim=1024
   output-layer name=output-xent dim=$num_targets learning-rate-factor=$learning_rate_factor $output_opts
 
 EOF
@@ -171,8 +202,7 @@ steps/nnet3/chain/train.py --stage=$train_stage \
     --trainer.optimization.num-jobs-final 5 \
     --trainer.optimization.initial-effective-lrate 0.001 \
     --trainer.optimization.final-effective-lrate 0.0001 \
-    --trainer.num-chunk-per-minibatch 256,128,64 \
-    --egs.cmd="run.pl --max-jobs-run 12" \
+    --trainer.num-chunk-per-minibatch 64 \
     --egs.chunk-width 140,100,160 \
     --egs.dir="$common_egs_dir" \
     --egs.opts="--frames-overlap-per-eg 0" \
