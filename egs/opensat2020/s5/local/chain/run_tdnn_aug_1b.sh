@@ -45,24 +45,24 @@ fi
 local/nnet3/multicondition/run_ivector_common.sh --stage $stage \
   --train-set $train_set || exit 1;
 
-#if [ $stage -le 11 ]; then
-#  prefixes=""
-#  include_original=false
-#  for n in $aug_list; do
-#    if [ "$n" != "clean" ]; then
-#      prefixes="$prefixes "$n
-#    else
-#      include_original=true
-#    fi
-#  done
-#  nj=$(cat exp/tri5b_cleaned_${clean_set}_ali_aug/num_jobs) || exit 1;
-#  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" data/${clean_set} \
-#    data/lang_test exp/tri5b_cleaned exp/tri5b_lats_clean
-#  rm exp/tri5b_lats_clean/fsts.*.gz # save space
-#  steps/copy_lat_dir.sh --nj $nj --cmd "$train_cmd" \
-#    --include-original "$include_original" --prefixes "$prefixes" \
-#    data/${train_set} exp/tri5b_lats_clean exp/tri5b_lats_${suffix} || exit 1;
-#fi
+if [ $stage -le 11 ]; then
+  prefixes=""
+  include_original=false
+  for n in $aug_list; do
+    if [ "$n" != "clean" ]; then
+      prefixes="$prefixes "$n
+    else
+      include_original=true
+    fi
+  done
+  nj=$(cat exp/tri5b_cleaned_${clean_set}_ali_aug/num_jobs) || exit 1;
+  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" data/${clean_set} \
+    data/lang_test exp/tri5b_cleaned exp/tri5b_lats_clean
+  rm exp/tri5b_lats_clean/fsts.*.gz # save space
+  steps/copy_lat_dir.sh --nj $nj --cmd "$train_cmd" \
+    --include-original "$include_original" --prefixes "$prefixes" \
+    data/${train_set} exp/tri5b_lats_clean exp/tri5b_lats_${suffix} || exit 1;
+fi
 
 gmm_dir=exp/$gmm
 ali_dir=exp/tri5b_cleaned_train_cleaned_ali_aug

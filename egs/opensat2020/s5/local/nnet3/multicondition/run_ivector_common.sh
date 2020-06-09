@@ -78,12 +78,12 @@ if [ $stage -le 3 ]; then
   # handle per-utterance decoding well (the iVector starts at zero at the beginning
   # of each pseudo-speaker).
   temp_data_root=${ivectordir}
-  #utils/data/modify_speaker_info.sh --utts-per-spk-max 2 \
-  #  data/${train_set}_hires ${temp_data_root}/${train_set}_hires_max2
+  utils/data/modify_speaker_info.sh --utts-per-spk-max 2 \
+    data/${train_set}_hires ${temp_data_root}/${train_set}_hires_max2
 
-  #steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
-  #  ${temp_data_root}/${train_set}_hires_max2 \
-  #  exp/nnet3${nnet3_affix}/extractor $ivectordir
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
+    ${temp_data_root}/${train_set}_hires_max2 \
+    exp/nnet3${nnet3_affix}/extractor $ivectordir
 
   for data in safe_t_dev1; do
     steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
