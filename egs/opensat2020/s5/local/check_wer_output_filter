@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cat  data/safe_t_dev1/text | local/wer_output_filter > uttid_hyp_text
+cat uttid_hyp_text | cut -d  ' ' -f 2- > hyp_text
+
+cat  data/safe_t_dev1/text | local/wer_output_filter_ref > uttid_ref_text
+cat uttid_ref_text | cut -d  ' ' -f 2- > ref_text
+cat data/safe_t_dev1/text | cut -d  ' ' -f 2- > ref_text1
+vimdiff ref_text1 hyp_text

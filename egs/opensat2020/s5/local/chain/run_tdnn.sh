@@ -121,7 +121,7 @@ fi
 if [ $stage -le 16 ]; then
   steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
       --context-opts "--context-width=2 --central-position=1" \
-      --cmd "$train_cmd" 3000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
+      --cmd "$train_cmd" 3500 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
 fi
 
 if [ $stage -le 17 ]; then
@@ -223,6 +223,6 @@ if [ $stage -le 20 ]; then
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
         --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
-       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
+       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1_ami || exit 1;
 fi
 exit 0
