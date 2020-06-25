@@ -49,3 +49,7 @@ for wav_name in /export/c12/aarora8/OpenSAT/combined_noise/*.wav; do
   echo $wav_id $wav_id >> /export/c12/aarora8/OpenSAT/combined_noise_wavfile/utt2spk
   echo $wav_id $wav_id >> /export/c12/aarora8/OpenSAT/combined_noise_wavfile/spk2utt
 done
+
+copy-vector --binary=false scp:safet_noise_wavfile/vad.scp ark,t:safet_noise_wavfile/vad.txtcopy-vector --binary=false scp:safet_noise_wavfile/vad.scp ark,t:safet_noise_wavfile/vad.txt
+steps/make_mfcc.sh --nj 15 --cmd "$train_cmd" safet_noise_wavfile
+sid/compute_vad_decision.sh --nj 40 --cmd "$train_cmd"   safet_noise_wavfile
