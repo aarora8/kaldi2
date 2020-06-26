@@ -46,6 +46,6 @@ while IFS= read -r line ; do
 done < <(find -L ${TEXTS_DIR} -name "*tsv" ) | sort -u > $OUTPUT/texts.scp
 
 
-./local/safe_t_parse_texts.py $OUTPUT/texts.scp > $OUTPUT/transcripts
+./local/safet_parse_texts.py $OUTPUT/texts.scp > $OUTPUT/transcripts
 
 exit 0

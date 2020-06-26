@@ -25,30 +25,33 @@ nmics=$(echo $mic | sed 's/[a-z]//g') # e.g. 8 for mdm8.
 
 set -euo pipefail
 
-# Path where ICSI gets downloaded (or where locally available):
-# Note: provide the path to a subdirectory with meeting folders (i.e. B* ones)
-ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech # Default
-
-[ ! -r data/local/lm/final_lm ] && echo "Please, run 'run_prepare_shared.sh' first!" && exit 1
-final_lm=$(cat data/local/lm/final_lm)
-LM=$final_lm.pr1-7
-
-# This recipe assumes (so far) you obtained the corpus already (can do so from LDC or http://groups.inf.ed.ac.uk/ami/icsi/)
-
-if [[ "$base_mic" =~ "mdm" ]]; then
-  echo "Running multi distant channel recipe with beamforming...."
-  PROCESSED_ICSI_DIR=$ICSI_DIR/../beamformed
-  if [ $stage -le 1 ]; then
-    # for MDM data, do beamforming
-    ! hash BeamformIt && echo "Missing BeamformIt, run 'cd ../../../tools/; extras/install_beamformit.sh; cd -;'" && exit 1
-    local/icsi_beamform.sh --cmd "$train_cmd" --nj 20 $mic $ICSI_DIR $PROCESSED_ICSI_DIR
-  fi
-else
-  PROCESSED_ICSI_DIR=$ICSI_DIR
+SAFE_T_AUDIO_R20=/export/corpora5/opensat_corpora/LDC2020E10
+SAFE_T_TEXTS_R20=/export/corpora5/opensat_corpora/LDC2020E09
+SAFE_T_AUDIO_R11=/export/corpora5/opensat_corpora/LDC2019E37
+SAFE_T_TEXTS_R11=/export/corpora5/opensat_corpora/LDC2019E36
+SAFE_T_AUDIO_DEV1=/export/corpora5/opensat_corpora/LDC2019E53
+SAFE_T_TEXTS_DEV1=/export/corpora5/opensat_corpora/LDC2019E53
+SAFE_T_AUDIO_EVAL1=/export/corpora5/opensat_corpora/LDC2020E07
+ICSI_TRANS=/export/corpora3/LDC/LDC2004T04/icsi_mr_transcr
+ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech
+PROCESSED_ICSI_DIR=$ICSI_DIR
+if [ $stage -le 0 ]; then
+  local/safet_data_prep.sh ${SAFE_T_AUDIO_R11} ${SAFE_T_TEXTS_R11} data/safe_t_r11
+  local/safet_data_prep.sh ${SAFE_T_AUDIO_R20} ${SAFE_T_TEXTS_R20} data/safe_t_r20
+  local/safet_data_prep.sh ${SAFE_T_AUDIO_DEV1} ${SAFE_T_TEXTS_DEV1} data/safe_t_dev1
+  local/safet_data_prep.sh ${SAFE_T_AUDIO_EVAL1} data/safe_t_eval1
 fi
 
-# Prepare original data directories data/ihm/train_orig, etc.
+if [ $stage -le 1 ]; then
+  rm -rf data/lang_nosp data/local/lang_nosp data/local/dict_nosp
+  local/safet_get_cmu_dict.sh
+  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
+  utils/validate_lang.pl data/lang_nosp
+fi
+
 if [ $stage -le 2 ]; then
+  #prepare annotations, note: dict is assumed to exist when this is called
+  local/icsi_text_prep.sh $ICSI_TRANS data/local/annotations
   local/icsi_${base_mic}_data_prep.sh $PROCESSED_ICSI_DIR $mic
   local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic dev
   local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic eval
@@ -72,8 +75,48 @@ if [ $stage -le 3 ]; then
   done
 fi
 
+if [ $stage -le 4 ]; then
+  for dset in train dev eval; do
+    cat data/$mic/$dset/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/$mic/$dset/texttmp
+    mv data/$mic/$dset/text data/$mic/$dset/textupper
+    mv data/$mic/$dset/texttmp data/$mic/$dset/text
+  done
+fi
+
+if [ $stage -le 5 ]; then
+  mkdir -p exp/cleanup_stage_1
+  (
+    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r11/transcripts data/safe_t_r11/transcripts.clean
+    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r20/transcripts data/safe_t_r20/transcripts.clean
+  ) | sort > exp/cleanup_stage_1/oovs
+
+  local/safet_cleanup_transcripts.py --no-unk-replace  data/local/lexicon.txt \
+    data/safe_t_dev1/transcripts data/safe_t_dev1/transcripts.clean > exp/cleanup_stage_1/oovs.dev1
+  local/safet_build_data_dir.sh data/safe_t_r11/ data/safe_t_r11/transcripts.clean
+  local/safet_build_data_dir.sh data/safe_t_r20/ data/safe_t_r20/transcripts.clean
+  local/safet_build_data_dir.sh data/safe_t_dev1/ data/safe_t_dev1/transcripts
+fi
+
+if [ $stage -le 6 ] ; then
+  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
+  local/safet_train_lms_srilm.sh \
+    --train_text data/train/text --dev_text data/safe_t_dev1/text  \
+    data/ data/local/srilm
+
+  utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
+    data/local/lexicon.txt  data/lang_nosp_test
+fi
+
+if [ $stage -le 7 ]; then
+  echo "$0: preparing directory for low-resolution speed-perturbed data (for alignment)"
+  utils/data/perturb_data_dir_speed_3way.sh data/train data/train_sp
+fi
+
+exit
+
 if [ $stage -le 4 ] ; then
-  utils/data/combine_data.sh data/$mic/train /export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train_cleaned_sp /export/c02/aarora8/kaldi/egs/ami/s5b/data/ihm/train /export/c02/aarora8/kaldi/egs/icsi/s5/data/ihm/train_icsi
+  utils/data/combine_data.sh data/$mic/train /export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train_cleaned_sp \ 
+       /export/c02/aarora8/kaldi/egs/ami/s5b/data/ihm/train /export/c02/aarora8/kaldi/egs/icsi/s5/data/ihm/train_icsi
 fi
 
 # Feature extraction,
