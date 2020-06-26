@@ -76,6 +76,9 @@ if [ $stage -le 3 ]; then
 fi
 
 if [ $stage -le 4 ]; then
+  utils/data/get_reco2dur.sh data/ihm/train
+  utils/data/get_utt2dur.sh data/ihm/train
+
   for dset in train dev eval; do
     cat data/$mic/$dset/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/$mic/$dset/texttmp
     mv data/$mic/$dset/text data/$mic/$dset/textupper
@@ -95,126 +98,146 @@ if [ $stage -le 5 ]; then
   local/safet_build_data_dir.sh data/safe_t_r11/ data/safe_t_r11/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_r20/ data/safe_t_r20/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_dev1/ data/safe_t_dev1/transcripts
+  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
 fi
 
 if [ $stage -le 6 ] ; then
-  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
   local/safet_train_lms_srilm.sh \
     --train_text data/train/text --dev_text data/safe_t_dev1/text  \
     data/ data/local/srilm
-
   utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
     data/local/lexicon.txt  data/lang_nosp_test
 fi
 
-if [ $stage -le 7 ]; then
-  echo "$0: preparing directory for low-resolution speed-perturbed data (for alignment)"
-  utils/data/perturb_data_dir_speed_3way.sh data/train data/train_sp
+if [ $stage -le 7 ] ; then
+
+mkdir -p data/train/wav_files
+utils/copy_data_dir.sh data/train data/train_safet
+
+#while read -r line;
+#  do
+#    wav_id=$(echo "$line" | cut -d" " -f 1)
+#    wav_path=$(echo "$line" | cut -d" " -f 6)
+#    echo $wav_id
+#    echo $wav_path
+#    flac -s -c -d $wav_path | sox - -b 16 -t wav -r 16000 -c 1 data/train/wav_files/${wav_id}.wav
+#done < data/train/wav.scp
+#
+#rm data/train_safet/wav.scp
+#for wav_name in /export/c02/aarora8/kaldi2/egs/icsisafet/s5/data/train/wav_files/*.wav; do
+#  recording_id=$(echo "$wav_name" | cut -d"/" -f 12)
+#  wav_id=$(echo "$recording_id" | cut -d"." -f 1)
+#  echo $wav_id $wav_name >> data/train_safet/wav.scp
+#done
 fi
 
-exit
+if [ $stage -le 8 ]; then
+  echo "$0: preparing directory for low-resolution speed-perturbed data (for alignment)"
+  utils/data/perturb_data_dir_speed_3way.sh data/train_safet data/train_safet_sp
+fi
 
-if [ $stage -le 4 ] ; then
-  utils/data/combine_data.sh data/$mic/train /export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train_cleaned_sp \ 
-       /export/c02/aarora8/kaldi/egs/ami/s5b/data/ihm/train /export/c02/aarora8/kaldi/egs/icsi/s5/data/ihm/train_icsi
+if [ $stage -le 9 ]; then
+  utils/copy_data_dir.sh /export/c02/aarora8/kaldi/egs/ami/s5b/data/ihm/train data/ihm/train_ami
+  utils/data/get_reco2dur.sh data/ihm/train_ami
+  utils/data/get_utt2dur.sh data/ihm/train_ami
+  cat data/$mic/train_ami/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/$mic/train_ami/texttmp
+  mv data/$mic/train_ami/text data/$mic/train_ami/textupper
+  mv data/$mic/train_ami/texttmp data/$mic/train_ami/text
+fi
+
+if [ $stage -le 10 ] ; then
+  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami
 fi
 
 # Feature extraction,
-if [ $stage -le 4 ]; then
-  for dset in train dev eval; do
-    steps/make_mfcc.sh --nj 15 --cmd "$train_cmd" data/$mic/$dset
+if [ $stage -le 11 ]; then
+  for dset in train_isa dev eval; do
+    steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/$mic/$dset
     steps/compute_cmvn_stats.sh data/$mic/$dset
     utils/fix_data_dir.sh data/$mic/$dset
   done
 fi
 
 # monophone training
-if [ $stage -le 5 ]; then
+if [ $stage -le 12 ]; then
   # Full set 77h, reduced set 10.8h,
-  utils/subset_data_dir.sh data/$mic/train 15000 data/$mic/train_15k
+  #utils/subset_data_dir.sh data/$mic/train_isa 15000 data/$mic/train_15k
 
   steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
     data/$mic/train_15k data/lang exp/$mic/mono
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train data/lang exp/$mic/mono exp/$mic/mono_ali
+    data/$mic/train_isa data/lang exp/$mic/mono exp/$mic/mono_ali
 fi
 
 # context-dep. training with delta features.
-if [ $stage -le 6 ]; then
+if [ $stage -le 13 ]; then
   steps/train_deltas.sh --cmd "$train_cmd" \
-    5000 80000 data/$mic/train data/lang exp/$mic/mono_ali exp/$mic/tri1
+    5000 80000 data/$mic/train_isa data/lang exp/$mic/mono_ali exp/$mic/tri1
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train data/lang exp/$mic/tri1 exp/$mic/tri1_ali
+    data/$mic/train_isa data/lang exp/$mic/tri1 exp/$mic/tri1_ali
 fi
 
-if [ $stage -le 7 ]; then
+if [ $stage -le 14 ]; then
   # LDA_MLLT
   steps/train_lda_mllt.sh --cmd "$train_cmd" \
     --splice-opts "--left-context=3 --right-context=3" \
-    5000 80000 data/$mic/train data/lang exp/$mic/tri1_ali exp/$mic/tri2
+    5000 80000 data/$mic/train_isa data/lang exp/$mic/tri1_ali exp/$mic/tri2
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train data/lang exp/$mic/tri2 exp/$mic/tri2_ali
-  # Decode
-  graph_dir=exp/$mic/tri2/graph_${LM}
-  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
-    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri2 $graph_dir
-  steps/decode.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/dev exp/$mic/tri2/decode_dev_${LM}
-  steps/decode.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/eval exp/$mic/tri2/decode_eval_${LM}
+    data/$mic/train_isa data/lang exp/$mic/tri2 exp/$mic/tri2_ali
 fi
 
 
-if [ $stage -le 8 ]; then
+if [ $stage -le 15 ]; then
   # LDA+MLLT+SAT
   steps/train_sat.sh --cmd "$train_cmd" \
-    5000 80000 data/$mic/train data/lang exp/$mic/tri2_ali exp/$mic/tri3
+    5000 80000 data/$mic/train_isa data/lang exp/$mic/tri2_ali exp/$mic/tri3
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train data/lang exp/$mic/tri3 exp/$mic/tri3_ali
+    data/$mic/train_isa data/lang exp/$mic/tri3 exp/$mic/tri3_ali
 fi
 
-if [ $stage -le 9 ]; then
-  # Decode the fMLLR system.
-  graph_dir=exp/$mic/tri3/graph_${LM}
-  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
-    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri3 $graph_dir
-  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/dev exp/$mic/tri3/decode_dev_${LM}
-  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/eval exp/$mic/tri3/decode_eval_${LM}
-fi
-
-if [ $stage -le 10 ]; then
-  # The following script cleans the data and produces cleaned data
-  # in data/$mic/train_cleaned, and a corresponding system
-  # in exp/$mic/tri3_cleaned.  It also decodes.
-  #
-  # Note: local/run_cleanup_segmentation.sh defaults to using 50 jobs,
-  # you can reduce it using the --nj option if you want.
-  #local/run_cleanup_segmentation.sh --mic $mic
+if [ $stage -le 16 ]; then
   echo "For ICSI we do not clean segmentations, as those are manual by default, so should be OK."
-  #but perhaps running such experiment would make sense, for now I want to keep this recipe as
-  #close to the baseline one as possibe
+  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami
+
+  utils/copy_data_dir.sh /export/c12/aarora8/OpenSAT/safet_noise_wavfile/ data/safet_noise_wavfile
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 data/safet_noise_wavfile
+  steps/compute_cmvn_stats.sh data/safet_noise_wavfile
+  sid/compute_vad_decision.sh --nj 40 --cmd "$train_cmd" data/safet_noise_wavfile
+  copy-vector --binary=false scp:data/safet_noise_wavfile/vad.scp ark,t:data/safet_noise_wavfile/vad.txt
+  local/get_percent_overlap.py data/safet_noise_wavfile > data/safet_noise_wavfile/percentage_speech
+  #rm data/safet_noise_wavfile/filtered_noises
+  while read -r line;
+  do
+    percentage_speech=$(echo "$line" | cut -d" " -f 2)
+    uttid=$(echo "$line" | cut -d" " -f 1)
+    if [ "$percentage_speech" -gt 80 ]; then
+      echo $uttid >> data/safet_noise_wavfile/filtered_noises
+    fi
+done < data/safet_noise_wavfile/percentage_speech
+#sort -k2 -n data/safet_noise_wavfile/filtered_noises > data/safet_noise_wavfile/sorted_filtered_noises
+utils/copy_data_dir.sh data/safet_noise_wavfile data/safet_noise_filtered
+for f in utt2spk wav.scp feats.scp spk2utt reco2dur cmvn.scp utt2dur utt2num_frames vad.scp; do
+  utils/filter_scp.pl data/safet_noise_wavfile/filtered_noises data/safet_noise_wavfile/$f > data/safet_noise_filtered/$f
+done
 fi
 
 train_set=train_icsiami
 aug_list="noise_low noise_high clean"
-
-if [ $stage -le 11 ]; then
+if [ $stage -le 17 ]; then
   utils/data/get_reco2dur.sh data/ihm/${train_set}
   steps/data/augment_data_dir.py --utt-prefix "noise_low" --modify-spk-id "true" \
-    --bg-snrs "85:80:75:70" --num-bg-noises "1" --bg-noise-dir "/export/c12/aarora8/OpenSAT/safet_noise_wavfile/" \
+    --bg-snrs "85:80:75:70" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
     data/$mic/${train_set} data/$mic/${train_set}_noise_low
 
   steps/data/augment_data_dir.py --utt-prefix "noise_high" --modify-spk-id "true" \
-    --bg-snrs "15:10:5:3:0" --num-bg-noises "1" --bg-noise-dir "/export/c12/aarora8/OpenSAT/safet_noise_wavfile/" \
+    --bg-snrs "15:10:5:3:0" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
     data/$mic/${train_set} data/$mic/${train_set}_noise_high
 
-  utils/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train
+  utils/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train_isa
 fi
 
 
-if [ $stage -le 12 ]; then
+if [ $stage -le 18 ]; then
   # obtain the alignment of augmented data from clean data
   include_original=false
   prefixes=""
@@ -230,7 +253,7 @@ if [ $stage -le 12 ]; then
 
   echo "Starting SAT+FMLLR training."
   steps/align_si.sh --nj 30 --cmd "$train_cmd" \
-      --use-graphs true data/$mic/train data/lang exp/$mic/tri3 exp/$mic/tri3_train_ali
+      --use-graphs true data/$mic/train_isa data/lang exp/$mic/tri3 exp/$mic/tri3_train_ali
 
   echo "$0: Creating alignments of aug data by copying alignments of clean data"
   steps/copy_ali_dir.sh --nj 30 --cmd "$train_cmd" \
@@ -238,28 +261,17 @@ if [ $stage -le 12 ]; then
     data/$mic/train_aug exp/$mic/tri3_train_ali exp/$mic/tri3_train_ali_aug
 fi
 
-if [ $stage -le 13 ]; then
+if [ $stage -le 19 ]; then
    for f in data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high ; do
     steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 $f
     steps/compute_cmvn_stats.sh $f
   done
-fi
 
-if [ $stage -le 14 ] ; then
-  utils/data/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train
+  utils/data/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train_isa
   steps/compute_cmvn_stats.sh data/$mic/train_aug
 fi
 
-#if [ $stage -le 13 ]; then
-#  # Extract low-resolution MFCCs for the augmented data
-#  # To be used later to generate alignments for augmented data
-#  echo "$0: Extracting low-resolution MFCCs for the augmented data. Useful for generating alignments"
-#  steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 data/$mic/train_aug
-#  steps/compute_cmvn_stats.sh data/$mic/train_aug
-#  utils/fix_data_dir.sh data/$mic/train_aug
-#fi
-
-if [ $stage -le 14 ]; then
+if [ $stage -le 20 ]; then
   for dataset in train_aug; do
     echo "$0: Creating hi resolution MFCCs for dir data/$dataset"
     utils/copy_data_dir.sh data/$mic/$dataset data/$mic/${dataset}_hires
@@ -272,19 +284,7 @@ if [ $stage -le 14 ]; then
   done
 fi
 
-
 #if [ $stage -le 11 ]; then
-#  ali_opt=
-#  [ "$mic" != "ihm" ] && ali_opt="--use-ihm-ali true"
-#  local/chain/run_tdnn.sh $ali_opt --mic $mic
+#  local/chain/run_tdnn.sh
 #fi
-
-#if [ $stage -le 12 ]; then
-#  the following shows how you would run the nnet3 system; we comment it out
-#  because it's not as good as the chain system.
-#  ali_opt=
-#  [ "$mic" != "ihm" ] && ali_opt="--use-ihm-ali false"
-#  local/nnet3/run_tdnn.sh $ali_opt --mic $mic 
-#fi
-
 exit 0

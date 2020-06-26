@@ -22,6 +22,7 @@ uconv -f iso-8859-1 -t utf-8 $OUTPUT/cmudict-0.7b| grep -v ';;' | sed 's/([0-9])
 
 # add SIL, <UNK>, %uh, {breath}, {lipsmack}, {laugh}, {cough}, <noise> words in the lexicon 
 # <UNK> word is mapped to <unk> phone
+# {breath}, {lipsmack}, {laugh}, {cough}, <noise> are mapped to <noise>
 mkdir -p $OUTPUT/dict_nosp
 echo -e "SIL <sil>\n<UNK> <unk>" |  cat - local/safet_hesitations.txt $OUTPUT/lexicon.txt | sort -u > $OUTPUT/dict_nosp/lexicon1.txt
 
