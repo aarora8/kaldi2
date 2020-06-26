@@ -3,8 +3,8 @@
 . ./cmd.sh
 . ./path.sh
 
-ICSI_TRANS=/disks/data1/corpora/icsi_mr_transcr #where to find ICSI transcriptions [required]
-FISHER_TRANS=/disks/data1/corpora/LDC2004T19/fe_03_p1_tran #where to find FISHER transcriptions [optional, for LM esimation]
+ICSI_TRANS=/export/corpora3/LDC/LDC2004T04/icsi_mr_transcr #where to find ICSI transcriptions [required]
+FISHER_TRANS=/export/corpora3/LDC/LDC2004T19/fe_03_p1_tran #where to find FISHER transcriptions [optional, for LM esimation]
 
 . utils/parse_options.sh
 
