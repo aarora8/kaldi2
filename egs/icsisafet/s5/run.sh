@@ -24,7 +24,7 @@ base_mic=$(echo $mic | sed 's/[0-9]//g') # sdm, ihm or mdm
 nmics=$(echo $mic | sed 's/[a-z]//g') # e.g. 8 for mdm8.
 
 set -euo pipefail
-
+opensat_corpora=/export/corpora5/opensat_corpora
 SAFE_T_AUDIO_R20=/export/corpora5/opensat_corpora/LDC2020E10
 SAFE_T_TEXTS_R20=/export/corpora5/opensat_corpora/LDC2020E09
 SAFE_T_AUDIO_R11=/export/corpora5/opensat_corpora/LDC2019E37
@@ -35,11 +35,21 @@ SAFE_T_AUDIO_EVAL1=/export/corpora5/opensat_corpora/LDC2020E07
 ICSI_TRANS=/export/corpora3/LDC/LDC2004T04/icsi_mr_transcr
 ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech
 PROCESSED_ICSI_DIR=$ICSI_DIR
+
 if [ $stage -le 0 ]; then
   local/safet_data_prep.sh ${SAFE_T_AUDIO_R11} ${SAFE_T_TEXTS_R11} data/safe_t_r11
   local/safet_data_prep.sh ${SAFE_T_AUDIO_R20} ${SAFE_T_TEXTS_R20} data/safe_t_r20
   local/safet_data_prep.sh ${SAFE_T_AUDIO_DEV1} ${SAFE_T_TEXTS_DEV1} data/safe_t_dev1
   local/safet_data_prep.sh ${SAFE_T_AUDIO_EVAL1} data/safe_t_eval1
+fi
+
+if [ $stage -le 0 ]; then
+  local/spine_data_prep.sh $opensat_corpora/LDC2000S96  $opensat_corpora/LDC2000T54 data/spine_eval
+  local/spine_data_prep.sh $opensat_corpora/LDC2000S87  $opensat_corpora/LDC2000T49 data/spine_train
+
+  local/spine_data_prep.sh $opensat_corpora/LDC2001S04  $opensat_corpora/LDC2001T05 data/spine2_train1
+  local/spine_data_prep.sh $opensat_corpora/LDC2001S06  $opensat_corpora/LDC2001T07 data/spine2_train2
+  local/spine_data_prep.sh $opensat_corpora/LDC2001S08  $opensat_corpora/LDC2001T09 data/spine2_train3
 fi
 
 if [ $stage -le 1 ]; then
@@ -91,14 +101,29 @@ if [ $stage -le 5 ]; then
   (
     local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r11/transcripts data/safe_t_r11/transcripts.clean
     local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r20/transcripts data/safe_t_r20/transcripts.clean
+
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine2_train1/transcripts data/spine2_train1/transcripts.clean
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine2_train2/transcripts data/spine2_train2/transcripts.clean
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine2_train3/transcripts data/spine2_train3/transcripts.clean
+    local/cleanup_transcripts.py data/local/lexicon.txt data/spine_train/transcripts   data/spine_train//transcripts.clean
   ) | sort > exp/cleanup_stage_1/oovs
 
   local/safet_cleanup_transcripts.py --no-unk-replace  data/local/lexicon.txt \
     data/safe_t_dev1/transcripts data/safe_t_dev1/transcripts.clean > exp/cleanup_stage_1/oovs.dev1
+  local/cleanup_transcripts.py  --no-unk-replace  data/local/lexicon.txt \
+    data/spine_eval/transcripts data/spine_eval/transcripts.clean > exp/cleanup_stage_1/oovs.spine_eval
   local/safet_build_data_dir.sh data/safe_t_r11/ data/safe_t_r11/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_r20/ data/safe_t_r20/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_dev1/ data/safe_t_dev1/transcripts
+
+  local/build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
+  local/build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
+  local/build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
+  local/build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
+  local/build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
+
   utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
+  utils/data/combine_data.sh data/train_spine data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
 fi
 
 if [ $stage -le 6 ] ; then
@@ -146,7 +171,7 @@ if [ $stage -le 9 ]; then
 fi
 
 if [ $stage -le 10 ] ; then
-  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami
+  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami data/train_spine
 fi
 
 # Feature extraction,
@@ -197,7 +222,7 @@ fi
 
 if [ $stage -le 16 ]; then
   echo "For ICSI we do not clean segmentations, as those are manual by default, so should be OK."
-  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami
+  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami data/train_spine
 
   utils/copy_data_dir.sh /export/c12/aarora8/OpenSAT/safet_noise_wavfile/ data/safet_noise_wavfile
   steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 data/safet_noise_wavfile
@@ -213,7 +238,7 @@ if [ $stage -le 16 ]; then
     if [ "$percentage_speech" -gt 80 ]; then
       echo $uttid >> data/safet_noise_wavfile/filtered_noises
     fi
-  done < data/safet_noise_wavfile/percentage_speech
+done < data/safet_noise_wavfile/percentage_speech
 #sort -k2 -n data/safet_noise_wavfile/filtered_noises > data/safet_noise_wavfile/sorted_filtered_noises
 utils/copy_data_dir.sh data/safet_noise_wavfile data/safet_noise_filtered
 for f in utt2spk wav.scp feats.scp spk2utt reco2dur cmvn.scp utt2dur utt2num_frames vad.scp; do
