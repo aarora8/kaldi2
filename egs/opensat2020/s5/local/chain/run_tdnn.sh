@@ -14,7 +14,7 @@ online_cmvn=false
 
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1a_lr001  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1a_lr001_2  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
 remove_egs=false
 srand=0
@@ -214,6 +214,30 @@ steps/nnet3/chain/train.py --stage=$train_stage \
     --dir=$dir  || exit 1;
 fi
 
+## create big LM for decoding and get HCLG
+#if [ $stage -le 19 ]; then
+#  echo "$0:  prepare new lang with pronunciation and silence modeling..."
+#  LM=/export/c03/pzelasko/opensat/pocolm/egs/opensat/data/srilm/combined.3g.kn.gz
+#  rm -rf data/lang_tmp
+#  utils/prepare_lang.sh data/local/dict "<UNK>" data/local/lang data/lang_tmp
+#  utils/format_lm.sh \
+#    data/lang_tmp $LM data/local/dict/lexicon.txt data/lang_os_srilm3g_test
+#
+#  # Note: it might appear that this data/lang_chain directory is mismatched, and it is as
+#  # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
+#  # the lang directory.
+#  #utils/mkgraph.sh --self-loop-scale 1.0 data/lang_os_srilm3g_test $dir $dir/graph_os_srilm3g
+#fi
+#
+## decode with big HCLG
+#if [ $stage -le 20 ]; then
+#  for dset in safe_t_dev1; do
+#      steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
+#          --acwt 1.0 --post-decode-acwt 10.0 \
+#          --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${dset}_hires \
+#         $dir/graph_os_srilm3g data/${dset}_hires $dir/decode_${dset} || exit 1;
+#  done
+#fi
 
 if [ $stage -le 19 ]; then
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_test $dir $dir/graph
@@ -223,6 +247,24 @@ if [ $stage -le 20 ]; then
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
         --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
-       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1_ami || exit 1;
+       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
+fi
+
+## create big LM for rescoring
+LM=/export/c03/pzelasko/opensat/pocolm/egs/opensat/data/srilm/combined.3g.kn.gz
+test=data/lang_os_srilm3g_rescore_test
+if [ $stage -le 21 ]; then
+  mkdir -p $test
+  utils/build_const_arpa_lm.sh $LM data/lang_test $test
+  utils/validate_lang.pl --skip-determinization-check $test || exit 1;
+fi
+
+# rescore with big LM
+if [ $stage -le 22 ]; then
+  for decode_set in safe_t_dev1; do
+    steps/lmrescore_const_arpa.sh --cmd "$decode_cmd" \
+      data/lang_test $test data/${decode_set}_hires \
+      $dir/decode_${decode_set} $dir/decode_${decode_set}_rescore || exit 1;
+  done
 fi
 exit 0

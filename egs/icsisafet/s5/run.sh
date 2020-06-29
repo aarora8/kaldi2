@@ -213,7 +213,7 @@ if [ $stage -le 16 ]; then
     if [ "$percentage_speech" -gt 80 ]; then
       echo $uttid >> data/safet_noise_wavfile/filtered_noises
     fi
-done < data/safet_noise_wavfile/percentage_speech
+  done < data/safet_noise_wavfile/percentage_speech
 #sort -k2 -n data/safet_noise_wavfile/filtered_noises > data/safet_noise_wavfile/sorted_filtered_noises
 utils/copy_data_dir.sh data/safet_noise_wavfile data/safet_noise_filtered
 for f in utt2spk wav.scp feats.scp spk2utt reco2dur cmvn.scp utt2dur utt2num_frames vad.scp; do
