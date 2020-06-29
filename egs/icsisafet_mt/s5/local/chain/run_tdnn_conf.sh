@@ -12,7 +12,7 @@
 
 set -e -o pipefail
 
-remove_egs=false
+remove_egs=true
 cmd=queue.pl
 srand=-1
 stage=0
@@ -20,38 +20,32 @@ train_stage=-10
 get_egs_stage=-10
 decode_stage=-10
 
-speed_perturb=true
 use_ivector=true
 megs_dir=
 alidir=tri3_train_ali
-stage=-1
 nj=30
 train_set=train
 gmm=tri3  # the gmm for the target data
 langdir=data/lang
-num_threads_ubm=1
 nnet3_affix=_cleaned  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1c  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1d  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 feat_suffix=_hires      
 
 label_delay=5
 frame_subsampling_factor=3
-xent_regularize=0.01
+xent_regularize=0.1
 max_param_change=2.0
 num_jobs_initial=2
 num_jobs_final=5
 initial_effective_lrate=0.001
 final_effective_lrate=0.0001
-num_jobs_initial=2
-num_jobs_final=8
 chunk_width=140,100,160
-extra_left_context=50
+extra_left_context=10
 extra_right_context=0
 common_egs_dir=  # you can set this to use previously dumped egs.
 langconf=local.conf
 
-speed_perturb=true
 global_extractor=exp/multi/nnet3/extractor
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 
@@ -144,9 +138,6 @@ for lang_index in `seq 0 $[$num_langs-1]`; do
   multi_gmm_dir[$lang_index]=exp/${lang_list[$lang_index]}/$gmm
   multi_chain_dir[$lang_index]=exp/${lang_list[$lang_index]}/chain/$dir_basename
 done
-
-ivector_dim=100
-feat_dim=40
 
 if [ $stage -le 8 ]; then
   for lang_index in `seq 0 $[$num_langs-1]`;do
@@ -394,10 +385,10 @@ if [ $stage -le 19 ]; then
     --initial-effective-lrate 0.0005 \
     --final-effective-lrate 0.00005 \
     --max-param-change 2.0 \
-    --groups-per-minibatch 128 \
+    --groups-per-minibatch 64 \
     --srand 1 --dropout-schedule $dropout_schedule \
     --shuffle-buffer-size 5000 --apply-deriv-weights false \
-    --l2-regularize 5e-5 --num-epochs 10 \
+    --l2-regularize 0.0 --num-epochs 10 \
     --num-jobs-initial 3 --num-jobs-final 5 \
      $common_egs_dir $dir
 fi
