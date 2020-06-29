@@ -209,9 +209,8 @@ if [ $stage -le 11 ]; then
   dummy_tree_dir=${multi_ali_treedirs[0]}
   num_targets=`tree-info $dummy_tree_dir/tree 2>/dev/null | grep num-pdfs | awk '{print $2}'` || exit 1;
   cat <<EOF > $dir/configs/network.xconfig
-  input dim=$feat_dim name=input
-  input dim=$ivector_dim name=ivector
-
+  input dim=100 name=ivector
+  input dim=40 name=input
   # please note that it is important to have input layer with the name=input
   # as the layer immediately preceding the fixed-affine-layer to enable
   # the use of short notation for the descriptor
@@ -387,4 +386,15 @@ if [ $stage -le 19 ]; then
             grep -m 1 "^$param_name " $dir/init/info.txt
        done > $dir/${lang_name}/init/info.txt
     done
+fi
+
+if [ $stage -le 20 ]; then
+  utils/mkgraph.sh --self-loop-scale 1.0 data/safet/lang exp/chain2_cleaned/tdnn_multi/safet exp/chain2_cleaned/tdnn_multi/safet/graph
+fi
+
+if [ $stage -le 21 ]; then
+    steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
+        --acwt 1.0 --post-decode-acwt 10.0 \
+        --online-ivector-dir exp/ihm/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
+       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
 fi
