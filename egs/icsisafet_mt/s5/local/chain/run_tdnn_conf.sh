@@ -381,14 +381,14 @@ fi
 
 if [ $stage -le 18 ]; then
     echo "$0: Preparing initial acoustic model"
-    $cuda_cmd ${dir}/log/init_model.log \
+    $gpu_cmd ${dir}/log/init_model.log \
            nnet3-init --srand=${srand} ${dir}/configs/final.config ${dir}/init/multi.raw || exit 1
 fi
 
 if [ $stage -le 19 ]; then
   echo "$0: Starting model training"
   steps/chain2/train.sh \
-    --stage $train_stage --cmd "$cuda_cmd" \
+    --stage $train_stage --cmd "$gpu_cmd" \
     --multilingual-eg true \
     --xent-regularize $xent_regularize --leaky-hmm-coefficient 0.1  \
     --initial-effective-lrate 0.0005 \

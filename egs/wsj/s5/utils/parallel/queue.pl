@@ -94,8 +94,7 @@ sub caught_signal {
   if ( defined $sge_job_id ) { # Signal trapped after submitting jobs
     my $signal = $!;
     system ("qdel $sge_job_id");
-    print STDERR "Caught a signal: $signal , deleting SGE task: $sge_job_id and exiting\n";
-    exit(2);
+    die "Caught a signal: $signal , deleting SGE task: $sge_job_id and exiting\n";
   }
 }
 
@@ -168,15 +167,16 @@ if (exists $cli_options{"config"}) {
 
 my $default_config_file = <<'EOF';
 # Default configuration
-command qsub -v PATH -cwd -S /bin/bash -j y -l arch=*64*
+#command qsub -v PATH -cwd -S /bin/bash -j y -l arch=*64*
+command qsub -V -cwd -S /bin/bash -j y -l arch=*64*
 option mem=* -l mem_free=$0,ram_free=$0
 option mem=0          # Do not add anything to qsub_opts
-option num_threads=* -pe smp $0
+option num_threads=* -l num_proc=$0
 option num_threads=1  # Do not add anything to qsub_opts
 option max_jobs_run=* -tc $0
 default gpu=0
 option gpu=0
-option gpu=* -l gpu=$0 -q '*.q'
+option gpu=* -l gpu=$0 -q g.q
 EOF
 
 # Here the configuration options specified by the user on the command line
@@ -370,6 +370,8 @@ open(Q, ">$queue_scriptfile") || die "Failed to write to $queue_scriptfile";
 print Q "#!/bin/bash\n";
 print Q "cd $cwd\n";
 print Q ". ./path.sh\n";
+print Q ". /etc/profile.d/modules.sh\n";
+print Q "module load shared cuda80/toolkit\n";
 print Q "( echo '#' Running on \`hostname\`\n";
 print Q "  echo '#' Started at \`date\`\n";
 print Q "  echo -n '# '; cat <<EOF\n";
