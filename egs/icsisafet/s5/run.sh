@@ -116,11 +116,11 @@ if [ $stage -le 5 ]; then
   local/safet_build_data_dir.sh data/safe_t_r20/ data/safe_t_r20/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_dev1/ data/safe_t_dev1/transcripts
 
-  local/build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
-  local/build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
-  local/build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
-  local/build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
-  local/build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
+  local/safet_build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
+  local/safet_build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
+  local/safet_build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
+  local/safet_build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
+  local/safet_build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
 
   utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
   utils/data/combine_data.sh data/train_spine data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
