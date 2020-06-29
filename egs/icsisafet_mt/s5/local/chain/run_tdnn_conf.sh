@@ -32,7 +32,7 @@ langdir=data/lang
 num_threads_ubm=1
 nnet3_affix=_cleaned  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1c  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 feat_suffix=_hires      
 
 label_delay=5
@@ -45,7 +45,7 @@ initial_effective_lrate=0.001
 final_effective_lrate=0.0001
 num_jobs_initial=2
 num_jobs_final=8
-chunk_width=150
+chunk_width=140,100,160
 extra_left_context=50
 extra_right_context=0
 common_egs_dir=  # you can set this to use previously dumped egs.
@@ -53,7 +53,7 @@ langconf=local.conf
 
 speed_perturb=true
 global_extractor=exp/multi/nnet3/extractor
-dir=exp/chain2${nnet3_affix}/tdnn${tdnn_affix}_multi
+dropout_schedule='0,0@0.20,0.5@0.50,0'
 
 . ./path.sh
 . ./cmd.sh
@@ -81,6 +81,7 @@ for lang_index in `seq 0 $[$num_langs-1]`; do
   done
 done
 
+dir=exp/chain2${nnet3_affix}/tdnn${tdnn_affix}_multi
 dir=${dir}
 ivec_feat_suffix=${feat_suffix}
 
@@ -206,25 +207,46 @@ if [ $stage -le 11 ]; then
   echo "$0: creating multilingual neural net configs using the xconfig parser";
   mkdir -p $dir/configs
   learning_rate_factor=$(echo "print (0.5/$xent_regularize)" | python)
+  affine_opts="l2-regularize=0.008 dropout-proportion=0.0 dropout-per-dim-continuous=true"
+  tdnnf_opts="l2-regularize=0.008 dropout-proportion=0.0 bypass-scale=0.66"
+  linear_opts="l2-regularize=0.008 orthonormal-constraint=-1.0"
+  prefinal_opts="l2-regularize=0.008"
+  output_opts="l2-regularize=0.002"
   dummy_tree_dir=${multi_ali_treedirs[0]}
   num_targets=`tree-info $dummy_tree_dir/tree 2>/dev/null | grep num-pdfs | awk '{print $2}'` || exit 1;
+
   cat <<EOF > $dir/configs/network.xconfig
   input dim=100 name=ivector
   input dim=40 name=input
+
   # please note that it is important to have input layer with the name=input
   # as the layer immediately preceding the fixed-affine-layer to enable
   # the use of short notation for the descriptor
+  fixed-affine-layer name=lda input=Append(-1,0,1,ReplaceIndex(ivector, t, 0)) affine-transform-file=$dir/configs/lda.mat
+
   # the first splicing is moved before the lda layer, so no splicing here
-  relu-batchnorm-layer name=tdnn1 input=Append(-1,0,1,ReplaceIndex(ivector, t, 0)) dim=450
-  relu-batchnorm-layer name=tdnn2 input=Append(-1,0,1,2) dim=450
-  relu-batchnorm-layer name=tdnn4 input=Append(-3,0,3) dim=450
-  relu-batchnorm-layer name=tdnn5 input=Append(-3,0,3) dim=450
-  relu-batchnorm-layer name=tdnn6 input=Append(-3,0,3) dim=450
-  relu-batchnorm-layer name=tdnn7 input=Append(-6,-3,0) dim=450
+  relu-batchnorm-dropout-layer name=tdnn1 $affine_opts dim=1024
+  tdnnf-layer name=tdnnf2 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
+  tdnnf-layer name=tdnnf3 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
+  tdnnf-layer name=tdnnf4 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=1
+  tdnnf-layer name=tdnnf5 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=0
+
+  tdnnf-layer name=tdnnf6 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf7 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf8 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf9 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf10 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf11 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf12 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  tdnnf-layer name=tdnnf13 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
+  linear-component name=prefinal-l dim=256 $linear_opts
+  prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts big-dim=1024 small-dim=256
+  prefinal-layer name=prefinal-xent input=prefinal-l $prefinal_opts big-dim=1024 small-dim=256
+
   # adding the layers for diffrent language's output
   # dummy output node
-  output-layer name=output dim=$num_targets max-change=1.5 include-log-softmax=false
-  output-layer name=output-xent input=tdnn7 dim=$num_targets learning-rate-factor=$learning_rate_factor max-change=1.5
+  output-layer name=output dim=$num_targets input=prefinal-chain include-log-softmax=false $output_opts max-change=1.5
+  output-layer name=output-xent dim=$num_targets input=prefinal-xent learning-rate-factor=$learning_rate_factor $output_opts max-change=1.5
 EOF
   # added separate outptut layer and softmax for all languages.
   for lang_index in `seq 0 $[$num_langs-1]`;do
@@ -232,9 +254,8 @@ EOF
     num_targets=`tree-info $tree_dir/tree 2>/dev/null | grep num-pdfs | awk '{print $2}'` || exit 1;
 
     lang_name=${lang_list[${lang_index}]}
-    #echo "relu-renorm-layer name=prefinal-affine-lang-${lang_name} input=tdnn7 dim=450 target-rms=0.5"
-    echo "output-layer name=output-${lang_name} dim=$num_targets input=tdnn7  max-change=1.5 include-log-softmax=false"
-    echo "output-layer name=output-${lang_name}-xent input=tdnn7 dim=$num_targets  learning-rate-factor=$learning_rate_factor max-change=1.5"
+    echo "output-layer name=output-${lang_name} dim=$num_targets input=prefinal-chain  max-change=1.5 include-log-softmax=false $output_opts"
+    echo "output-layer name=output-${lang_name}-xent input=prefinal-xent dim=$num_targets learning-rate-factor=$learning_rate_factor max-change=1.5 $output_opts"
   done >> $dir/configs/network.xconfig
 
   lang_name=${lang_list[0]}
@@ -309,7 +330,7 @@ if [ $stage -le 14 ]; then
             --right-context $egs_right_context \
             --frame-subsampling-factor $frame_subsampling_factor \
             --alignment-subsampling-factor $frame_subsampling_factor \
-            --frames-per-chunk $chunk_width \
+            --frames-per-chunk ${chunk_width} \
             ${train_data_dir} ${dir} ${lat_dir} ${dir}/${lang_name}_raw_egs || exit 1
 
           echo "$0: Processing raw egs for $lang_name"
@@ -329,7 +350,7 @@ if [ $stage -le 15 ]; then
     egs_dir_list=$(for lang_index in `seq 0 $[$num_langs-1]`;do lang_name=${lang_list[$lang_index]}; echo ${dir}/${lang_name}_processed_egs; done)
     
     steps/chain2/combine_egs.sh $egs_opts \
-        --cmd "$train_cmd" \
+        --cmd "$train_cmd" --frames-per-job 3000000 \
         $num_langs $egs_dir_list ${dir}/egs
 fi
 [[ -z $common_egs_dir ]] && common_egs_dir=${dir}/egs
@@ -349,29 +370,39 @@ if [ $stage -le 16 ]; then
 fi
 
 if [ $stage -le 17 ]; then
+    echo "$0: Training pre-conditioning matrix"
+    num_lda_jobs=`find ${dir}/egs/ -iname 'train.*.scp' | wc -l | cut -d ' ' -f2`
+    steps/chain2/compute_preconditioning_matrix.sh --cmd "$train_cmd" \
+        --nj $num_lda_jobs \
+        $dir/configs/init.raw \
+        $dir/egs \
+        $dir || exit 1
+fi
+
+if [ $stage -le 18 ]; then
     echo "$0: Preparing initial acoustic model"
     $cuda_cmd ${dir}/log/init_model.log \
            nnet3-init --srand=${srand} ${dir}/configs/final.config ${dir}/init/multi.raw || exit 1
 fi
 
-if [ $stage -le 18 ]; then
+if [ $stage -le 19 ]; then
   echo "$0: Starting model training"
   steps/chain2/train.sh \
     --stage $train_stage --cmd "$cuda_cmd" \
     --multilingual-eg true \
-    --xent-regularize $xent_regularize --leaky-hmm-coefficient 0.25  \
-    --initial-effective-lrate $initial_effective_lrate \
-    --final-effective-lrate $final_effective_lrate \
-    --max-param-change $max_param_change \
+    --xent-regularize $xent_regularize --leaky-hmm-coefficient 0.1  \
+    --initial-effective-lrate 0.0005 \
+    --final-effective-lrate 0.00005 \
+    --max-param-change 2.0 \
     --groups-per-minibatch 128 \
-    --srand 1 \
-    --shuffle-buffer-size 5000 \
-    --l2-regularize 5e-5 \
-    --num-jobs-initial $num_jobs_initial --num-jobs-final $num_jobs_final \
+    --srand 1 --dropout-schedule $dropout_schedule \
+    --shuffle-buffer-size 5000 --apply-deriv-weights false \
+    --l2-regularize 5e-5 --num-epochs 10 \
+    --num-jobs-initial 3 --num-jobs-final 5 \
      $common_egs_dir $dir
 fi
 
-if [ $stage -le 19 ]; then
+if [ $stage -le 20 ]; then
     echo "$0: Splitting models"
     frame_subsampling_factor=`fgrep "frame_subsampling_factor" $dir/init/info.txt | awk '{print $2}'`
     for lang_index in `seq 0 $[$num_langs-1]`;do
@@ -388,11 +419,11 @@ if [ $stage -le 19 ]; then
     done
 fi
 
-if [ $stage -le 20 ]; then
+if [ $stage -le 21 ]; then
   utils/mkgraph.sh --self-loop-scale 1.0 data/safet/lang exp/chain2_cleaned/tdnn_multi/safet exp/chain2_cleaned/tdnn_multi/safet/graph
 fi
 
-if [ $stage -le 21 ]; then
+if [ $stage -le 22 ]; then
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
         --online-ivector-dir exp/ihm/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
