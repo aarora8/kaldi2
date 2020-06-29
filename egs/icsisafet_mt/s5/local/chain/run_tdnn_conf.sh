@@ -32,7 +32,7 @@ langdir=data/lang
 num_threads_ubm=1
 nnet3_affix=_cleaned  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1c  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1d  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 feat_suffix=_hires      
 
 label_delay=5
@@ -46,7 +46,7 @@ final_effective_lrate=0.0001
 num_jobs_initial=2
 num_jobs_final=8
 chunk_width=140,100,160
-extra_left_context=50
+extra_left_context=10
 extra_right_context=0
 common_egs_dir=  # you can set this to use previously dumped egs.
 langconf=local.conf
