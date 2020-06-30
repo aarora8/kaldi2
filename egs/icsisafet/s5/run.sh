@@ -57,6 +57,7 @@ if [ $stage -le 1 ]; then
   local/safet_get_cmu_dict.sh
   utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
   utils/validate_lang.pl data/lang_nosp
+  cp -r data/lang_nosp data/lang
 fi
 
 if [ $stage -le 2 ]; then
@@ -186,8 +187,7 @@ fi
 # monophone training
 if [ $stage -le 12 ]; then
   # Full set 77h, reduced set 10.8h,
-  #utils/subset_data_dir.sh data/$mic/train_isa 15000 data/$mic/train_15k
-
+  utils/subset_data_dir.sh data/$mic/train_isa 15000 data/$mic/train_15k
   steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
     data/$mic/train_15k data/lang exp/$mic/mono
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
