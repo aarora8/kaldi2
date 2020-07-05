@@ -1,0 +1,559 @@
+KW-0001 again
+KW-0002 can't
+KW-0003 let's
+KW-0004 little
+KW-0005 maybe
+KW-0006 you're
+KW-0007 because
+KW-0008 let
+KW-0009 corner
+KW-0010 getting
+KW-0011 green
+KW-0012 yes
+KW-0013 first
+KW-0014 other
+KW-0015 outside
+KW-0016 saved
+KW-0017 sorry
+KW-0018 they
+KW-0019 able
+KW-0020 forward
+KW-0021 ahead
+KW-0022 completely
+KW-0023 down
+KW-0024 new
+KW-0025 possible
+KW-0026 should
+KW-0027 these
+KW-0028 work
+KW-0029 also
+KW-0030 any
+KW-0031 has
+KW-0032 thank
+KW-0033 already
+KW-0034 doing
+KW-0035 her
+KW-0036 wait
+KW-0037 your
+KW-0038 would
+KW-0039 cool
+KW-0040 extinguishing
+KW-0041 left
+KW-0042 looking
+KW-0043 our
+KW-0044 potential
+KW-0045 too
+KW-0046 turns
+KW-0047 walls
+KW-0048 been
+KW-0049 bit
+KW-0050 false
+KW-0051 great
+KW-0052 spread
+KW-0053 taking
+KW-0054 who
+KW-0055 anything
+KW-0056 bank
+KW-0057 checking
+KW-0058 might
+KW-0059 nothing
+KW-0060 really
+KW-0061 safety
+KW-0062 save
+KW-0063 since
+KW-0064 they're
+KW-0065 turning
+KW-0066 actions
+KW-0067 around
+KW-0068 between
+KW-0069 hear
+KW-0070 how
+KW-0071 mhm
+KW-0072 onto
+KW-0073 remove
+KW-0074 rid
+KW-0075 safe
+KW-0076 side
+KW-0077 we'll
+KW-0078 alarm
+KW-0079 area
+KW-0080 believe
+KW-0081 boy
+KW-0082 break
+KW-0083 coming
+KW-0084 doesn't
+KW-0085 enter
+KW-0086 flames
+KW-0087 front
+KW-0088 hopefully
+KW-0089 kid's
+KW-0090 lot
+KW-0091 man
+KW-0092 nope
+KW-0093 opening
+KW-0094 stepping
+KW-0095 about
+KW-0096 almost
+KW-0097 bad
+KW-0098 cannot
+KW-0099 carry
+KW-0100 closer
+KW-0101 could
+KW-0102 doors
+KW-0103 else
+KW-0104 extra
+KW-0105 fighter
+KW-0106 fire's
+KW-0107 fires
+KW-0108 flip
+KW-0109 last
+KW-0110 lost
+KW-0111 near
+KW-0112 only
+KW-0113 putting
+KW-0114 removing
+KW-0115 space
+KW-0116 sure
+KW-0117 using
+KW-0118 victims
+KW-0119 when
+KW-0120 behind
+KW-0121 blown
+KW-0122 both
+KW-0123 building
+KW-0124 clear
+KW-0125 close
+KW-0126 covered
+KW-0127 end
+KW-0128 explosions
+KW-0129 far
+KW-0130 further
+KW-0131 god
+KW-0132 happening
+KW-0133 hospital
+KW-0134 investigate
+KW-0135 know
+KW-0136 made
+KW-0137 making
+KW-0138 much
+KW-0139 people
+KW-0140 somebody
+KW-0141 soon
+KW-0142 yet
+KW-0143 awesome
+KW-0144 better
+KW-0145 care
+KW-0146 control
+KW-0147 did
+KW-0148 didn't
+KW-0149 done
+KW-0150 guy
+KW-0151 had
+KW-0152 kind
+KW-0153 markers
+KW-0154 meantime
+KW-0155 moment
+KW-0156 probably
+KW-0157 rescue
+KW-0158 same
+KW-0159 smoky
+KW-0160 something
+KW-0161 things
+KW-0162 those
+KW-0163 token
+KW-0164 under
+KW-0165 won't
+KW-0166 after
+KW-0167 bed
+KW-0168 before
+KW-0169 bust
+KW-0170 case
+KW-0171 cause
+KW-0172 chief
+KW-0173 coordinates
+KW-0174 correct
+KW-0175 engulfed
+KW-0176 even
+KW-0177 focus
+KW-0178 least
+KW-0179 mind
+KW-0180 minutes
+KW-0181 never
+KW-0182 pretty
+KW-0183 reach
+KW-0184 situation
+KW-0185 smoldering
+KW-0186 spot
+KW-0187 stand
+KW-0188 that'll
+KW-0189 used
+KW-0190 wasn't
+KW-0191 whole
+KW-0192 worse
+KW-0193 breaking
+KW-0194 carrying
+KW-0195 causing
+KW-0196 closed
+KW-0197 couple
+KW-0198 does
+KW-0199 entrance
+KW-0200 flame
+KW-0201 free
+KW-0202 happens
+KW-0203 holes
+KW-0204 makes
+KW-0205 many
+KW-0206 mean
+KW-0207 means
+KW-0208 nice
+KW-0209 place
+KW-0210 reduce
+KW-0211 she
+KW-0212 status
+KW-0213 structural
+KW-0214 taken
+KW-0215 unfortunately
+KW-0216 update
+KW-0217 were
+KW-0218 while
+KW-0219 become
+KW-0220 best
+KW-0221 change
+KW-0222 cost
+KW-0223 course
+KW-0224 deal
+KW-0225 direction
+KW-0226 explode
+KW-0227 few
+KW-0228 fifteen
+KW-0229 flag
+KW-0230 fully
+KW-0231 honestly
+KW-0232 hotter
+KW-0233 huh
+KW-0234 knocking
+KW-0235 naughty
+KW-0236 nearby
+KW-0237 north
+KW-0238 once
+KW-0239 oof
+KW-0240 pet
+KW-0241 popping
+KW-0242 repeat
+KW-0243 seconds
+KW-0244 sense
+KW-0245 showing
+KW-0246 suggest
+KW-0247 very
+KW-0248 video
+KW-0249 above
+KW-0250 against
+KW-0251 alarms
+KW-0252 blowout
+KW-0253 business
+KW-0254 caught
+KW-0255 condition
+KW-0256 containment
+KW-0257 dangerous
+KW-0258 death
+KW-0259 dog's
+KW-0260 ends
+KW-0261 engulfing
+KW-0262 everybody
+KW-0263 finishing
+KW-0264 fire-wise
+KW-0265 found
+KW-0266 general
+KW-0267 generous
+KW-0268 gets
+KW-0269 happened
+KW-0270 hasn't
+KW-0271 hello
+KW-0272 impossible
+KW-0273 integrity
+KW-0274 interested
+KW-0275 isn't
+KW-0276 job
+KW-0277 keeps
+KW-0278 live
+KW-0279 nothing's
+KW-0280 outdoors
+KW-0281 plan
+KW-0282 redhead
+KW-0283 replaced
+KW-0284 room's
+KW-0285 saying
+KW-0286 shored
+KW-0287 short
+KW-0288 smokes
+KW-0289 spoke
+KW-0290 table's
+KW-0291 talk
+KW-0292 team
+KW-0293 took
+KW-0294 trouble
+KW-0295 troubling
+KW-0296 twin
+KW-0297 unveiled
+KW-0298 whoever
+KW-0299 wish
+KW-0300 worth
+KW-0301 little bit
+KW-0302 false alarm
+KW-0303 can't hear
+KW-0304 too much
+KW-0305 building they
+KW-0306 coming up
+KW-0307 completely engulfed
+KW-0308 has been
+KW-0309 how many
+KW-0310 looking really
+KW-0311 never mind
+KW-0312 other side
+KW-0313 possible victims
+KW-0314 really bad
+KW-0315 since you're
+KW-0316 these walls
+KW-0317 they were
+KW-0318 again nothing
+KW-0319 almost completely
+KW-0320 anything else
+KW-0321 been saved
+KW-0322 bit safe
+KW-0323 can't reach
+KW-0324 carrying somebody
+KW-0325 coming down
+KW-0326 completely covered
+KW-0327 cool cool
+KW-0328 cool deal
+KW-0329 cost anything
+KW-0330 doesn't cost
+KW-0331 false flag
+KW-0332 far corner
+KW-0333 fifteen seconds
+KW-0334 fire's doing
+KW-0335 getting hotter
+KW-0336 getting worse
+KW-0337 great thank
+KW-0338 has become
+KW-0339 naughty little
+KW-0340 popping up
+KW-0341 seconds left
+KW-0342 showing up
+KW-0343 something else
+KW-0344 status update
+KW-0345 taken care
+KW-0346 they can't
+KW-0347 they're looking
+KW-0348 when you're
+KW-0349 your end
+KW-0350 about your
+KW-0351 again correct
+KW-0352 alarm false
+KW-0353 already carrying
+KW-0354 already took
+KW-0355 also making
+KW-0356 any any
+KW-0357 any false
+KW-0358 any possible
+KW-0359 any trouble
+KW-0360 bad spot
+KW-0361 been any
+KW-0362 been under
+KW-0363 better focus
+KW-0364 between us
+KW-0365 bit closer
+KW-0366 bit troubling
+KW-0367 both these
+KW-0368 boy they're
+KW-0369 by making
+KW-0370 cannot reach
+KW-0371 change these
+KW-0372 chief how
+KW-0373 closed between
+KW-0374 completely blown
+KW-0375 condition coming
+KW-0376 coordinates completely
+KW-0377 couple smoldering
+KW-0378 dangerous place
+KW-0379 death wish
+KW-0380 direction putting
+KW-0381 doesn't explode
+KW-0382 dog's been
+KW-0383 done your
+KW-0384 e m
+KW-0385 else happening
+KW-0386 even worse
+KW-0387 everybody keeps
+KW-0388 explode again
+KW-0389 false alarms
+KW-0390 few minutes
+KW-0391 finishing knocking
+KW-0392 forward removing
+KW-0393 found has
+KW-0394 fully engulfing
+KW-0395 general direction
+KW-0396 gets outside
+KW-0397 getting kind
+KW-0398 getting these
+KW-0399 getting under
+KW-0400 great because
+KW-0401 guy has
+KW-0402 happened once
+KW-0403 has taken
+KW-0404 hasn't been
+KW-0405 hear anything
+KW-0406 her because
+KW-0407 hm hm
+KW-0408 honestly would
+KW-0409 hopefully extinguishing
+KW-0410 hopefully isn't
+KW-0411 hopefully that'll
+KW-0412 how did
+KW-0413 how much
+KW-0414 huh hello
+KW-0415 isn't causing
+KW-0416 job team
+KW-0417 keeps showing
+KW-0418 knocking down
+KW-0419 least reduce
+KW-0420 little further
+KW-0421 little hospital
+KW-0422 little while
+KW-0423 little worse
+KW-0424 looking they're
+KW-0425 lost somebody
+KW-0426 m ts
+KW-0427 man down
+KW-0428 maybe extinguishing
+KW-0429 mean sorry
+KW-0430 mm hm
+KW-0431 never ends
+KW-0432 new potential
+KW-0433 north side
+KW-0434 nothing happens
+KW-0435 only fifteen
+KW-0436 oof man
+KW-0437 our e
+KW-0438 our fires
+KW-0439 our twin
+KW-0440 pet has
+KW-0441 possible hopefully
+KW-0442 possible situation
+KW-0443 probably before
+KW-0444 reach any
+KW-0445 really nice
+KW-0446 really smokes
+KW-0447 repeat chief
+KW-0448 rescue her
+KW-0449 room's getting
+KW-0450 same corner
+KW-0451 save these
+KW-0452 saying anything
+KW-0453 shored up
+KW-0454 short little
+KW-0455 situation coming
+KW-0456 smokes nearby
+KW-0457 somebody ahead
+KW-0458 something you're
+KW-0459 spoke too
+KW-0460 spread too
+KW-0461 stepping forward
+KW-0462 structural integrity
+KW-0463 taking care
+KW-0464 talk about
+KW-0465 these extra
+KW-0466 these people
+KW-0467 these victims
+KW-0468 things getting
+KW-0469 token down
+KW-0470 too bad
+KW-0471 too soon
+KW-0472 took your
+KW-0473 troubling because
+KW-0474 under containment
+KW-0475 unfortunately has
+KW-0476 used up
+KW-0477 very close
+KW-0478 very generous
+KW-0479 video too
+KW-0480 wait how
+KW-0481 walls blown
+KW-0482 walls they
+KW-0483 wasn't sure
+KW-0484 were doing
+KW-0485 who let
+KW-0486 whoever gets
+KW-0487 whole north
+KW-0488 wish against
+KW-0489 won't spread
+KW-0490 worse situation
+KW-0491 worth taking
+KW-0492 would rescue
+KW-0493 would work
+KW-0494 you're already
+KW-0495 you're interested
+KW-0496 you're near
+KW-0497 you're very
+KW-0498 your area
+KW-0499 your plan
+KW-0500 your save
+KW-0501 looking really bad
+KW-0502 doesn't cost anything
+KW-0503 fifteen seconds left
+KW-0504 little bit safe
+KW-0505 about your plan
+KW-0506 already took your
+KW-0507 any false alarms
+KW-0508 any possible victims
+KW-0509 bit troubling because
+KW-0510 can't hear anything
+KW-0511 cannot reach any
+KW-0512 chief how much
+KW-0513 condition coming up
+KW-0514 coordinates completely engulfed
+KW-0515 death wish against
+KW-0516 doesn't explode again
+KW-0517 everybody keeps showing up
+KW-0518 false alarm false
+KW-0519 false alarm false alarm
+KW-0520 found has been
+KW-0521 general direction putting
+KW-0522 getting these people
+KW-0523 getting under containment
+KW-0524 guy has become
+KW-0525 has been under
+KW-0526 hasn't been any
+KW-0527 honestly would rescue
+KW-0528 hopefully isn't causing
+KW-0529 keeps showing up
+KW-0530 little bit closer
+KW-0531 little worse situation
+KW-0532 looking they're looking
+KW-0533 mm hm hm
+KW-0534 only fifteen seconds
+KW-0535 oof man down
+KW-0536 our e m ts
+KW-0537 pet has been
+KW-0538 possible hopefully extinguishing
+KW-0539 possible situation coming up
+KW-0540 really smokes nearby
+KW-0541 repeat chief how much
+KW-0542 room's getting kind
+KW-0543 short little while
+KW-0544 since you're near
+KW-0545 something else happening
+KW-0546 something you're interested
+KW-0547 spoke too soon
+KW-0548 stepping forward removing
+KW-0549 talk about your
+KW-0550 these walls they
+KW-0551 they're looking they're looking
+KW-0552 unfortunately has taken
+KW-0553 video too much
+KW-0554 whoever gets outside
+KW-0555 won't spread too
+KW-0556 worth taking care
+KW-0557 would rescue her because
+KW-0558 you're already carrying
+KW-0559 you're very generous
