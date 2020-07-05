@@ -8,9 +8,9 @@
 # This script trains LMs on the swbd LM-training data.
 
 dir=exp/rnnlm_lstm_1e
-embedding_dim=1024
-lstm_rpd=256
-lstm_nrpd=256
+embedding_dim=512
+lstm_rpd=128
+lstm_nrpd=128
 stage=-10
 train_stage=-10
 
@@ -36,17 +36,15 @@ text_dir=data/rnnlm/text_nosp_1a
 mkdir -p $dir/config
 set -e
 
-for f in $text $lexicon $giga_text; do
+for f in $text $lexicon; do
   [ ! -f $f ] && \
     echo "$0: expected file $f to exist;" && exit 1
 done
 
 if [ $stage -le 0 ]; then
   mkdir -p $text_dir
-  echo -n >$text_dir/dev.txt
-  # hold out one in every 50 lines as dev data.
-  cat $text | cut -d ' ' -f2- | awk -v text_dir=$text_dir '{if(NR%50 == 0) { print >text_dir"/dev.txt"; } else {print;}}' >$text_dir/gale.txt
-  cp $giga_text > $text_dir/giga.txt
+  cat $train_text | cut -d ' ' -f2- > $text_dir/train.txt
+  cat $dev_text | cut -d ' ' -f2- > $text_dir/dev.txt
 fi
 
 if [ $stage -le 1 ]; then
@@ -59,8 +57,7 @@ if [ $stage -le 1 ]; then
   echo "<UNK>" >$dir/config/oov.txt
 
   cat > $dir/config/data_weights.txt <<EOF
-gale   3   1.0
-giga   1   1.0
+train   1   1.0
 EOF
 
   rnnlm/get_unigram_probs.py --vocab-file=$dir/config/words.txt \
