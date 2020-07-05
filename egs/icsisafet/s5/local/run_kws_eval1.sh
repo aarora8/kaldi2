@@ -16,37 +16,40 @@ set -e -o pipefail
 set -o nounset                              # Treat unset variables as an error
 
 if [ $stage -le 0 ] ; then
-#  cat data/safe_t_eval1/wav.scp | awk '{print $1 " " $1}' > data/safe_t_eval1/utt2spk
-#  utils/fix_data_dir.sh data/safe_t_eval1
-#
-#  steps/make_mfcc.sh --cmd "$train_cmd" --nj 20 data/safe_t_eval1/
-#  steps/compute_cmvn_stats.sh data/safe_t_eval1
-#
-#  # extract ivector for eval1
-#  utils/copy_data_dir.sh data/safe_t_eval1 data/safe_t_eval1_hires
-#  steps/make_mfcc.sh --nj 20 --mfcc-config conf/mfcc_hires.conf \
-#            --cmd "$train_cmd" data/safe_t_eval1_hires 
-#  steps/compute_cmvn_stats.sh data/safe_t_eval1_hires
-#  utils/fix_data_dir.sh data/safe_t_eval1_hires
-#
-#  nspk=$(wc -l <data/safe_t_eval1_hires/spk2utt)
-#  nnet3_affix="_1a"
-#  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
-#        data/safe_t_eval1_hires exp/ihm/nnet3${nnet3_affix}/extractor \
-#        exp/ihm/nnet3${nnet3_affix}/ivectors_safe_t_eval1_hires
+  #cut -d"/" -f 8 data/safe_t_eval1/wav.scp | cut -d"." -f 1 | awk '{print $1 " " $1}'  > data/safe_t_eval1/utt2spk
+  cat data/safe_t_eval1/wav.scp | awk '{print $1 " " $1}' > data/safe_t_eval1/utt2spk
+  utils/fix_data_dir.sh data/safe_t_eval1
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 20 data/safe_t_eval1/
+  steps/compute_cmvn_stats.sh data/safe_t_eval1
 
-  # decode
-#  dir=exp/ihm/chain_1a/tdnn_b_bigger_aug
-#  steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
-#     --acwt 1.0 --post-decode-acwt 10.0 \
-#     --online-ivector-dir exp/ihm/nnet3_1a/ivectors_safe_t_eval1_hires \
-#     $dir/graph data/safe_t_eval1_hires $dir/decode_safe_t_eval1 || exit 1;
+  # extract ivector for eval1
+  utils/copy_data_dir.sh data/safe_t_eval1 data/safe_t_eval1_hires
+  steps/make_mfcc.sh --nj 20 --mfcc-config conf/mfcc_hires.conf \
+            --cmd "$train_cmd" data/safe_t_eval1_hires 
+  steps/compute_cmvn_stats.sh data/safe_t_eval1_hires
+  utils/fix_data_dir.sh data/safe_t_eval1_hires
+
+  nspk=$(wc -l <data/safe_t_eval1_hires/spk2utt)
+  nnet3_affix="_1a"
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
+        data/safe_t_eval1_hires exp/ihm/nnet3${nnet3_affix}/extractor \
+        exp/ihm/nnet3${nnet3_affix}/ivectors_safe_t_eval1_hires
+
+ # decode
+  dir=exp/ihm/chain_1a/tdnn_b_aug
+  steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
+     --acwt 1.0 --post-decode-acwt 10.0 \
+     --online-ivector-dir exp/ihm/nnet3_1a/ivectors_safe_t_eval1_hires \
+     $dir/graph data/safe_t_eval1_hires $dir/decode_safe_t_eval1 || exit 1;
 
   echo "Done decoding."
+  steps/get_ctm_conf.sh --cmd "$train_cmd"  --use-segments false data/safe_t_eval1_hires/  
+    data/lang_nosp_test $dir/decode_safe_t_eval1/
 fi
+exit
 data=data/safe_t_eval1_hires
 output=data/safe_t_eval1/kws_1306system
-lang=data/lang_test
+lang=data/lang_nosp_test
 keywords=local/kws/example/keywords_opensat2020.txt
 system=exp/ihm/chain_1a/tdnn_b_bigger_aug/decode_safe_t_eval1
 mkdir -p $output
