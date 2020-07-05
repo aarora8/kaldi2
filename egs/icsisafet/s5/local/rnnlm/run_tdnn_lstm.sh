@@ -13,12 +13,9 @@ lstm_rpd=128
 lstm_nrpd=128
 stage=-10
 train_stage=-10
-
-# variables for lattice rescoring
 run_lat_rescore=true
 run_nbest_rescore=false
-
-ac_model_dir=exp/chain/tdnn_1a_sp/
+ac_model_dir=exp/ihm/chain_1a/tdnn_b_aug/
 decode_dir_suffix=rnnlm_1a
 ngram_order=4 # approximate the lattice-rescoring by limiting the max-ngram-order
               # if it's set, it merges histories in the lattice if they share
@@ -29,26 +26,25 @@ pruned_rescore=true
 . ./cmd.sh
 . ./utils/parse_options.sh
 
-text=data/train/text
-giga_text=giga/text.2000k
-lexicon=data/local/dict/lexiconp.txt
+text=data/train_safet/text
 text_dir=data/rnnlm/text_nosp_1a
+dev_text=exp/ihm/chain_1a/tdnn_b_aug/decode_safe_t_dev1/scoring_kaldi/test_filt.txt
+train_text=data/train_safet/text
 mkdir -p $dir/config
 set -e
 
-for f in $text $lexicon; do
-  [ ! -f $f ] && \
-    echo "$0: expected file $f to exist;" && exit 1
-done
-
 if [ $stage -le 0 ]; then
   mkdir -p $text_dir
+  echo "getting training data"
   cat $train_text | cut -d ' ' -f2- > $text_dir/train.txt
   cat $dev_text | cut -d ' ' -f2- > $text_dir/dev.txt
 fi
 
+echo "getting weights and training"
 if [ $stage -le 1 ]; then
-  cp data/lang/words.txt $dir/config/
+  echo "getting weights and training"
+
+  cp data/lang_nosp_test/words.txt $dir/config/
   n=`cat $dir/config/words.txt | wc -l`
   echo "<brk> $n" >> $dir/config/words.txt
 
@@ -88,20 +84,19 @@ if [ $stage -le 2 ]; then
 fi
 
 if [ $stage -le 3 ]; then
-  rnnlm/train_rnnlm.sh --num-jobs-initial 1 --num-jobs-final 3 \
-                  --stage $train_stage --num-epochs 4 --cmd "$train_cmd" $dir
+  rnnlm/train_rnnlm.sh --num-jobs-initial 1 --num-jobs-final 1 \
+                  --stage $train_stage --num-epochs 60 --cmd "$train_cmd" $dir
 fi
 
-LM=lang_test # using the 4-gram const arpa file as old lm
+LM=lang_nosp_test # using the 4-gram const arpa file as old lm
 if [ $stage -le 4 ] && $run_lat_rescore; then
   echo "$0: Perform lattice-rescoring on $ac_model_dir"
-#  LM=sw1_tg # if using the original 3-gram G.fst as old lm
   pruned=
   if $pruned_rescore; then
     pruned=_pruned
   fi
-  for decode_set in test_p2; do
-    decode_dir=exp/chain/tdnn_1a_sp/decode_test_p2
+  for decode_set in safe_t_dev1; do
+    decode_dir=$ac_model_dir/decode_safe_t_dev1
 
     # Lattice rescoring
     rnnlm/lmrescore$pruned.sh \
