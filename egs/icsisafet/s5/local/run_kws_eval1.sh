@@ -43,7 +43,7 @@ if [ $stage -le 0 ] ; then
      $dir/graph data/safe_t_eval1_hires $dir/decode_safe_t_eval1 || exit 1;
 
   echo "Done decoding."
-  steps/get_ctm_conf.sh --cmd "$train_cmd"  --use-segments false data/safe_t_eval1_hires/  
+  steps/get_ctm_conf.sh --cmd "$train_cmd"  --use-segments false data/safe_t_eval1_hires/ \
     data/lang_nosp_test $dir/decode_safe_t_eval1/
 fi
 exit
