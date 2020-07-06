@@ -43,7 +43,7 @@ if [ -z $loc ]; then
 fi
 
 cat data/train/text | cut -d " " -f 2- >  $dir/text.txt
-cat data/test/text | cut -d ' ' -f2- > $dir/dev.txt
+cat data/safe_t_dev1/text | cut -d ' ' -f2- > $dir/dev.txt
 cut -d' ' -f1 $lexicon > $dir/wordlist
 
 ngram-count -text $dir/text.txt -order $order -vocab $dir/wordlist \

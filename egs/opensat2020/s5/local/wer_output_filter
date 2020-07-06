@@ -18,6 +18,6 @@ if __name__ == '__main__':
         text = re.sub(' --$', '', text)
         text = re.sub('\s+', ' ', text)
         text = re.sub('\s+$', '', text)
-        #text = re.sub('<UNK>', ' ', text)
+        text = re.sub('<UNK>', ' ', text)
 
         print("{} {}".format(utt, text))

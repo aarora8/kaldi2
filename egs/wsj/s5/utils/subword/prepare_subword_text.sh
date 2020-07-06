@@ -10,7 +10,7 @@
 
 # Begin configuration section
 separator="@@"
-glossaries=
+glossaries="<UNK> <sil>"
 # End configuration section
 
 . utils/parse_options.sh

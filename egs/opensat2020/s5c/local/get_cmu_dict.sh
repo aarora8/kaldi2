@@ -16,7 +16,7 @@ mkdir -p $OUTPUT
 [ -f data/cmudict-0.7b ] || \
   curl http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b > $OUTPUT/cmudict-0.7b
 
-uconv -f iso-8859-1 -t utf-8 data/cmudict-0.7b| grep -v ';;' | sed 's/([0-9])//g' | \
+uconv -f iso-8859-1 -t utf-8 $OUTPUT/cmudict-0.7b| grep -v ';;' | sed 's/([0-9])//g' | \
   perl -ne '($a, $b) = split " ", $_, 2; $b =~ s/[0-9]//g; $a = lc $a; print "$a $b";' > $OUTPUT/lexicon.txt
 
 mkdir -p $OUTPUT/g2p
@@ -32,15 +32,15 @@ ngram -order 6 -lm $OUTPUT/g2p/corpus.arpa  -ppl $OUTPUT/g2p/corpus | paste -s
 phonetisaurus-arpa2wfst  --lm=$OUTPUT/g2p/corpus.arpa  --ofile=$OUTPUT/g2p/corpus.g2p
 fi
 
-mkdir -p $OUTPUT/dict
-echo -e "SIL <sil>\n<UNK> <unk>" |  cat - local/hesitations.txt $OUTPUT/lexicon.txt | sort -u > $OUTPUT/dict/lexicon.txt
-echo '<UNK>' > $OUTPUT/dict/oov.txt
-#echo ''  > $OUTPUT/dict/extra_questions.txt
-echo '<sil>' > $OUTPUT/dict/optional_silence.txt
+mkdir -p $OUTPUT/dict_nosp
+echo -e "SIL <sil>\n<UNK> <unk>" |  cat - local/hesitations.txt $OUTPUT/lexicon.txt | sort -u > $OUTPUT/dict_nosp/lexicon.txt
+echo '<UNK>' > $OUTPUT/dict_nosp/oov.txt
+#echo ''  > $OUTPUT/dict_nosp/extra_questions.txt
+echo '<sil>' > $OUTPUT/dict_nosp/optional_silence.txt
 cat $OUTPUT/lexicon.txt | cut -d ' ' -f 2- | sed 's/ /\n/g' | \
-  sort -u | sed '/^ *$/d' > $OUTPUT/dict/nonsilence_phones.txt
+  sort -u | sed '/^ *$/d' > $OUTPUT/dict_nosp/nonsilence_phones.txt
 echo -e "SIL <sil>\n<UNK> <unk>" |  cat - local/hesitations.txt | cut -d ' ' -f 2- | sed 's/ /\n/g' | \
-  sort -u | sed '/^ *$/d' > $OUTPUT/dict/silence_phones.txt
+  sort -u | sed '/^ *$/d' > $OUTPUT/dict_nosp/silence_phones.txt
 
 
 

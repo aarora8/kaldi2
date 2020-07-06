@@ -15,7 +15,7 @@ online_cmvn=true
 
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=1g  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=1h  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
 remove_egs=true
 get_egs_stage=-10
@@ -142,7 +142,8 @@ if [ $stage -le 17 ]; then
   batchnorm-component name=idct-batchnorm input=idct
   spec-augment-layer name=idct-spec-augment freq-max-proportion=0.5 time-zeroed-proportion=0.2 time-mask-max-frames=20
   batchnorm-component name=idct-spec-augment-batchnorm input=idct-spec-augment
-  combine-feature-maps-layer name=combine_inputs input=Append(idct-spec-augment-batchnorm, ivector-batchnorm) num-filters1=1 num-filters2=5 height=40
+  stats-layer name=stats input=idct config=mean+stddev(-99:3:9:99)
+  combine-feature-maps-layer name=combine_inputs input=Append(idct-spec-augment-batchnorm, ivector-batchnorm, stats) num-filters1=1 num-filters2=5 num-filters3=2 height=40
   conv-relu-batchnorm-layer name=cnn1 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64 
   conv-relu-batchnorm-layer name=cnn2 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
   conv-relu-batchnorm-layer name=cnn3 $cnn_opts height-in=40 height-out=20 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=128
@@ -255,6 +256,12 @@ if [ $stage -le 20 ]; then
   done
 fi
 
+#if [ $stage -le 21 ]; then
+#  local/decode.sh \
+#    --ivector-dir exp/nnet3${nnet3_affix}/ \
+#    data/safe_t_dev1 data/lang_test \
+#    $dir/graph $dir
+#fi
 
 ## create big LM for rescoring
 #LM=/export/c03/pzelasko/opensat/pocolm/egs/opensat/data/srilm/combined.3g.kn.gz
