@@ -11,7 +11,7 @@ set -euo pipefail
 stage=0
 mic=ihm
 train_set=train_aug
-test_sets="dev eval"
+test_sets="safe_t_dev1"
 gmm=tri3
 nj=10
 
@@ -99,7 +99,7 @@ if [ $stage -le 6 ]; then
   # perturbation (sp).
   for data in $test_sets; do
     steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
-      data/$mic/${data}_hires exp/$mic/nnet3${nnet3_affix}/extractor \
+      data/${data}_hires exp/$mic/nnet3${nnet3_affix}/extractor \
       exp/$mic/nnet3${nnet3_affix}/ivectors_${data}_hires
   done
 fi
