@@ -2,10 +2,11 @@
 
 #/export/c12/aarora8/OpenSAT/16khz_OpenSAT_noise
 
-#for wav_path_name in /export/c12/aarora8/OpenSAT/OpenSAT_noise/*.wav; do
-#  wav_id=$(echo "$wav_path_name" | cut -f7 -d "/")
+#for wav_path_name in /export/c05/aarora8/kaldi2/egs/icsisafet/s5/audio/*.flac; do
+#  wav_id_flac=$(echo "$wav_path_name" | cut -f10 -d "/")
+#  wav_id=$(echo "$wav_id_flac" | cut -d"." -f 1)
 #  echo $wav_id
-#  sox $wav_path_name -r 16000 -c 1 -b 16 /export/c12/aarora8/OpenSAT/16khz_OpenSAT_noise/$wav_id
+#  sox $wav_path_name -t wav -r 16000 -c 1 -b 16 audio_wav/${wav_id}.wav
 #done
 
 #for wav_name in ls /export/c12/aarora8/OpenSAT/16khz_OpenSAT_noise/*.wav; do
@@ -24,3 +25,37 @@
 #    data_dir=$(echo "$line" | cut -d"/" -f 11)
 #    echo $data_dir >> data/ihm/train_aug/data_loca
 #done < data/ihm/train_aug/feats.scp
+
+# get wav file path and names in r11
+#while read -r line;
+#  do
+#    data_dir=$(echo "$line" | cut -d" " -f 6)
+#    echo $data_dir  >> /export/c05/aarora8/kaldi2/egs/icsisafet/s5/wav_safe_t_r11
+#done < /export/c05/aarora8/kaldi2/egs/icsisafet/s5/meta_dexp/2G_sp_amiicsisafet/data/safe_t_r11/wav.scp
+
+# get duration of each wav file
+#while read -r line;
+#  do
+#    soxi -D $line
+#done < /export/c05/aarora8/kaldi2/egs/icsisafet/s5/wav_safe_t_r11
+
+#
+#while read -r line;
+#  do
+#    data_dir=$(echo "$line" | cut -d" " -f 6)
+#    echo $data_dir >> /export/c05/aarora8/kaldi2/egs/icsisafet/s5/wav_safe_t_r20
+#done < /export/c05/aarora8/kaldi2/egs/icsisafet/s5/meta_dexp/2G_sp_amiicsisafet/data/safe_t_r20/wav.scp
+#
+#while read -r line;
+#  do
+#    soxi -D $line
+#done < /export/c05/aarora8/kaldi2/egs/icsisafet/s5/wav_safe_t_r20
+
+#for wav_name in /export/corpora5/opensat_corpora/LDC2019E37/LDC2019E37_SAFE-T_Corpus_Speech_Recording_Audio_Training_Data_R1_V1.1/data/audio/*.flac; do
+#soxi -D $wav_name
+#done
+
+for wav_name in /export/corpora5/opensat_corpora/LDC2020E10/LDC2020E10_SAFE-T_Corpus_Speech_Recording_Audio_Training_Data_R2/data/audio/*.flac; do
+soxi -D $wav_name
+done
+

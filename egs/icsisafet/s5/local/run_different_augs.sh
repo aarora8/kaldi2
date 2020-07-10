@@ -40,17 +40,17 @@ if [ $stage -le 0 ]; then
   local/safet_data_prep.sh ${SAFE_T_AUDIO_R11} ${SAFE_T_TEXTS_R11} data/safe_t_r11
   local/safet_data_prep.sh ${SAFE_T_AUDIO_R20} ${SAFE_T_TEXTS_R20} data/safe_t_r20
   local/safet_data_prep.sh ${SAFE_T_AUDIO_DEV1} ${SAFE_T_TEXTS_DEV1} data/safe_t_dev1
-  local/safet_data_prep.sh ${SAFE_T_AUDIO_EVAL1} data/safe_t_eval1
+  local/safet_eval_data_prep.sh ${SAFE_T_AUDIO_EVAL1} data/safe_t_eval1
 fi
 
-if [ $stage -le 0 ]; then
-  local/spine_data_prep.sh $opensat_corpora/LDC2000S96  $opensat_corpora/LDC2000T54 data/spine_eval
-  local/spine_data_prep.sh $opensat_corpora/LDC2000S87  $opensat_corpora/LDC2000T49 data/spine_train
-
-  local/spine_data_prep.sh $opensat_corpora/LDC2001S04  $opensat_corpora/LDC2001T05 data/spine2_train1
-  local/spine_data_prep.sh $opensat_corpora/LDC2001S06  $opensat_corpora/LDC2001T07 data/spine2_train2
-  local/spine_data_prep.sh $opensat_corpora/LDC2001S08  $opensat_corpora/LDC2001T09 data/spine2_train3
-fi
+#if [ $stage -le 0 ]; then
+#  local/spine_data_prep.sh $opensat_corpora/LDC2000S96  $opensat_corpora/LDC2000T54 data/spine_eval
+#  local/spine_data_prep.sh $opensat_corpora/LDC2000S87  $opensat_corpora/LDC2000T49 data/spine_train
+#
+#  local/spine_data_prep.sh $opensat_corpora/LDC2001S04  $opensat_corpora/LDC2001T05 data/spine2_train1
+#  local/spine_data_prep.sh $opensat_corpora/LDC2001S06  $opensat_corpora/LDC2001T07 data/spine2_train2
+#  local/spine_data_prep.sh $opensat_corpora/LDC2001S08  $opensat_corpora/LDC2001T09 data/spine2_train3
+#fi
 
 if [ $stage -le 1 ]; then
   rm -rf data/lang_nosp data/local/lang_nosp data/local/dict_nosp
@@ -70,17 +70,8 @@ fi
 
 if [ $stage -le 3 ]; then
   for dset in train dev eval; do
-    # this splits up the speakers (which for sdm and mdm just correspond
-    # to recordings) into 30-second chunks.  It's like a very brain-dead form
-    # of diarization; we can later replace it with 'real' diarization.
     seconds_per_spk_max=30
     [ "$mic" == "ihm" ] && seconds_per_spk_max=120  # speaker info for ihm is real,
-                                                    # so organize into much bigger chunks.
-
-    # Note: the 30 on the next line should have been $seconds_per_spk_max
-    # (thanks: Pavel Denisov.  This is a bug but before fixing it we'd have to
-    # test the WER impact.  I suspect it will be quite small and maybe hard to
-    # measure consistently.
     utils/data/modify_speaker_info.sh --seconds-per-spk-max 30 \
       data/$mic/${dset}_orig data/$mic/$dset
   done
@@ -89,7 +80,6 @@ fi
 if [ $stage -le 4 ]; then
   utils/data/get_reco2dur.sh data/ihm/train
   utils/data/get_utt2dur.sh data/ihm/train
-
   for dset in train dev eval; do
     cat data/$mic/$dset/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/$mic/$dset/texttmp
     mv data/$mic/$dset/text data/$mic/$dset/textupper
@@ -103,28 +93,28 @@ if [ $stage -le 5 ]; then
     local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r11/transcripts data/safe_t_r11/transcripts.clean
     local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r20/transcripts data/safe_t_r20/transcripts.clean
 
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train1/transcripts data/spine2_train1/transcripts.clean
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train2/transcripts data/spine2_train2/transcripts.clean
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train3/transcripts data/spine2_train3/transcripts.clean
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine_train/transcripts   data/spine_train//transcripts.clean
+    #local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train1/transcripts data/spine2_train1/transcripts.clean
+    #local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train2/transcripts data/spine2_train2/transcripts.clean
+    #local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train3/transcripts data/spine2_train3/transcripts.clean
+    #local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine_train/transcripts   data/spine_train//transcripts.clean
   ) | sort > exp/cleanup_stage_1/oovs
 
   local/safet_cleanup_transcripts.py --no-unk-replace  data/local/lexicon.txt \
     data/safe_t_dev1/transcripts data/safe_t_dev1/transcripts.clean > exp/cleanup_stage_1/oovs.dev1
-  local/safet_cleanup_transcripts.py  --no-unk-replace  data/local/lexicon.txt \
-    data/spine_eval/transcripts data/spine_eval/transcripts.clean > exp/cleanup_stage_1/oovs.spine_eval
+  #local/safet_cleanup_transcripts.py  --no-unk-replace  data/local/lexicon.txt \
+  #  data/spine_eval/transcripts data/spine_eval/transcripts.clean > exp/cleanup_stage_1/oovs.spine_eval
   local/safet_build_data_dir.sh data/safe_t_r11/ data/safe_t_r11/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_r20/ data/safe_t_r20/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_dev1/ data/safe_t_dev1/transcripts
 
-  local/safet_build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
-  local/safet_build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
-  local/safet_build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
-  local/safet_build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
-  local/safet_build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
 
   utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
-  utils/data/combine_data.sh data/train_spine data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
+#  utils/data/combine_data.sh data/train_spine data/spine2_train1 data/spine2_train2 data/spine2_train3 data/spine_train
 fi
 
 if [ $stage -le 6 ] ; then
@@ -172,7 +162,8 @@ if [ $stage -le 9 ]; then
 fi
 
 if [ $stage -le 10 ] ; then
-  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami data/train_spine
+  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami
+  #utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami data/train_spine
 fi
 
 # Feature extraction,
@@ -222,8 +213,8 @@ fi
 
 if [ $stage -le 16 ]; then
   echo "For ICSI we do not clean segmentations, as those are manual by default, so should be OK."
-  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami data/train_spine
-
+  #utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami data/train_spine
+  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami
   utils/copy_data_dir.sh /export/c12/aarora8/OpenSAT/safet_noise_wavfile/ data/safet_noise_wavfile
   steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 data/safet_noise_wavfile
   steps/compute_cmvn_stats.sh data/safet_noise_wavfile
@@ -251,52 +242,72 @@ aug_list="noise_low noise_high clean"
 if [ $stage -le 17 ]; then
   utils/data/get_reco2dur.sh data/ihm/${train_set}
   steps/data/augment_data_dir.py --utt-prefix "noise_low" --modify-spk-id "true" \
-    --bg-snrs "10:12:14:16:18" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
+    --bg-snrs "85:80:75:70" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
     data/$mic/${train_set} data/$mic/${train_set}_noise_low
 
   steps/data/augment_data_dir.py --utt-prefix "noise_high" --modify-spk-id "true" \
-    --bg-snrs "0:2:4:6:8" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
+    --bg-snrs "15:10:5:3:0" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
     data/$mic/${train_set} data/$mic/${train_set}_noise_high
 
-  utils/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train_isa
+  #utils/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train_isa
 fi
 
-
 if [ $stage -le 18 ]; then
-  # obtain the alignment of augmented data from clean data
+  # combining icsi and ami for speed perturbation
+  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami
+
+  utils/data/perturb_data_dir_speed_3way.sh data/ihm/train_icsiami data/ihm/train_icsiami_sp
+  utils/copy_data_dir.sh data/ihm/train_icsiami_sp data/ihm/train_icsiami_sp_woclean
+  grep 'sp' data/ihm/train_icsiami_sp/utt2spk > data/ihm/train_icsiami_sp_woclean/utt2spk
+  utils/fix_data_dir.sh data/ihm/train_icsiami_sp_woclean
+
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 20 data/ihm/train_icsiami_sp_woclean
+  steps/compute_cmvn_stats.sh data/ihm/train_icsiami_sp_woclean
+  utils/fix_data_dir.sh data/ihm/train_icsiami_sp_woclean
+
+  # 
+  # utils/combine_data.sh data/ihm/train_aug data/ihm/train_icsiami_noise_low data/ihm/train_icsiami_noise_high data/ihm/train_isa
+
+  #entire data without noise augmentation (for alignment)
+  utils/combine_data.sh data/ihm/train_isaclean_iasp data/ihm/train_isa data/ihm/train_icsiami_sp_woclean
+
+  #entire data for training
+  utils/combine_data.sh data/ihm/train_aug data/ihm/train_icsiami_noise_low data/ihm/train_icsiami_noise_high data/ihm/train_isa  data/ihm/train_icsiami_sp_woclean
+fi
+
+if [ $stage -le 19 ]; then
   include_original=false
   prefixes=""
   for n in $aug_list; do
     if [ "$n" != "clean" ]; then
       prefixes="$prefixes "$n
     else
-      # The original train directory will not have any prefix
-      # include_original flag will take care of copying the original alignments
       include_original=true
     fi
   done
 
   echo "Starting SAT+FMLLR training."
   steps/align_si.sh --nj 30 --cmd "$train_cmd" \
-      --use-graphs true data/$mic/train_isa data/lang exp/$mic/tri3 exp/$mic/tri3_train_ali
+      data/ihm/train_isaclean_iasp data/lang exp/ihm/tri3 exp/ihm/tri3_train_ali
 
   echo "$0: Creating alignments of aug data by copying alignments of clean data"
   steps/copy_ali_dir.sh --nj 30 --cmd "$train_cmd" \
     --include-original "$include_original" --prefixes "$prefixes" \
-    data/$mic/train_aug exp/$mic/tri3_train_ali exp/$mic/tri3_train_ali_aug
-fi
-
-if [ $stage -le 19 ]; then
-   for f in data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high ; do
-    steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 $f
-    steps/compute_cmvn_stats.sh $f
-  done
-
-  utils/data/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train_isa
-  steps/compute_cmvn_stats.sh data/$mic/train_aug
+    data/ihm/train_aug exp/ihm/tri3_train_ali exp/$mic/tri3_train_ali_aug
 fi
 
 if [ $stage -le 20 ]; then
+#   for f in data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/ihm/train_icsiami_sp_woclean ; do
+#    steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 $f
+#    steps/compute_cmvn_stats.sh $f
+#  done
+
+  utils/data/combine_data.sh data/$mic/train_aug data/ihm/train_icsiami_sp_woclean data/$mic/train_isa
+  steps/compute_cmvn_stats.sh data/$mic/train_aug
+  utils/fix_data_dir.sh data/$mic/train_aug
+fi
+
+if [ $stage -le 21 ]; then
   for dataset in train_aug; do
     echo "$0: Creating hi resolution MFCCs for dir data/$dataset"
     utils/copy_data_dir.sh data/$mic/$dataset data/$mic/${dataset}_hires
@@ -308,8 +319,4 @@ if [ $stage -le 20 ]; then
     utils/fix_data_dir.sh data/$mic/${dataset}_hires;
   done
 fi
-
-#if [ $stage -le 11 ]; then
-#  local/chain/run_tdnn.sh
-#fi
 exit 0
