@@ -29,7 +29,7 @@ mkdir -p $dir
 echo "Getting CMU dictionary"
 svn co  https://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict  $dir/cmudict
 
-# silence phones, one per line. 
+# silence phones, one per line.
 for w in sil laughter noise oov; do echo $w; done > $dir/silence_phones.txt
 echo sil > $dir/optional_silence.txt
 
@@ -145,5 +145,5 @@ cat $dir/acronyms_lex_swbd.txt |\
 
 cat $dir/acronyms_lex_swbd_cmuphones.txt $dir/lexicon_fisher.txt | sort -u > $dir/lexicon.txt
 
-echo Prepared input dictionary and phone-sets for Switchboard phase 1.
+echo "Prepared input dictionary and phone-sets for Switchboard phase 1."
 utils/validate_dict_dir.pl $dir
