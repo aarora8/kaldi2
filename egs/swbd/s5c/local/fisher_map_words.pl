@@ -35,9 +35,9 @@ while (<>) {
   # <german (( ja wohl )) > -- we remove these
   s/<[^>]*>//g;
 
-  #s/\.\_/ /g;  # Abbreviations: a._b._c. -> a b c.
-  #s/(\w)\.s( |$)/$1's /g;  # a.s -> a's
-  #s/\./ /g;    # Remove remaining .
+  s/\.\_/ /g;  # Abbreviations: a._b._c. -> a b c.
+  s/(\w)\.s( |$)/$1's /g;  # a.s -> a's
+  s/\./ /g;    # Remove remaining .
   s/(\w)\,(\w| )/$1 $2/g;    # commas don't appear within numbers, but still
 
   s/( |^)\'(blade|cause|course|frisco|okay|plain|specially)( |$)/ $2 /g;
@@ -72,6 +72,7 @@ while (<>) {
   s/\[mn\]/[vocalized-noise]/g;  # [mn] -> [vocalized-noise]
   s/\[laugh\]/[laughter]/g;      # [laugh] -> [laughter]
 
+  $_ = uc($_);
   # Now, mapping individual words
   my @words = split /\s+/;
   for my $i (0..$#words) {

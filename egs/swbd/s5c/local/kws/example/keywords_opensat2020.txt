@@ -1,0 +1,1063 @@
+KW_0001 ablaze
+KW_0002 able
+KW_0003 about
+KW_0004 across
+KW_0005 actions
+KW_0006 actually
+KW_0007 add
+KW_0008 additional
+KW_0009 address
+KW_0010 adjacent
+KW_0011 affected
+KW_0012 again
+KW_0013 ahead
+KW_0014 alarm
+KW_0015 all
+KW_0016 allowed
+KW_0017 almost
+KW_0018 already
+KW_0019 alright
+KW_0020 alrighty
+KW_0021 also
+KW_0022 any
+KW_0023 anything
+KW_0024 anyways
+KW_0025 appears
+KW_0026 appease
+KW_0027 appreciate
+KW_0028 area
+KW_0029 aren't
+KW_0030 around
+KW_0031 arrived
+KW_0032 assess
+KW_0033 attempting
+KW_0034 away
+KW_0035 axing
+KW_0036 back
+KW_0037 backup
+KW_0038 bad
+KW_0039 bank
+KW_0040 banked
+KW_0041 barely
+KW_0042 bath
+KW_0043 bathroom
+KW_0044 because
+KW_0045 becomes
+KW_0046 bed
+KW_0047 bedroom
+KW_0048 bedroom's
+KW_0049 been
+KW_0050 before
+KW_0051 behind
+KW_0052 being
+KW_0053 believe
+KW_0054 better
+KW_0055 between
+KW_0056 bit
+KW_0057 black
+KW_0058 blasting
+KW_0059 blaze
+KW_0060 blocks
+KW_0061 blown
+KW_0062 boom
+KW_0063 boop
+KW_0064 bravo
+KW_0065 break
+KW_0066 broken
+KW_0067 brown
+KW_0068 building
+KW_0069 burning
+KW_0070 bust
+KW_0071 call
+KW_0072 came
+KW_0073 can't
+KW_0074 care
+KW_0075 carry
+KW_0076 cat
+KW_0077 catastrophe
+KW_0078 catching
+KW_0079 caught
+KW_0080 chain
+KW_0081 checking
+KW_0082 children's
+KW_0083 chop
+KW_0084 clear
+KW_0085 close
+KW_0086 closer
+KW_0087 collapse
+KW_0088 collapsing
+KW_0089 come
+KW_0090 coming
+KW_0091 completely
+KW_0092 concerned
+KW_0093 concerning
+KW_0094 congrats
+KW_0095 continue
+KW_0096 control
+KW_0097 convenient
+KW_0098 cool
+KW_0099 copy
+KW_0100 corner
+KW_0101 correct
+KW_0102 could
+KW_0103 crap
+KW_0104 crazier
+KW_0105 currently
+KW_0106 damage
+KW_0107 damaged
+KW_0108 damn
+KW_0109 danger
+KW_0110 dangerous
+KW_0111 dead
+KW_0112 decent
+KW_0113 developing
+KW_0114 diagonals
+KW_0115 did
+KW_0116 didn't
+KW_0117 different
+KW_0118 dining
+KW_0119 discovery
+KW_0120 distance
+KW_0121 does
+KW_0122 doesn't
+KW_0123 dog
+KW_0124 doing
+KW_0125 don't
+KW_0126 done
+KW_0127 door
+KW_0128 doors
+KW_0129 down
+KW_0130 drag
+KW_0131 drinking
+KW_0132 dude
+KW_0133 during
+KW_0134 earlier
+KW_0135 easily
+KW_0136 else
+KW_0137 empty
+KW_0138 end
+KW_0139 engulfed
+KW_0140 enough
+KW_0141 entrance
+KW_0142 escaping
+KW_0143 establish
+KW_0144 even
+KW_0145 exactly
+KW_0146 excellent
+KW_0147 exit
+KW_0148 explode
+KW_0149 explosions
+KW_0150 exterior
+KW_0151 extinguish
+KW_0152 extinguishing
+KW_0153 fall
+KW_0154 fancy
+KW_0155 far
+KW_0156 fast
+KW_0157 fiery
+KW_0158 fight
+KW_0159 find
+KW_0160 fine
+KW_0161 finish
+KW_0162 fire
+KW_0163 fire's
+KW_0164 firefighter
+KW_0165 firefighter's
+KW_0166 firefighters
+KW_0167 fires
+KW_0168 first
+KW_0169 five
+KW_0170 fix
+KW_0171 flame
+KW_0172 flawless
+KW_0173 flip
+KW_0174 floral
+KW_0175 folks
+KW_0176 forward
+KW_0177 found
+KW_0178 four
+KW_0179 fred
+KW_0180 from
+KW_0181 fruit
+KW_0182 full
+KW_0183 game
+KW_0184 general
+KW_0185 gentleman
+KW_0186 get
+KW_0187 gets
+KW_0188 getting
+KW_0189 girl
+KW_0190 given
+KW_0191 go
+KW_0192 god
+KW_0193 goes
+KW_0194 going
+KW_0195 gone
+KW_0196 good
+KW_0197 got
+KW_0198 gotten
+KW_0199 great
+KW_0200 green
+KW_0201 guess
+KW_0202 had
+KW_0203 half
+KW_0204 hallway
+KW_0205 hand
+KW_0206 hang
+KW_0207 hanging
+KW_0208 happening
+KW_0209 has
+KW_0210 have
+KW_0211 haven't
+KW_0212 head
+KW_0213 headed
+KW_0214 heading
+KW_0215 hear
+KW_0216 hello
+KW_0217 help
+KW_0218 hep
+KW_0219 her
+KW_0220 here
+KW_0221 hey
+KW_0222 high
+KW_0223 him
+KW_0224 hold
+KW_0225 holes
+KW_0226 hop
+KW_0227 hope
+KW_0228 hopefully
+KW_0229 how
+KW_0230 huh
+KW_0231 human
+KW_0232 i'll
+KW_0233 i've
+KW_0234 idea
+KW_0235 identify
+KW_0236 identifying
+KW_0237 injured
+KW_0238 inner
+KW_0239 inside
+KW_0240 interest
+KW_0241 interesting
+KW_0242 into
+KW_0243 investigate
+KW_0244 inward
+KW_0245 isn't
+KW_0246 it'll
+KW_0247 it's
+KW_0248 jeez
+KW_0249 job
+KW_0250 join
+KW_0251 jump
+KW_0252 just
+KW_0253 kay
+KW_0254 keep
+KW_0255 keeping
+KW_0256 kind
+KW_0257 kitchen
+KW_0258 kitty
+KW_0259 knock
+KW_0260 knocked
+KW_0261 knocking
+KW_0262 know
+KW_0263 lady
+KW_0264 last
+KW_0265 least
+KW_0266 leave
+KW_0267 leaving
+KW_0268 left
+KW_0269 less
+KW_0270 let
+KW_0271 let's
+KW_0272 likely
+KW_0273 little
+KW_0274 live
+KW_0275 living
+KW_0276 location
+KW_0277 looking
+KW_0278 lost
+KW_0279 lot
+KW_0280 low
+KW_0281 luck
+KW_0282 made
+KW_0283 make
+KW_0284 making
+KW_0285 man
+KW_0286 many
+KW_0287 master
+KW_0288 may
+KW_0289 maybe
+KW_0290 mean
+KW_0291 meth
+KW_0292 mhm
+KW_0293 might
+KW_0294 minute
+KW_0295 minutes
+KW_0296 mkay
+KW_0297 moderately
+KW_0298 money
+KW_0299 more
+KW_0300 mostly
+KW_0301 move
+KW_0302 much
+KW_0303 near
+KW_0304 need
+KW_0305 new
+KW_0306 nice
+KW_0307 nothing
+KW_0308 now
+KW_0309 nowhere
+KW_0310 number
+KW_0311 off
+KW_0312 okay
+KW_0313 once
+KW_0314 one
+KW_0315 only
+KW_0316 ooh
+KW_0317 oops
+KW_0318 opened
+KW_0319 other
+KW_0320 our
+KW_0321 out
+KW_0322 outside
+KW_0323 over
+KW_0324 path
+KW_0325 peace
+KW_0326 people
+KW_0327 percent
+KW_0328 person
+KW_0329 person's
+KW_0330 personal
+KW_0331 piano
+KW_0332 pink
+KW_0333 place
+KW_0334 places
+KW_0335 plan
+KW_0336 player
+KW_0337 plus
+KW_0338 point
+KW_0339 points
+KW_0340 pop
+KW_0341 popped
+KW_0342 popping
+KW_0343 possible
+KW_0344 potentially
+KW_0345 precedes
+KW_0346 pressure
+KW_0347 pretty
+KW_0348 probably
+KW_0349 prove
+KW_0350 pull-out
+KW_0351 puppy's
+KW_0352 putting
+KW_0353 questions
+KW_0354 quick
+KW_0355 quickly
+KW_0356 quite
+KW_0357 raises
+KW_0358 ran
+KW_0359 reaction
+KW_0360 real
+KW_0361 realize
+KW_0362 really
+KW_0363 record
+KW_0364 recovering
+KW_0365 red
+KW_0366 reenter
+KW_0367 remaining
+KW_0368 remove
+KW_0369 repeat
+KW_0370 reports
+KW_0371 reputation
+KW_0372 rescue
+KW_0373 reserve
+KW_0374 resulted
+KW_0375 rid
+KW_0376 right
+KW_0377 roger
+KW_0378 roll
+KW_0379 romeo
+KW_0380 room
+KW_0381 room's
+KW_0382 round
+KW_0383 route
+KW_0384 ruling
+KW_0385 run
+KW_0386 sad
+KW_0387 safe
+KW_0388 safety
+KW_0389 said
+KW_0390 same
+KW_0391 save
+KW_0392 saved
+KW_0393 saving
+KW_0394 say
+KW_0395 seeing
+KW_0396 seem
+KW_0397 seems
+KW_0398 sensitive
+KW_0399 serious
+KW_0400 seventy
+KW_0401 seventy-five
+KW_0402 several
+KW_0403 shape
+KW_0404 shared
+KW_0405 she's
+KW_0406 shoot
+KW_0407 shortest
+KW_0408 should
+KW_0409 sights
+KW_0410 sign
+KW_0411 signs
+KW_0412 since
+KW_0413 situation
+KW_0414 smashed
+KW_0415 smelling
+KW_0416 smoke
+KW_0417 smokes
+KW_0418 smoky
+KW_0419 sofa
+KW_0420 some
+KW_0421 somebody
+KW_0422 someone
+KW_0423 something
+KW_0424 somewhere
+KW_0425 soon
+KW_0426 sorry
+KW_0427 sounds
+KW_0428 south
+KW_0429 space
+KW_0430 spread
+KW_0431 spreading
+KW_0432 square
+KW_0433 standing
+KW_0434 start
+KW_0435 step
+KW_0436 stepping
+KW_0437 still
+KW_0438 straight
+KW_0439 strategy
+KW_0440 strength
+KW_0441 suggestion
+KW_0442 support
+KW_0443 sure
+KW_0444 surprised
+KW_0445 surrounded
+KW_0446 swinging
+KW_0447 table
+KW_0448 tackle
+KW_0449 taken
+KW_0450 takes
+KW_0451 taking
+KW_0452 tank
+KW_0453 tell
+KW_0454 tense
+KW_0455 terrible
+KW_0456 than
+KW_0457 thank
+KW_0458 thanks
+KW_0459 that
+KW_0460 that's
+KW_0461 their
+KW_0462 then
+KW_0463 there
+KW_0464 there's
+KW_0465 these
+KW_0466 they
+KW_0467 they're
+KW_0468 thing
+KW_0469 things
+KW_0470 think
+KW_0471 third
+KW_0472 this
+KW_0473 those
+KW_0474 though
+KW_0475 three
+KW_0476 throughout
+KW_0477 tile
+KW_0478 time
+KW_0479 tiny
+KW_0480 too
+KW_0481 top
+KW_0482 toward
+KW_0483 toxic
+KW_0484 track
+KW_0485 trying
+KW_0486 turn
+KW_0487 turned
+KW_0488 turning
+KW_0489 turns
+KW_0490 twin
+KW_0491 two
+KW_0492 under
+KW_0493 underneath
+KW_0494 underway
+KW_0495 unnecessary
+KW_0496 until
+KW_0497 update
+KW_0498 use
+KW_0499 useful
+KW_0500 using
+KW_0501 very
+KW_0502 victim
+KW_0503 wait
+KW_0504 walk
+KW_0505 wall
+KW_0506 wall's
+KW_0507 walls
+KW_0508 want
+KW_0509 wasn't
+KW_0510 we'll
+KW_0511 we've
+KW_0512 weight
+KW_0513 welcome
+KW_0514 what
+KW_0515 whatever
+KW_0516 when
+KW_0517 where
+KW_0518 which
+KW_0519 while
+KW_0520 who's
+KW_0521 whoever
+KW_0522 whole
+KW_0523 why
+KW_0524 wish
+KW_0525 without
+KW_0526 woman
+KW_0527 woo
+KW_0528 work
+KW_0529 working
+KW_0530 worried
+KW_0531 would
+KW_0532 yeah
+KW_0533 yellow
+KW_0534 yet
+KW_0535 you
+KW_0536 you're
+KW_0537 young
+KW_0538 youngish
+KW_0539 your
+KW_0540 yourself
+KW_0541 yummy
+KW_0542 yup
+KW_0543 ablaze your
+KW_0544 about half
+KW_0545 actions left
+KW_0546 actually before
+KW_0547 actually head
+KW_0548 additional fires
+KW_0549 adjacent tile
+KW_0550 again raises
+KW_0551 again reserve
+KW_0552 all across
+KW_0553 all around
+KW_0554 almost seventy-five
+KW_0555 already anyways
+KW_0556 already mostly
+KW_0557 also taking
+KW_0558 any actions
+KW_0559 any additional
+KW_0560 anyways if
+KW_0561 appease all
+KW_0562 around us
+KW_0563 as fast
+KW_0564 away crap
+KW_0565 axing reputation
+KW_0566 backup dude
+KW_0567 backup has
+KW_0568 bad isn't
+KW_0569 barely could
+KW_0570 because nothing
+KW_0571 because they're
+KW_0572 becomes standing
+KW_0573 bedroom's getting
+KW_0574 bedroom's pretty
+KW_0575 been saved
+KW_0576 been smashed
+KW_0577 being affected
+KW_0578 being underneath
+KW_0579 bit smoky
+KW_0580 bit worried
+KW_0581 black blocks
+KW_0582 blasting holes
+KW_0583 blaze pop
+KW_0584 boom boom
+KW_0585 boom gone
+KW_0586 boop boop
+KW_0587 break down
+KW_0588 broken as
+KW_0589 brown man
+KW_0590 burning fast
+KW_0591 burning up
+KW_0592 came from
+KW_0593 can't hear
+KW_0594 can't quite
+KW_0595 can't really
+KW_0596 can't support
+KW_0597 can't tell
+KW_0598 carry her
+KW_0599 cat has
+KW_0600 caught behind
+KW_0601 chain reaction
+KW_0602 children's bed
+KW_0603 chop down
+KW_0604 close nice
+KW_0605 collapse before
+KW_0606 collapsing all
+KW_0607 come around
+KW_0608 come back
+KW_0609 come help
+KW_0610 come toward
+KW_0611 concerning though
+KW_0612 continue trying
+KW_0613 cool backup
+KW_0614 cool yellow
+KW_0615 corner it'll
+KW_0616 could easily
+KW_0617 could finish
+KW_0618 could prove
+KW_0619 crazier than
+KW_0620 currently being
+KW_0621 damaged too
+KW_0622 dangerous than
+KW_0623 didn't realize
+KW_0624 different location
+KW_0625 doesn't seem
+KW_0626 dog again
+KW_0627 dog drag
+KW_0628 doing nothing
+KW_0629 don't fix
+KW_0630 don't know
+KW_0631 don't need
+KW_0632 don't they
+KW_0633 done new
+KW_0634 doors blasting
+KW_0635 drinking from
+KW_0636 during her
+KW_0637 easily tackle
+KW_0638 enough walls
+KW_0639 even crazier
+KW_0640 exit route
+KW_0641 exit yet
+KW_0642 explosions which
+KW_0643 fall down
+KW_0644 false alarm
+KW_0645 far from
+KW_0646 fast as
+KW_0647 fast burning
+KW_0648 fight these
+KW_0649 finish knocking
+KW_0650 fire's spread
+KW_0651 firefighter's heading
+KW_0652 first sights
+KW_0653 first things
+KW_0654 flawless track
+KW_0655 forward inward
+KW_0656 from last
+KW_0657 full collapse
+KW_0658 general catastrophe
+KW_0659 gentleman very
+KW_0660 gets blown
+KW_0661 gets broken
+KW_0662 getting folks
+KW_0663 getting kind
+KW_0664 getting knocked
+KW_0665 getting pretty
+KW_0666 getting reports
+KW_0667 getting rid
+KW_0668 getting smoky
+KW_0669 girl appears
+KW_0670 god damn
+KW_0671 god they
+KW_0672 goes down
+KW_0673 good call
+KW_0674 good luck
+KW_0675 good piano
+KW_0676 gotten reports
+KW_0677 guess i'll
+KW_0678 guess join
+KW_0679 had several
+KW_0680 hand hello
+KW_0681 hanging fruit
+KW_0682 has arrived
+KW_0683 has been
+KW_0684 has had
+KW_0685 has resulted
+KW_0686 has spread
+KW_0687 haven't gotten
+KW_0688 he gets
+KW_0689 he ran
+KW_0690 head straight
+KW_0691 hear anything
+KW_0692 hep cat
+KW_0693 her hand
+KW_0694 hey green
+KW_0695 high pressure
+KW_0696 hop him
+KW_0697 hop hop
+KW_0698 hope these
+KW_0699 hopefully i'll
+KW_0700 how convenient
+KW_0701 how many
+KW_0702 how they
+KW_0703 human being
+KW_0704 i'll still
+KW_0705 if they're
+KW_0706 inner support
+KW_0707 interesting how
+KW_0708 interesting questions
+KW_0709 jeez don't
+KW_0710 keep attempting
+KW_0711 keep getting
+KW_0712 keep heading
+KW_0713 keep popping
+KW_0714 keep taking
+KW_0715 keep track
+KW_0716 keep working
+KW_0717 keeping their
+KW_0718 kitty cat
+KW_0719 knocked down
+KW_0720 know how
+KW_0721 know if
+KW_0722 know low
+KW_0723 know why
+KW_0724 least find
+KW_0725 least moderately
+KW_0726 left hang
+KW_0727 less likely
+KW_0728 little area
+KW_0729 little bit
+KW_0730 little pink
+KW_0731 little too
+KW_0732 looking around
+KW_0733 looking pretty
+KW_0734 low hanging
+KW_0735 m may
+KW_0736 made earlier
+KW_0737 make knock
+KW_0738 make our
+KW_0739 make your
+KW_0740 making our
+KW_0741 many holes
+KW_0742 may need
+KW_0743 maybe unnecessary
+KW_0744 might actually
+KW_0745 might as
+KW_0746 might want
+KW_0747 minutes until
+KW_0748 moderately useful
+KW_0749 mostly engulfed
+KW_0750 much catching
+KW_0751 much danger
+KW_0752 need our
+KW_0753 new blaze
+KW_0754 nice work
+KW_0755 nothing else
+KW_0756 nowhere near
+KW_0757 once again
+KW_0758 only really
+KW_0759 only takes
+KW_0760 other thing
+KW_0761 other victim
+KW_0762 our last
+KW_0763 our plan
+KW_0764 our third
+KW_0765 peace good
+KW_0766 percent engulfed
+KW_0767 person's safe
+KW_0768 piano player
+KW_0769 pink floral
+KW_0770 places make
+KW_0771 places plus
+KW_0772 plus also
+KW_0773 pop up
+KW_0774 popped up
+KW_0775 popping up
+KW_0776 potentially injured
+KW_0777 pressure tense
+KW_0778 pretty bad
+KW_0779 pretty clear
+KW_0780 pretty fiery
+KW_0781 pretty much
+KW_0782 pretty sensitive
+KW_0783 pretty smoky
+KW_0784 probably spread
+KW_0785 prove useful
+KW_0786 pull-out strength
+KW_0787 puppy's safe
+KW_0788 questions about
+KW_0789 quick boom
+KW_0790 quickly assess
+KW_0791 quite hear
+KW_0792 raises interesting
+KW_0793 ran away
+KW_0794 reaction happening
+KW_0795 real hep
+KW_0796 really given
+KW_0797 really help
+KW_0798 really quick
+KW_0799 really spreading
+KW_0800 recovering from
+KW_0801 reputation precedes
+KW_0802 rescue underway
+KW_0803 roger thank
+KW_0804 room's getting
+KW_0805 room's looking
+KW_0806 round let
+KW_0807 run around
+KW_0808 same thing
+KW_0809 same tile
+KW_0810 save first
+KW_0811 save yourself
+KW_0812 say maybe
+KW_0813 seeing who's
+KW_0814 seem too
+KW_0815 seems fine
+KW_0816 seems still
+KW_0817 sensitive situation
+KW_0818 serious situation
+KW_0819 seventy percent
+KW_0820 seventy-five percent
+KW_0821 several explosions
+KW_0822 shape as
+KW_0823 shared between
+KW_0824 she's safe
+KW_0825 shortest distance
+KW_0826 should make
+KW_0827 should start
+KW_0828 should work
+KW_0829 since things
+KW_0830 smelling something
+KW_0831 smokes around
+KW_0832 smoky making
+KW_0833 smoky too
+KW_0834 somebody very
+KW_0835 something burning
+KW_0836 something else
+KW_0837 sorry about
+KW_0838 south end
+KW_0839 spread throughout
+KW_0840 spreading from
+KW_0841 start swinging
+KW_0842 step closer
+KW_0843 still haven't
+KW_0844 still need
+KW_0845 still seems
+KW_0846 strategy might
+KW_0847 suggestion yellow
+KW_0848 support walls
+KW_0849 support your
+KW_0850 surprised by
+KW_0851 surrounded by
+KW_0852 swinging away
+KW_0853 taken her
+KW_0854 taking twin
+KW_0855 tank top
+KW_0856 tell exactly
+KW_0857 tell she's
+KW_0858 thank god
+KW_0859 their meth
+KW_0860 these fires
+KW_0861 they aren't
+KW_0862 they could
+KW_0863 they keep
+KW_0864 they're dead
+KW_0865 they're keeping
+KW_0866 they're kind
+KW_0867 they're under
+KW_0868 thing excellent
+KW_0869 things first
+KW_0870 things happening
+KW_0871 those places
+KW_0872 tile does
+KW_0873 tile without
+KW_0874 time i'll
+KW_0875 too concerned
+KW_0876 too concerning
+KW_0877 too far
+KW_0878 too many
+KW_0879 too much
+KW_0880 too personal
+KW_0881 too surprised
+KW_0882 toxic little
+KW_0883 track record
+KW_0884 turned additional
+KW_0885 twin number
+KW_0886 under control
+KW_0887 under us
+KW_0888 up again
+KW_0889 up from
+KW_0890 update though
+KW_0891 us whoever
+KW_0892 using all
+KW_0893 very close
+KW_0894 very fancy
+KW_0895 very much
+KW_0896 very serious
+KW_0897 very very
+KW_0898 wall's coming
+KW_0899 walls broken
+KW_0900 walls collapsing
+KW_0901 want backup
+KW_0902 we'll address
+KW_0903 whatever firefighters
+KW_0904 where they're
+KW_0905 which has
+KW_0906 while because
+KW_0907 while they
+KW_0908 who's who's
+KW_0909 whoever gets
+KW_0910 why don't
+KW_0911 wish wish
+KW_0912 without being
+KW_0913 worried about
+KW_0914 would say
+KW_0915 yellow maybe
+KW_0916 yellow tank
+KW_0917 you're welcome
+KW_0918 young girl
+KW_0919 young human
+KW_0920 young lady
+KW_0921 young woman
+KW_0922 youngish woman
+KW_0923 your rescue
+KW_0924 your weight
+KW_0925 yup yup
+KW_0926 actions left hang
+KW_0927 adjacent tile without
+KW_0928 again raises interesting
+KW_0929 all around us
+KW_0930 almost seventy-five percent
+KW_0931 already anyways if
+KW_0932 already mostly engulfed
+KW_0933 any actions left
+KW_0934 as fast as
+KW_0935 axing reputation precedes
+KW_0936 backup has arrived
+KW_0937 because nothing else
+KW_0938 because they're kind
+KW_0939 bit smoky making
+KW_0940 bit worried about
+KW_0941 blaze pop up
+KW_0942 boom boom gone
+KW_0943 boop boop boop
+KW_0944 can't hear anything
+KW_0945 can't quite hear
+KW_0946 can't support your
+KW_0947 can't tell exactly
+KW_0948 cat has been
+KW_0949 chain reaction happening
+KW_0950 collapsing all around
+KW_0951 cool backup has
+KW_0952 could easily tackle
+KW_0953 could finish knocking
+KW_0954 currently being affected
+KW_0955 damaged too many
+KW_0956 don't know if
+KW_0957 don't know why
+KW_0958 enough walls broken
+KW_0959 even crazier than
+KW_0960 fight these fires
+KW_0961 first things first
+KW_0962 full collapse before
+KW_0963 gentleman very fancy
+KW_0964 gets broken as
+KW_0965 getting pretty fiery
+KW_0966 god they could
+KW_0967 good piano player
+KW_0968 had several explosions
+KW_0969 has been smashed
+KW_0970 has had several
+KW_0971 he gets blown
+KW_0972 he ran away
+KW_0973 her hand hello
+KW_0974 high pressure tense
+KW_0975 hop hop him
+KW_0976 how they keep
+KW_0977 human being underneath
+KW_0978 inner support walls
+KW_0979 interesting how they
+KW_0980 interesting questions about
+KW_0981 keeping their meth
+KW_0982 know if they're
+KW_0983 know low hanging
+KW_0984 least moderately useful
+KW_0985 little pink floral
+KW_0986 little too personal
+KW_0987 looking pretty bad
+KW_0988 low hanging fruit
+KW_0989 m may need
+KW_0990 might actually head
+KW_0991 need our third
+KW_0992 only really given
+KW_0993 places make knock
+KW_0994 places plus also
+KW_0995 pretty bad isn't
+KW_0996 pretty much catching
+KW_0997 pretty sensitive situation
+KW_0998 pretty smoky too
+KW_0999 ran away crap
+KW_1000 real hep cat
+KW_1001 really spreading from
+KW_1002 room's getting smoky
+KW_1003 room's looking pretty
+KW_1004 same thing excellent
+KW_1005 same tile does
+KW_1006 seeing who's who's
+KW_1007 seems still seems
+KW_1008 seventy percent engulfed
+KW_1009 several explosions which
+KW_1010 should make our
+KW_1011 smelling something burning
+KW_1012 start swinging away
+KW_1013 still haven't gotten
+KW_1014 still seems fine
+KW_1015 suggestion yellow maybe
+KW_1016 taken her hand
+KW_1017 taking twin number
+KW_1018 thank god they
+KW_1019 they keep popping
+KW_1020 they're under us
+KW_1021 those places plus
+KW_1022 tile without being
+KW_1023 time i'll still
+KW_1024 too far from
+KW_1025 too many holes
+KW_1026 too much danger
+KW_1027 too surprised by
+KW_1028 toxic little area
+KW_1029 us whoever gets
+KW_1030 very serious situation
+KW_1031 very very close
+KW_1032 walls collapsing all
+KW_1033 want backup dude
+KW_1034 where they're keeping
+KW_1035 which has resulted
+KW_1036 while because they're
+KW_1037 while they aren't
+KW_1038 why don't they
+KW_1039 yellow tank top
+KW_1040 young girl appears
+KW_1041 your rescue underway
+KW_1042 almost seventy-five percent engulfed
+KW_1043 bedroom's pretty smoky too
+KW_1044 boop boop boop boop
+KW_1045 can't support your weight
+KW_1046 cat has been saved
+KW_1047 doesn't seem too concerning
+KW_1048 don't know if they're
+KW_1049 explosions which has resulted
+KW_1050 interesting how they keep
+KW_1051 know low hanging fruit
+KW_1052 little bit smoky making
+KW_1053 looking pretty bad isn't
+KW_1054 new blaze pop up
+KW_1055 peace good piano player
+KW_1056 quick boom boom gone
+KW_1057 raises interesting questions about
+KW_1058 really quick boom boom
+KW_1059 room's looking pretty bad
+KW_1060 somebody very very close
+KW_1061 they keep popping up
+KW_1062 they're keeping their meth
+KW_1063 walls collapsing all around

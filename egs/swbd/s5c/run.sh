@@ -26,7 +26,8 @@ fi
 if [ $stage -le 1 ]; then
   # prepare SWBD dictionary first since we want to find acronyms according to pronunciations
   # before mapping lexicon and transcripts
-  local/swbd1_prepare_dict.sh
+  #local/swbd1_prepare_dict.sh
+  local/safet_get_cmu_dict.sh
 fi
 
 if [ $stage -le 2 ]; then
@@ -39,16 +40,16 @@ if [ $stage -le 2 ]; then
   # Note: if you are using this link, make sure you rename conv_tab.csv to conv.tab
   # after downloading.
   # Usage: local/swbd1_data_prep.sh /path/to/SWBD [/path/to/SWBD_docs]
-  local/swbd1_data_prep.sh /export/corpora3/LDC/LDC97S62
+  #local/swbd1_data_prep.sh /export/corpora3/LDC/LDC97S62
   # local/swbd1_data_prep.sh /home/dpovey/data/LDC97S62
   # local/swbd1_data_prep.sh /data/corpora0/LDC97S62
   # local/swbd1_data_prep.sh /mnt/matylda2/data/SWITCHBOARD_1R2 # BUT,
   # local/swbd1_data_prep.sh /exports/work/inf_hcrc_cstr_general/corpora/switchboard/switchboard1
 
-  utils/prepare_lang.sh data/local/dict_nosp \
-                        "<unk>"  data/local/lang_nosp data/lang_nosp
+  utils/prepare_lang.sh data/local/dict_nosp_final \
+                        '<UNK>'  data/local/lang_nosp data/lang_nosp
 fi
-
+exit
 if [ $stage -le 3 ]; then
   # Now train the language models. We are using SRILM and interpolating with an
   # LM trained on the Fisher transcripts (part 2 disk is currently missing; so
@@ -78,22 +79,22 @@ if [ $stage -le 4 ]; then
 fi
 
 
-if [ $stage -le 5 ]; then
-  # Data preparation and formatting for eval2000 (note: the "text" file
-  # is not very much preprocessed; for actual WER reporting we'll use
-  # sclite.
-
-  # local/eval2000_data_prep.sh /data/corpora0/LDC2002S09/hub5e_00 /data/corpora0/LDC2002T43
-  # local/eval2000_data_prep.sh /mnt/matylda2/data/HUB5_2000/ /mnt/matylda2/data/HUB5_2000/2000_hub5_eng_eval_tr
-  # local/eval2000_data_prep.sh /exports/work/inf_hcrc_cstr_general/corpora/switchboard/hub5/2000 /exports/work/inf_hcrc_cstr_general/corpora/switchboard/hub5/2000/transcr
-  local/eval2000_data_prep.sh /export/corpora2/LDC/LDC2002S09/hub5e_00 /export/corpora2/LDC/LDC2002T43
-fi
-
-if [ $stage -le 6 ]; then
-  # prepare the rt03 data.  Note: this isn't 100% necessary for this
-  # recipe, not all parts actually test using rt03.
-  local/rt03_data_prep.sh /export/corpora/LDC/LDC2007S10
-fi
+#if [ $stage -le 5 ]; then
+#  # Data preparation and formatting for eval2000 (note: the "text" file
+#  # is not very much preprocessed; for actual WER reporting we'll use
+#  # sclite.
+#
+#  # local/eval2000_data_prep.sh /data/corpora0/LDC2002S09/hub5e_00 /data/corpora0/LDC2002T43
+#  # local/eval2000_data_prep.sh /mnt/matylda2/data/HUB5_2000/ /mnt/matylda2/data/HUB5_2000/2000_hub5_eng_eval_tr
+#  # local/eval2000_data_prep.sh /exports/work/inf_hcrc_cstr_general/corpora/switchboard/hub5/2000 /exports/work/inf_hcrc_cstr_general/corpora/switchboard/hub5/2000/transcr
+#  local/eval2000_data_prep.sh /export/corpora2/LDC/LDC2002S09/hub5e_00 /export/corpora2/LDC/LDC2002T43
+#fi
+#
+#if [ $stage -le 6 ]; then
+#  # prepare the rt03 data.  Note: this isn't 100% necessary for this
+#  # recipe, not all parts actually test using rt03.
+#  local/rt03_data_prep.sh /export/corpora/LDC/LDC2007S10
+#fi
 
 
 if [ $stage -le 7 ]; then
@@ -102,7 +103,7 @@ if [ $stage -le 7 ]; then
   # want to store MFCC features.
   if [ -e data/rt03 ]; then maybe_rt03=rt03; else maybe_rt03= ; fi
   mfccdir=mfcc
-  for x in train eval2000 $maybe_rt03; do
+  for x in train $maybe_rt03; do
     steps/make_mfcc.sh --nj 50 --cmd "$train_cmd" \
                        data/$x exp/make_mfcc/$x $mfccdir
     steps/compute_cmvn_stats.sh data/$x exp/make_mfcc/$x $mfccdir
@@ -148,13 +149,6 @@ if [ $stage -le 10 ]; then
   steps/train_deltas.sh --cmd "$train_cmd" \
                         3200 30000 data/train_100k_nodup data/lang_nosp exp/mono_ali exp/tri1
 
-  (
-    graph_dir=exp/tri1/graph_nosp_sw1_tg
-    $train_cmd $graph_dir/mkgraph.log \
-               utils/mkgraph.sh data/lang_nosp_sw1_tg exp/tri1 $graph_dir
-    steps/decode_si.sh --nj 30 --cmd "$decode_cmd" --config conf/decode.config \
-                       $graph_dir data/eval2000 exp/tri1/decode_eval2000_nosp_sw1_tg
-  ) &
 fi
 
 
