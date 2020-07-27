@@ -309,6 +309,18 @@ if [ $stage -le 20 ]; then
   done
 fi
 
+if [ $stage -le 21 ]; then
+  for dataset in safe_t_dev1; do
+    echo "$0: Creating hi resolution MFCCs for dir data/$dataset"
+    utils/copy_data_dir.sh data/$dataset data/${dataset}_hires
+    utils/data/perturb_data_dir_volume.sh data/${dataset}_hires
+
+    steps/make_mfcc.sh --nj 80 --mfcc-config conf/mfcc_hires.conf \
+        --cmd "$train_cmd" data/${dataset}_hires
+    steps/compute_cmvn_stats.sh data/${dataset}_hires
+    utils/fix_data_dir.sh data/${dataset}_hires;
+  done
+fi
 #if [ $stage -le 11 ]; then
 #  local/chain/run_tdnn.sh
 #fi

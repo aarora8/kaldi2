@@ -17,7 +17,7 @@ num_epochs=10
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
 tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=_b  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_b_bigger  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 common_egs_dir=  # you can set this to use previously dumped egs.
 frames_per_eg=150,110,100
 dropout_schedule='0,0@0.20,0.5@0.50,0'
