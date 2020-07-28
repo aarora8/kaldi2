@@ -129,12 +129,12 @@ if [ $stage -le 9 ]; then
 fi
 
 if [ $stage -le 10 ] ; then
-  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami data/ihm/train_swbd
+  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami data/ihm/train_swbd_wav
 fi
 
 # Feature extraction,
 if [ $stage -le 11 ]; then
-  for dset in train_isa dev eval; do
+  for dset in train_isa; do
     steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/$mic/$dset
     steps/compute_cmvn_stats.sh data/$mic/$dset
     utils/fix_data_dir.sh data/$mic/$dset
@@ -179,7 +179,7 @@ fi
 
 if [ $stage -le 16 ]; then
   echo "For ICSI we do not clean segmentations, as those are manual by default, so should be OK."
-  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami
+  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami data/ihm/train_swbd_wav
 
   utils/copy_data_dir.sh /export/c12/aarora8/OpenSAT/safet_noise_wavfile/ data/safet_noise_wavfile
   steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 data/safet_noise_wavfile
@@ -203,24 +203,75 @@ for f in utt2spk wav.scp feats.scp spk2utt reco2dur cmvn.scp utt2dur utt2num_fra
 done
 fi
 
-train_set=train_icsiami
-aug_list="noise_low noise_high clean"
 if [ $stage -le 17 ]; then
-  utils/data/get_reco2dur.sh data/ihm/${train_set}
+  train_set=train_icsiami
+  aug_list="noise_low noise_high clean"
+  utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami
+  utils/data/get_reco2dur.sh data/ihm/train_icsiami
   steps/data/augment_data_dir.py --utt-prefix "noise_low" --modify-spk-id "true" \
     --bg-snrs "10:12:14:16:18" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
-    data/$mic/${train_set} data/$mic/${train_set}_noise_low
+    data/$mic/train_icsiami data/$mic/train_icsiami_noise_low
 
   steps/data/augment_data_dir.py --utt-prefix "noise_high" --modify-spk-id "true" \
     --bg-snrs "0:2:4:6:8" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
-    data/$mic/${train_set} data/$mic/${train_set}_noise_high
+    data/$mic/train_icsiami data/$mic/train_icsiami_noise_high
 
-  utils/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train_isa
+
+  train_set=train_swbd_wav
+  aug_list="noise_low noise_high clean"
+  utils/data/get_reco2dur.sh data/ihm/train_swbd_wav
+  steps/data/augment_data_dir.py --utt-prefix "noise_low" --modify-spk-id "true" \
+    --bg-snrs "10:12:14:16:18" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
+    data/$mic/train_swbd_wav data/$mic/train_swbd_noise_low
+
+  steps/data/augment_data_dir.py --utt-prefix "noise_high" --modify-spk-id "true" \
+    --bg-snrs "0:2:4:6:8" --num-bg-noises "1" --bg-noise-dir "data/safet_noise_filtered" \
+    data/$mic/train_swbd_wav data/$mic/train_swbd_noise_high
+
+  utils/combine_data.sh data/$mic/train_aug data/$mic/train_swbd_noise_low data/$mic/train_swbd_noise_high data/$mic/train_icsiami_noise_low data/$mic/train_icsiami_noise_high data/$mic/train_isa
 fi
 
 
-if [ $stage -le 18 ]; then
+#if [ $stage -le 18 ]; then
+#  # obtain the alignment of augmented data from clean data
+#  include_original=false
+#  prefixes=""
+#  for n in $aug_list; do
+#    if [ "$n" != "clean" ]; then
+#      prefixes="$prefixes "$n
+#    else
+#      # The original train directory will not have any prefix
+#      # include_original flag will take care of copying the original alignments
+#      include_original=true
+#    fi
+#  done
+#
+#  echo "Starting SAT+FMLLR training."
+#  steps/align_si.sh --nj 30 --cmd "$train_cmd" \
+#      --use-graphs true data/$mic/train_isa data/lang exp/$mic/tri3 exp/$mic/tri3_train_ali
+#
+#  echo "$0: Creating alignments of aug data by copying alignments of clean data"
+#  steps/copy_ali_dir.sh --nj 30 --cmd "$train_cmd" \
+#    --include-original "$include_original" --prefixes "$prefixes" \
+#    data/$mic/train_aug exp/$mic/tri3_train_ali exp/$mic/tri3_train_ali_aug
+#fi
+
+if [ $stage -le 19 ]; then
+
+#   for f in data/$mic/train_swbd_noise_low data/$mic/train_swbd_noise_high data/$mic/train_icsiami_noise_low data/$mic/train_icsiami_noise_high ; do
+#    steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 $f
+#    steps/compute_cmvn_stats.sh $f
+#  done
+
+  # this is required again to inclide feats and cmvn
+  utils/combine_data.sh data/$mic/train_aug data/$mic/train_swbd_noise_low data/$mic/train_swbd_noise_high data/$mic/train_icsiami_noise_low data/$mic/train_icsiami_noise_high data/$mic/train_isa
+  steps/compute_cmvn_stats.sh data/$mic/train_aug
+fi
+
+
+if [ $stage -le 20 ]; then
   # obtain the alignment of augmented data from clean data
+  aug_list="noise_low noise_high clean"
   include_original=false
   prefixes=""
   for n in $aug_list; do
@@ -233,7 +284,10 @@ if [ $stage -le 18 ]; then
     fi
   done
 
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 data/ihm/train_swbd_wav
+  steps/compute_cmvn_stats.sh $f
   echo "Starting SAT+FMLLR training."
+  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami data/ihm/train_swbd_wav
   steps/align_si.sh --nj 30 --cmd "$train_cmd" \
       --use-graphs true data/$mic/train_isa data/lang exp/$mic/tri3 exp/$mic/tri3_train_ali
 
@@ -243,16 +297,8 @@ if [ $stage -le 18 ]; then
     data/$mic/train_aug exp/$mic/tri3_train_ali exp/$mic/tri3_train_ali_aug
 fi
 
-if [ $stage -le 19 ]; then
-   for f in data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high ; do
-    steps/make_mfcc.sh --cmd "$train_cmd" --nj 80 $f
-    steps/compute_cmvn_stats.sh $f
-  done
 
-  utils/data/combine_data.sh data/$mic/train_aug data/$mic/${train_set}_noise_low data/$mic/${train_set}_noise_high data/$mic/train_isa
-  steps/compute_cmvn_stats.sh data/$mic/train_aug
-fi
-
+exit
 if [ $stage -le 20 ]; then
   for dataset in train_aug; do
     echo "$0: Creating hi resolution MFCCs for dir data/$dataset"
