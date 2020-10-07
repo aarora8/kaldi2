@@ -3,18 +3,6 @@
 . ./cmd.sh
 . ./path.sh
 
-# You may set 'mic' to:
-#  ihm [individual headset mic- the default which gives best results]
-#  sdmN [single distant microphone- the current script allows you to select
-#        any of 4 PZM microphones, D1...D4 in a diagram, best results are with D2]
-#  mdm4 [multiple distant microphones-- currently we only support averaging over
-#       the 2,3 or 4 single microphones].
-# ... by calling this script as, for example,
-# ./run.sh --mic ihm  (will build ihm systems from individual headset mics)
-# ./run.sh --mic sdm4 (will build sdm systems from D2 mic - look ../README.txt if confused)
-# ./run.sh --mic mdm4 (will build mdm systems from D1...D4 mics)
-mic=ihm
-
 # Train systems,
 nj=30 # number of parallel jobs,
 stage=0
@@ -50,7 +38,7 @@ if [ $stage -le 1 ]; then
   utils/validate_lang.pl data/lang_nosp
   cp -r data/lang_nosp data/lang
 fi
-
+exit
 if [ $stage -le 2 ]; then
   #prepare annotations, note: dict is assumed to exist when this is called
   local/icsi_text_prep.sh $ICSI_TRANS data/local/annotations
