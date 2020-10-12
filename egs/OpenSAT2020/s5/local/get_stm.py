@@ -7,7 +7,7 @@ text_file = sys.argv[1]
 segments = sys.argv[2]
 stm = sys.argv[3]
 
-channel = "A"
+channel = "1"
 
 # segments:  <utterance-id> <recording-id> <segment-begin> <segment-end>
 # super_id = recording_id
