@@ -5,7 +5,10 @@ import sys
 
 if __name__ == '__main__':
     for line in sys.stdin:
-        utt, text = line.split(' ', 1)
+        try:
+            utt, text = line.split(' ', 1)
+        except:
+            continue
         text = text.lower()
         text = re.sub(r'[.,?]', ' ', text)
         text = re.sub(r'{[^}]+}', '<UNK>', text)
