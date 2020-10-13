@@ -32,28 +32,23 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  rm -rf data/lang_nosp data/local/lang_nosp data/local/dict_nosp
   local/safet_get_cmu_dict.sh
   utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
   utils/validate_lang.pl data/lang_nosp
-  cp -r data/lang_nosp data/lang
 fi
-exit
+
 if [ $stage -le 2 ]; then
   #prepare annotations, note: dict is assumed to exist when this is called
   local/icsi_text_prep.sh $ICSI_TRANS data/local/annotations
-  local/icsi_${base_mic}_data_prep.sh $PROCESSED_ICSI_DIR $mic
-  local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic dev
-  local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic eval
+  local/icsi_ihm_data_prep.sh $PROCESSED_ICSI_DIR ihm
+  local/icsi_ihm_scoring_data_prep.sh $PROCESSED_ICSI_DIR ihm dev
+  local/icsi_ihm_scoring_data_prep.sh $PROCESSED_ICSI_DIR ihm eval
 fi
 
 if [ $stage -le 3 ]; then
   for dset in train dev eval; do
-    seconds_per_spk_max=30
-    [ "$mic" == "ihm" ] && seconds_per_spk_max=120  # speaker info for ihm is real,
-                                                    # so organize into much bigger chunks.
     utils/data/modify_speaker_info.sh --seconds-per-spk-max 30 \
-      data/$mic/${dset}_orig data/$mic/$dset
+      data/ihm/${dset}_orig data/ihm/$dset
   done
 fi
 
@@ -62,9 +57,9 @@ if [ $stage -le 4 ]; then
   utils/data/get_utt2dur.sh data/ihm/train
 
   for dset in train dev eval; do
-    cat data/$mic/$dset/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/$mic/$dset/texttmp
-    mv data/$mic/$dset/text data/$mic/$dset/textupper
-    mv data/$mic/$dset/texttmp data/$mic/$dset/text
+    cat data/ihm/$dset/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/ihm/$dset/texttmp
+    mv data/ihm/$dset/text data/ihm/$dset/textupper
+    mv data/ihm/$dset/texttmp data/ihm/$dset/text
   done
 fi
 
@@ -91,116 +86,61 @@ if [ $stage -le 6 ] ; then
     data/local/lexicon.txt  data/lang_nosp_test
 fi
 
-if [ $stage -le 7 ] ; then
-
-#mkdir -p data/train/wav_files
-utils/copy_data_dir.sh data/train data/train_safet
-
-#while read -r line;
-#  do
-#    wav_id=$(echo "$line" | cut -d" " -f 1)
-#    wav_path=$(echo "$line" | cut -d" " -f 6)
-#    echo $wav_id
-#    echo $wav_path
-#    flac -s -c -d $wav_path | sox - -b 16 -t wav -r 16000 -c 1 data/train/wav_files/${wav_id}.wav
-#done < data/train/wav.scp
-#
-#rm data/train_safet/wav.scp
-#for wav_name in /export/c02/aarora8/kaldi2/egs/icsisafet/s5/data/train/wav_files/*.wav; do
-#  recording_id=$(echo "$wav_name" | cut -d"/" -f 12)
-#  wav_id=$(echo "$recording_id" | cut -d"." -f 1)
-#  echo $wav_id $wav_name >> data/train_safet/wav.scp
-#done
-fi
-
-if [ $stage -le 8 ]; then
-  echo "$0: preparing directory for low-resolution speed-perturbed data (for alignment)"
-  utils/data/perturb_data_dir_speed_3way.sh data/train_safet data/train_safet_sp
-fi
-
-if [ $stage -le 9 ]; then
+if [ $stage -le 7 ]; then
   utils/copy_data_dir.sh /export/c02/aarora8/kaldi/egs/ami/s5b/data/ihm/train data/ihm/train_ami
   utils/data/get_reco2dur.sh data/ihm/train_ami
   utils/data/get_utt2dur.sh data/ihm/train_ami
-  cat data/$mic/train_ami/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/$mic/train_ami/texttmp
-  mv data/$mic/train_ami/text data/$mic/train_ami/textupper
-  mv data/$mic/train_ami/texttmp data/$mic/train_ami/text
+  cat data/ihm/train_ami/text | awk '{printf $1""FS;for(i=2; i<=NF; ++i) printf "%s",tolower($i)""FS; print""}'  > data/ihm/train_ami/texttmp
+  mv data/ihm/train_ami/text data/ihm/train_ami/textupper
+  mv data/ihm/train_ami/texttmp data/ihm/train_ami/text
 fi
 
-if [ $stage -le 10 ] ; then
-  utils/data/combine_data.sh data/ihm/train_isa data/train_safet_sp data/ihm/train data/ihm/train_ami
+if [ $stage -le 8 ] ; then
+  utils/data/combine_data.sh data/ihm/train_isa data/train data/ihm/train data/ihm/train_ami
 fi
 
 # Feature extraction,
-if [ $stage -le 11 ]; then
+if [ $stage -le 9 ]; then
   for dset in train_isa dev eval; do
-    steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/$mic/$dset
-    steps/compute_cmvn_stats.sh data/$mic/$dset
-    utils/fix_data_dir.sh data/$mic/$dset
+    steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/ihm/$dset
+    steps/compute_cmvn_stats.sh data/ihm/$dset
+    utils/fix_data_dir.sh data/ihm/$dset
   done
 fi
 
 # monophone training
-if [ $stage -le 12 ]; then
-  # Full set 77h, reduced set 10.8h,
-  utils/subset_data_dir.sh data/$mic/train_isa 15000 data/$mic/train_15k
+if [ $stage -le 10 ]; then
+  utils/subset_data_dir.sh data/ihm/train_isa 15000 data/ihm/train_15k
   steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train_15k data/lang exp/$mic/mono
+    data/$mic/train_15k data/lang_nosp_test exp/ihm/mono
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train_isa data/lang exp/$mic/mono exp/$mic/mono_ali
+    data/$mic/train_isa data/lang_nosp_test exp/ihm/mono exp/ihm/mono_ali
 fi
 
 # context-dep. training with delta features.
-if [ $stage -le 13 ]; then
+if [ $stage -le 11 ]; then
   steps/train_deltas.sh --cmd "$train_cmd" \
-    5000 80000 data/$mic/train_isa data/lang exp/$mic/mono_ali exp/$mic/tri1
+    5000 80000 data/ihm/train_isa data/lang_nosp_test exp/ihm/mono_ali exp/ihm/tri1
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train_isa data/lang exp/$mic/tri1 exp/$mic/tri1_ali
+    data/ihm/train_isa data/lang_nosp_test exp/ihm/tri1 exp/ihm/tri1_ali
 fi
 
-if [ $stage -le 14 ]; then
-  # LDA_MLLT
+if [ $stage -le 12 ]; then
   steps/train_lda_mllt.sh --cmd "$train_cmd" \
     --splice-opts "--left-context=3 --right-context=3" \
-    5000 80000 data/$mic/train_isa data/lang exp/$mic/tri1_ali exp/$mic/tri2
+    5000 80000 data/$mic/train_isa data/lang_nosp_test exp/ihm/tri1_ali exp/ihm/tri2
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train_isa data/lang exp/$mic/tri2 exp/$mic/tri2_ali
+    data/$mic/train_isa data/lang_nosp_test exp/ihm/tri2 exp/ihm/tri2_ali
 fi
 
 
-if [ $stage -le 15 ]; then
-  # LDA+MLLT+SAT
+if [ $stage -le 13 ]; then
   steps/train_sat.sh --cmd "$train_cmd" \
-    5000 80000 data/$mic/train_isa data/lang exp/$mic/tri2_ali exp/$mic/tri3
+    5000 80000 data/$mic/train_isa data/lang_nosp_test exp/ihm/tri2_ali exp/ihm/tri3
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/$mic/train_isa data/lang exp/$mic/tri3 exp/$mic/tri3_ali
+    data/ihm/train_isa data/lang_nosp_test exp/ihm/tri3 exp/$mic/tri3_ali
 fi
-
-LM=data/local/srilm/lm.gz
-if [ $stage -le 16 ]; then
-  # Now we compute the pronunciation and silence probabilities from training data,
-  # and re-create the lang directory.
-  steps/get_prons.sh --cmd "$train_cmd" data/$mic/train_isa data/lang_nosp exp/$mic/tri3
-  utils/dict_dir_add_pronprobs.sh --max-normalize true \
-    data/local/dict_nosp exp/$mic//tri3/pron_counts_nowb.txt \
-    exp/$mic/tri3/sil_counts_nowb.txt \
-    exp/$mic/tri3/pron_bigram_counts_nowb.txt data/local/dict
-
-  echo "$0:  prepare new lang with pronunciation and silence modeling..."
-  utils/prepare_lang.sh data/local/dict "<UNK>" data/local/lang data/lang_tmp
-  utils/format_lm.sh \
-    data/lang_tmp $LM data/local/dict/lexicon.txt data/lang_test
-fi
-
-
-if [ $stage -le 17 ]; then
-  ### Triphone + LDA and MLLT + SAT and FMLLR
-  echo "Starting SAT+FMLLR training."
-  steps/train_sat.sh --cmd "$train_cmd" 5000 80000 \
-      data/$mic/train_isa data/lang_test exp/$mic/tri3_ali exp/$mic/tri4
-  echo "SAT+FMLLR training done."
-fi
-
+exit
 if [ $stage -le 18 ]; then
   echo "For ICSI we do not clean segmentations, as those are manual by default, so should be OK."
   utils/data/combine_data.sh data/ihm/train_icsiami data/ihm/train data/ihm/train_ami

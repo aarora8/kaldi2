@@ -89,7 +89,7 @@ if [ "$words_file" == "auto" ]; then
   sed 's/ /\n/g'  $train_text | sort -u | sed '/^ *$/d' > $tgtdir/words.txt
   words_file=$tgtdir/words.txt
 else
-  [ -z $words_file ] && words_file=$datadir/lang_nosp_3/words.txt
+  [ -z $words_file ] && words_file=$datadir/lang_nosp/words.txt
 fi
 echo "Using words file: $words_file"
 
