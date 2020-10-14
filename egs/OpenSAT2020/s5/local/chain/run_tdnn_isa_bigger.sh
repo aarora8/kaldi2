@@ -10,6 +10,8 @@ num_epochs=10
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
+xent_regularize=0.1
+get_egs_stage=-10
 tree_affix=_all  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
 tdnn_affix=_all  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 nnet3_affix=_all
@@ -22,7 +24,6 @@ echo "$0 $@"
 . ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
-
 
 if ! cuda-compiled; then
   cat <<EOF && exit 1
@@ -46,9 +47,7 @@ lang_dir=data/lang_nosp_test
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
 lat_dir=exp/tri3_${train_set}_lats_sp
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
-
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
-xent_regularize=0.1
 
 for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
    $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp; do
@@ -156,17 +155,17 @@ fi
 if [ $stage -le 18 ]; then
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $dir/egs/storage ]; then
     utils/create_split_dir.pl \
-     /export/b0{5,6,7,8}/$USER/kaldi-data/egs/ami-$(date +'%m_%d_%H_%M')/s5/$dir/egs/storage $dir/egs/storage
+     /export/b0{5,6,7,8}/$USER/kaldi-data/egs/opensat-$(date +'%m_%d_%H_%M')/s5/$dir/egs/storage $dir/egs/storage
   fi
 
 steps/nnet3/chain/train.py --stage $train_stage \
-    --cmd "$gpu_cmd" \
+    --cmd "$decode_cmd" \
     --feat.online-ivector-dir $train_ivector_dir \
     --feat.cmvn-opts "--norm-means=false --norm-vars=false" \
     --chain.xent-regularize $xent_regularize \
-    --chain.leaky-hmm-coefficient=0.1 \
-    --chain.l2-regularize=0.0 \
-    --chain.apply-deriv-weights=false \
+    --chain.leaky-hmm-coefficient 0.1 \
+    --chain.l2-regularize 0.0 \
+    --chain.apply-deriv-weights false \
     --chain.lm-opts="--num-extra-lm-states=2000" \
     --trainer.dropout-schedule $dropout_schedule \
     --trainer.add-option="--optimization.memory-compression-level=2" \
