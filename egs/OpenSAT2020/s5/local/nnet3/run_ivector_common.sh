@@ -9,10 +9,10 @@ set -euo pipefail
 # of usage.
 
 stage=0
+nj=60
 train_set=train_all
 gmm=tri3
 nnet3_affix=_all
-nj=60
 
 . ./cmd.sh
 . ./path.sh
