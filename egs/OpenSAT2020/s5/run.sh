@@ -46,7 +46,6 @@ fi
 
 if [ $stage -le 3 ]; then
   local/ami_text_prep.sh data/local/download
-
   local/ami_ihm_data_prep.sh $AMI_DIR
   local/ami_ihm_scoring_data_prep.sh $AMI_DIR dev
   local/ami_ihm_scoring_data_prep.sh $AMI_DIR eval
