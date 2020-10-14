@@ -15,7 +15,7 @@ mkdir -p $outdir
 
 ext=orig
 [ -f local/split_train.final ] && ext=final
-cat local/split_*.$ext | sort > $outdir/meetlist
+cat local/ICSI_split_*.$ext | sort > $outdir/meetlist
 
 meet=$(head -n1 $outdir/meetlist)
 [ ! -f "$icsi_trans_dir/transcripts/$meet.mrt" ] \

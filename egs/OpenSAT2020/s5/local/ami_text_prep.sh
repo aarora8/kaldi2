@@ -23,18 +23,18 @@ annot="$dir/$annotver"
 logdir=data/local/downloads; mkdir -p $logdir/log
 [ ! -f $annot.zip ] && wget -nv -O $annot.zip $amiurl/AMICorpusAnnotations/$annotver.zip &> $logdir/log/download_ami_annot.log
 
-if [ ! -d $dir/annotations ]; then
-  mkdir -p $dir/annotations
-  unzip -o -d $dir/annotations $annot.zip &> /dev/null
+if [ ! -d $dir/AMI_annotations ]; then
+  mkdir -p $dir/AMI_annotations
+  unzip -o -d $dir/AMI_annotations $annot.zip &> /dev/null
 fi
 
-[ ! -f "$dir/annotations/AMI-metadata.xml" ] && echo "$0: File AMI-Metadata.xml not found under $dir/annotations." && exit 1;
+[ ! -f "$dir/AMI_annotations/AMI-metadata.xml" ] && echo "$0: File AMI-Metadata.xml not found under $dir/AMI_annotations." && exit 1;
 
 
 # extract text from AMI XML annotations,
 local/ami_xml2text.sh $dir
 
-wdir=data/local/annotations
+wdir=data/local/AMI_annotations
 [ ! -f $wdir/transcripts1 ] && echo "$0: File $wdir/transcripts1 not found." && exit 1;
 
 echo "Preprocessing transcripts..."

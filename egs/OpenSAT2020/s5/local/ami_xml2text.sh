@@ -8,9 +8,9 @@ if [ $# -ne 1 ]; then
 fi
 
 adir=$1
-wdir=data/local/annotations
+wdir=data/local/AMI_annotations
 
-[ ! -f $adir/annotations/AMI-metadata.xml ] && echo "$0: File $adir/annotations/AMI-metadata.xml no found." && exit 1;
+[ ! -f $adir/AMI_annotations/AMI-metadata.xml ] && echo "$0: File $adir/AMI_annotations/AMI-metadata.xml no found." && exit 1;
 
 mkdir -p $wdir/log
 

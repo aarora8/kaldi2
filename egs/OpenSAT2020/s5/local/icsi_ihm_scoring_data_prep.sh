@@ -25,7 +25,7 @@ ICSI_DIR=$1
 mic=$2
 SET=$3
 
-SEGS=data/local/annotations/$SET.txt
+SEGS=data/local/ICSI_annotations/$SET.txt
 dir=data/local/$mic/$SET
 odir=data/ihm/${SET}_orig
 mkdir -p $dir

@@ -22,7 +22,7 @@ if [ $# -ne 2 ] || [ "$2" != "ihm" ]; then
 fi
 
 ICSI_DIR=$1
-SEGS=data/local/annotations/train.txt
+SEGS=data/local/ICSI_annotations/train.txt
 dir=data/local/ihm/train
 odir=data/ihm/train_orig
 mkdir -p $dir

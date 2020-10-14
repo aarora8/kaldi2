@@ -45,15 +45,14 @@ if [ $stage -le 2 ]; then
   local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR ihm eval
 fi
 
-if [ $stage -le 2 ]; then
+if [ $stage -le 3 ]; then
   local/ami_text_prep.sh data/local/download
   local/ami_ihm_data_prep.sh $AMI_DIR ihm
   local/ami_ihm_scoring_data_prep.sh $AMI_DIR ihm dev
   local/ami_ihm_scoring_data_prep.sh $AMI_DIR ihm eval
 fi
 
-exit
-if [ $stage -le 3 ]; then
+if [ $stage -le 4 ]; then
   for dset in train dev eval; do
     utils/data/modify_speaker_info.sh --seconds-per-spk-max 30 \
       data/ihm/${dset}_orig data/ihm/$dset
