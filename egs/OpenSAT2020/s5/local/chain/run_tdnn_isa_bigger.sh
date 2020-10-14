@@ -14,7 +14,6 @@ tree_affix=_all  # affix for tree directory, e.g. "a" or "b", in case we change 
 tdnn_affix=_all  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 nnet3_affix=_all
 common_egs_dir= 
-frames_per_eg=150,110,100
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
 # End configuration section.
@@ -46,7 +45,7 @@ train_data_dir=data/${train_set}_hires
 lang_dir=data/lang_nosp_test
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
 lat_dir=exp/tri3_${train_set}_lats_sp
-dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}_all
+dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
 
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
 xent_regularize=0.1
