@@ -3,7 +3,7 @@
 . ./cmd.sh
 . ./path.sh
 
-ICSI_TRANS=/disks/data1/corpora/icsi_mr_transcr #where to find ICSI transcriptions [required]
+ICSI_TRANS=/export/corpora3/LDC/LDC2004T04/icsi_mr_transcr #where to find ICSI transcriptions [required]
 FISHER_TRANS=/disks/data1/corpora/LDC2004T19/fe_03_p1_tran #where to find FISHER transcriptions [optional, for LM esimation]
 
 . utils/parse_options.sh
@@ -26,7 +26,7 @@ utils/prepare_lang.sh data/local/dict "<unk>" data/local/lang data/lang
 #prepare annotations, note: dict is assumed to exist when this is called
 local/icsi_text_prep.sh $ICSI_TRANS data/local/annotations
 
-local/icsi_train_lms.sh --fisher $FISHER_TRANS data/local/annotations/train.txt data/local/annotations/dev.txt data/local/dict/lexicon.txt data/local/lm
+local/icsi_train_lms.sh data/local/annotations/train.txt data/local/annotations/dev.txt data/local/dict/lexicon.txt data/local/lm
 
 final_lm=$(cat data/local/lm/final_lm)
 LM=$final_lm.pr1-7

@@ -27,7 +27,7 @@ set -euo pipefail
 
 # Path where ICSI gets downloaded (or where locally available):
 # Note: provide the path to a subdirectory with meeting folders (i.e. B* ones)
-ICSI_DIR=/disks/data1/corpora/meeting_speech/speech # Default
+ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech # Default
 
 [ ! -r data/local/lm/final_lm ] && echo "Please, run 'run_prepare_shared.sh' first!" && exit 1
 final_lm=$(cat data/local/lm/final_lm)
