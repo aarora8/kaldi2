@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This script uses weight transfer as a transfer learning method to transfer
-# already trained neural net model on wsj to rm.
+# already trained neural net model on ICSI+AMI to safet
 #
 # Model preparation: The last layer (prefinal and output layer) from
 # already-trained wsj model is removed and 3 randomly initialized layer
@@ -11,15 +11,15 @@
 # while new added layers are trained with larger learning rate using rm data.
 set -e
 
-dir=exp/chain/tdnn_wsj_rm_1a
-src_mdl=../../wsj/s5/exp/chain/tdnn1d_sp/final.mdl # Input chain model
+dir=exp/chain_finetune/tdnn_finetune
+src_mdl=exp/chain_icsiami/tdnn_icsiami/final.mdl # Input chain model
                                                    # trained on source dataset (wsj).
                                                    # This model is transfered to the target domain.
 
-src_mfcc_config=../../wsj/s5/conf/mfcc_hires.conf # mfcc config used to extract higher dim
+src_mfcc_config=conf/mfcc_hires.conf # mfcc config used to extract higher dim
                                                   # mfcc features for ivector and DNN training
                                                   # in the source domain.
-src_ivec_extractor_dir=  # Source ivector extractor dir used to extract ivector for
+src_ivec_extractor_dir=exp/nnet3_icsiami/extractor  # Source ivector extractor dir used to extract ivector for
                          # source data. The ivector for target data is extracted using this extractor.
                          # It should be nonempty, if ivector is used in the source model training.
 
@@ -28,21 +28,21 @@ primary_lr_factor=0.25 # The learning-rate factor for transferred layers from so
                        # are fixed.
                        # The learning-rate factor for new added layers is 1.0.
 
-nnet_affix=_online_wsj
+nnet_affix=_finetune
 
 set -e -o pipefail
 stage=0
 nj=30
-train_set=train_all
-gmm=tri3
+train_set=train_safet
+gmm=tri3_finetune
 num_epochs=10
 
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
-tree_affix=_all  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=_all  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
-nnet3_affix=_all
+tree_affix=_finetune  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_finetune  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+nnet3_affix=_finetune
 common_egs_dir=
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
@@ -63,29 +63,18 @@ where "nvcc" is installed.
 EOF
 fi
 
-# The iVector-extraction and feature-dumping parts are the same as the standard
-# nnet3 setup, and you can skip them by setting "--stage 4" if you have already
-# run those things.
-ali_dir=exp/tri3b_ali
-treedir=exp/chain/tri4_5n_tree
-lang=data/lang_chain_5n
-
-
-local/nnet3/run_ivector_common.sh --stage $stage \
-                                  --nj $nj \
-                                  --train-set $train_set \
-                                  --gmm $gmm \
-                                  --nnet3-affix "$nnet3_affix"
+local/nnet3/run_ivector_common_finetune.sh --stage $stage \
+                                           --nj $nj \
+                                           --train-set $train_set \
+                                           --nnet3-affix "$nnet3_affix"
 
 gmm_dir=exp/$gmm
 ali_dir=exp/${gmm}_${train_set}_ali_sp
+tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
+lang_dir=data/lang_nosp_test
 lores_train_data_dir=data/${train_set}
 train_data_dir=data/${train_set}_hires
-lang_dir=data/lang_nosp_test
-tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-lat_dir=exp/tri3_${train_set}_lats_sp
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
-
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
 xent_regularize=0.1
 
@@ -96,34 +85,34 @@ if [ $stage -le 4 ]; then
   rm $lat_dir/fsts.*.gz
 fi
 
-if [ $stage -le 5 ]; then
-  echo "$0: creating lang directory with one state per phone."
-  # Create a version of the lang/ directory that has one state per phone in the
-  # topo file. [note, it really has two states.. the first one is only repeated
-  # once, the second one has zero or more repeats.]
-  if [ -d data/lang_chain ]; then
-    if [ data/lang_chain/L.fst -nt $lang_dir/L.fst ]; then
-      echo "$0: data/lang_chain already exists, not overwriting it; continuing"
-    else
-      echo "$0: data/lang_chain already exists and seems to be older than data/lang..."
-      echo " ... not sure what to do.  Exiting."
-      exit 1;
-    fi
-  else
-    cp -r $lang_dir data/lang_chain
-    silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
-    nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
-    # Use our special topology... note that later on may have to tune this topology.
-    steps/nnet3/chain/gen_topo.py $nonsilphonelist $silphonelist >data/lang_chain/topo
-  fi
-fi
-
-if [ $stage -le 6 ]; then
-  steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
-      --context-opts "--context-width=2 --central-position=1" \
-      --leftmost-questions-truncate -1 \
-      --cmd "$train_cmd" 5000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
-fi
+#if [ $stage -le 5 ]; then
+#  echo "$0: creating lang directory with one state per phone."
+#  # Create a version of the lang/ directory that has one state per phone in the
+#  # topo file. [note, it really has two states.. the first one is only repeated
+#  # once, the second one has zero or more repeats.]
+#  if [ -d data/lang_chain ]; then
+#    if [ data/lang_chain/L.fst -nt $lang_dir/L.fst ]; then
+#      echo "$0: data/lang_chain already exists, not overwriting it; continuing"
+#    else
+#      echo "$0: data/lang_chain already exists and seems to be older than data/lang..."
+#      echo " ... not sure what to do.  Exiting."
+#      exit 1;
+#    fi
+#  else
+#    cp -r $lang_dir data/lang_chain
+#    silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
+#    nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
+#    # Use our special topology... note that later on may have to tune this topology.
+#    steps/nnet3/chain/gen_topo.py $nonsilphonelist $silphonelist >data/lang_chain/topo
+#  fi
+#fi
+#
+#if [ $stage -le 6 ]; then
+#  steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
+#      --context-opts "--context-width=2 --central-position=1" \
+#      --leftmost-questions-truncate -1 \
+#      --cmd "$train_cmd" 5000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
+#fi
 
 if [ $stage -le 7 ]; then
   echo "$0: Create neural net configs using the xconfig parser for";
@@ -134,12 +123,6 @@ if [ $stage -le 7 ]; then
   mkdir -p $dir
   mkdir -p $dir/configs
   cat <<EOF > $dir/configs/network.xconfig
-  relu-renorm-layer name=tdnn-target input=Append(tdnn6.renorm@-3,tdnn6.renorm) dim=450
-  ## adding the layers for chain branch
-  relu-renorm-layer name=prefinal-chain input=tdnn-target dim=450 target-rms=0.5
-  output-layer name=output include-log-softmax=false dim=$num_targets max-change=1.5
-  relu-renorm-layer name=prefinal-xent input=tdnn-target dim=450 target-rms=0.5
-  output-layer name=output-xent dim=$num_targets learning-rate-factor=$learning_rate_factor max-change=1.5
 EOF
   steps/nnet3/xconfig_to_configs.py --existing-model $src_mdl \
     --xconfig-file  $dir/configs/network.xconfig  \

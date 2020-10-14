@@ -113,7 +113,7 @@ if [ $stage -le 6 ]; then
   local/safet_build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
   local/safet_build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
 
-  utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
+  utils/data/combine_data.sh data/train_safet data/safe_t_r20 data/safe_t_r11
 fi
 
 if [ $stage -le 7 ] ; then
@@ -125,7 +125,7 @@ if [ $stage -le 7 ] ; then
 fi
 
 if [ $stage -le 8 ] ; then
-  utils/data/combine_data.sh data/train_all data/train data/AMI/train data/ICSI/train
+  utils/data/combine_data.sh data/train_all data/train_safet data/AMI/train data/ICSI/train
 fi
 
 # Feature extraction,
