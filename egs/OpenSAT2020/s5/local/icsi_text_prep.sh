@@ -43,7 +43,7 @@ echo "Normalising data"
 cat $outdir/all.txt | local/icsi_normalise_segments.pl > $outdir/all_normalised.txt
 # perfrom some dict matching e.g. LIVING-ROOM -> LIVINGROOM (if the former does not exist, 
 # but the latter is in the dictionary
-local/icsi_agree_words.sh $outdir/all_normalised.txt data/local/dict_nosp/lexicon.txt $outdir/match_with_dict
+local/icsi_agree_words.sh $outdir/all_normalised.txt data/local/dict/lexicon.txt $outdir/match_with_dict
 
 [ ! -f $outdir/match_with_dict/segments2 ] && \
   echo "Dict matching failed..." && exit 1;
