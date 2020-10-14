@@ -22,8 +22,7 @@ SAFE_T_TEXTS_DEV1=/export/corpora5/opensat_corpora/LDC2019E53
 SAFE_T_AUDIO_EVAL1=/export/corpora5/opensat_corpora/LDC2020E07
 ICSI_TRANS=/export/corpora3/LDC/LDC2004T04/icsi_mr_transcr
 ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech
-AMI_DIR=/export/corpora5/amicorpus
-PROCESSED_ICSI_DIR=$ICSI_DIR
+AMI_DIR=/export/corpora5/amicorpus/
 
 if [ $stage -le 0 ]; then
   local/safet_data_prep.sh ${SAFE_T_AUDIO_R11} ${SAFE_T_TEXTS_R11} data/safe_t_r11
@@ -40,21 +39,17 @@ fi
 
 if [ $stage -le 2 ]; then
   #prepare annotations, note: dict is assumed to exist when this is called
-  local/icsi_text_prep.sh $ICSI_TRANS data/local/annotations
-  local/icsi_ihm_data_prep.sh $PROCESSED_ICSI_DIR ihm
-  local/icsi_ihm_scoring_data_prep.sh $PROCESSED_ICSI_DIR ihm dev
-  local/icsi_ihm_scoring_data_prep.sh $PROCESSED_ICSI_DIR ihm eval
+  local/icsi_text_prep.sh $ICSI_TRANS data/local/ICSI_annotations
+  local/icsi_ihm_data_prep.sh $ICSI_DIR ihm
+  local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR ihm dev
+  local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR ihm eval
 fi
 
 if [ $stage -le 2 ]; then
-  #prepare annotations, note: dict is assumed to exist when this is called
   local/ami_text_prep.sh data/local/download
-fi
-
-if [ $stage -le 2 ]; then
-  local/ami_ihm_data_prep.sh /export/corpora5/amicorpus/ ihm
-  local/ami_ihm_scoring_data_prep.sh /export/corpora5/amicorpus/ ihm dev
-  local/ami_ihm_scoring_data_prep.sh /export/corpora5/amicorpus/ ihm eval
+  local/ami_ihm_data_prep.sh $AMI_DIR ihm
+  local/ami_ihm_scoring_data_prep.sh $AMI_DIR ihm dev
+  local/ami_ihm_scoring_data_prep.sh $AMI_DIR ihm eval
 fi
 
 exit
