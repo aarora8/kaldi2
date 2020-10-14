@@ -29,7 +29,7 @@ set -euo pipefail
 AMI_DIR=$PWD/wav_db # Default,
 case $(hostname -d) in
   fit.vutbr.cz) AMI_DIR=/mnt/matylda5/iveselyk/KALDI_AMI_WAV ;; # BUT,
-  clsp.jhu.edu) AMI_DIR=/export/corpora4/ami/amicorpus ;; # JHU,
+  clsp.jhu.edu) AMI_DIR=/export/corpora5/amicorpus ;; # JHU,
   cstr.ed.ac.uk) AMI_DIR= ;; # Edinburgh,
 esac
 
@@ -50,7 +50,6 @@ if [ $stage -le 0 ]; then
   fi
   local/ami_download.sh $mic $AMI_DIR
 fi
-
 
 if [ "$base_mic" == "mdm" ]; then
   PROCESSED_AMI_DIR=$AMI_DIR/beamformed
