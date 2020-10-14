@@ -23,8 +23,8 @@ fi
 
 ICSI_DIR=$1
 SEGS=data/local/ICSI_annotations/train.txt
-dir=data/local/ihm/train
-odir=data/ihm/train_orig
+dir=data/local/ICSI_ihm/train
+odir=data/ICSI/train_orig
 mkdir -p $dir
 
 # Audio data directory check

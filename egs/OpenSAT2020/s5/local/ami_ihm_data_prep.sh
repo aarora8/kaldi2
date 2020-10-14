@@ -12,18 +12,17 @@
 . ./path.sh
 
 #check existing directories
-if [ $# -ne 2 ] || [ "$2" != "ihm" ]; then
-  echo "Usage: $0 /path/to/AMI ihm"
-  echo "e.g. $0 /foo/bar/AMI ihm"
-  echo "note: the 2nd 'ihm' argument is for compatibility with other scripts."
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 /path/to/AMI"
+  echo "e.g. $0 /foo/bar/AMI"
   exit 1;
 fi
 
 AMI_DIR=$1
 
 SEGS=data/local/AMI_annotations/train.txt
-dir=data/local/ihm/train
-odir=data/ihm/train_orig
+dir=data/local/AMI_ihm/train
+odir=data/AMI/train_orig
 mkdir -p $dir
 
 # Audio data directory check
