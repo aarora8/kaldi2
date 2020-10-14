@@ -6,25 +6,22 @@ set -e -o pipefail
 stage=0
 mic=ihm
 nj=30
-use_ihm_ali=false
-train_set=train_aug
-gmm=tri3  # the gmm for the target data
-ihm_gmm=tri3  # the gmm for the IHM system (if --use-ihm-ali true).
-nnet3_affix=_1a  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
+train_set=train_all
+gmm=tri3
 num_epochs=10
 
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
-tree_affix=  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=_bsp_noise_amiicsisafet_bigger_onlytdnn  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
-common_egs_dir=  # you can set this to use previously dumped egs.
+tree_affix=_all  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_all  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+nnet3_affix=_all
+common_egs_dir= 
 frames_per_eg=150,110,100
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
-aug_list="noise_low noise_high clean"
 # End configuration section.
-echo "$0 $@"  # Print the command line for logging
+echo "$0 $@"
 
 . ./cmd.sh
 . ./path.sh
@@ -39,22 +36,23 @@ where "nvcc" is installed.
 EOF
 fi
 
-local/nnet3/multicondition/run_ivector_common.sh --stage $stage \
-                                  --mic $mic \
+local/nnet3/run_ivector_common.sh --stage $stage \
                                   --nj $nj \
                                   --train-set $train_set \
                                   --gmm $gmm \
                                   --nnet3-affix "$nnet3_affix"
 
-gmm_dir=exp/${mic}/$gmm
-ali_dir=exp/$mic/tri3_train_ali_aug
-lores_train_data_dir=data/$mic/${train_set}
-tree_dir=exp/$mic/chain${nnet3_affix}/tree_bi${tree_affix}
-lat_dir=exp/$mic/tri3_train_lats_aug
-dir=exp/$mic/chain${nnet3_affix}/tdnn${tdnn_affix}_aug
+gmm_dir=exp/$gmm
+ali_dir=exp/${gmm}_${train_set}_ali_sp
+lores_train_data_dir=data/${train_set}
+train_data_dir=data/${train_set}_hires
+lang_dir=data/lang_nosp_test
+tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
+lat_dir=exp/tri3_${train_set}_lats_sp
+dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}_all
 
-train_data_dir=data/$mic/${train_set}_hires
-train_ivector_dir=exp/$mic/nnet3${nnet3_affix}/ivectors_${train_set}_hires
+train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
+xent_regularize=0.1
 
 for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
    $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp; do
@@ -63,22 +61,10 @@ done
 
 
 if [ $stage -le 11 ]; then
-  prefixes=""
-  include_original=false
-  for n in $aug_list; do
-    if [ "$n" != "clean" ]; then
-      prefixes="$prefixes "$n
-    else
-      include_original=true
-    fi
-  done
-  nj=$(cat exp/$mic/tri3_train_ali_aug/num_jobs) || exit 1;
-  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" data/$mic/train_isa \
-    data/lang exp/$mic/tri3 exp/$mic/tri3_lats_clean
-  rm exp/$mic/tri3_lats_clean/fsts.*.gz # save space
-  steps/copy_lat_dir.sh --nj $nj --cmd "$train_cmd" \
-    --include-original "$include_original" --prefixes "$prefixes" \
-    data/$mic/train_aug exp/$mic/tri3_lats_clean exp/$mic/tri3_train_lats_aug || exit 1;
+  nj=$(cat $ali_dir/num_jobs) || exit 1;
+  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" $lores_train_data_dir \
+    $lang_dir $gmm_dir $lat_dir
+  rm $lat_dir/fsts.*.gz
 fi
 
 if [ $stage -le 12 ]; then
@@ -87,7 +73,7 @@ if [ $stage -le 12 ]; then
   # topo file. [note, it really has two states.. the first one is only repeated
   # once, the second one has zero or more repeats.]
   if [ -d data/lang_chain ]; then
-    if [ data/lang_chain/L.fst -nt data/lang/L.fst ]; then
+    if [ data/lang_chain/L.fst -nt $lang_dir/L.fst ]; then
       echo "$0: data/lang_chain already exists, not overwriting it; continuing"
     else
       echo "$0: data/lang_chain already exists and seems to be older than data/lang..."
@@ -95,36 +81,25 @@ if [ $stage -le 12 ]; then
       exit 1;
     fi
   else
-    cp -r data/lang data/lang_chain
+    cp -r $lang_dir data/lang_chain
     silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
     nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
-    # Use our special topology... note that later on may have to tune this
-    # topology.
+    # Use our special topology... note that later on may have to tune this topology.
     steps/nnet3/chain/gen_topo.py $nonsilphonelist $silphonelist >data/lang_chain/topo
   fi
 fi
 
 if [ $stage -le 14 ]; then
-  # Build a tree using our new topology.  We know we have alignments for the
-  # speed-perturbed data (local/nnet3/run_ivector_common.sh made them), so use
-  # those.
-  if [ -f $tree_dir/final.mdl ]; then
-    echo "$0: $tree_dir/final.mdl already exists, refusing to overwrite it."
-    exit 1;
-  fi
   steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
       --context-opts "--context-width=2 --central-position=1" \
       --leftmost-questions-truncate -1 \
       --cmd "$train_cmd" 5000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
 fi
 
-xent_regularize=0.1
-
 if [ $stage -le 15 ]; then
   mkdir -p $dir
 
   echo "$0: creating neural net configs using the xconfig parser";
-
   num_targets=$(tree-info $tree_dir/tree |grep num-pdfs|awk '{print $2}')
   learning_rate_factor=$(echo "print 0.5/$xent_regularize" | python)
 
@@ -196,7 +171,7 @@ steps/nnet3/chain/train.py --stage $train_stage \
     --egs.chunk-width 140,100,160 \
     --trainer.num-chunk-per-minibatch 64 \
     --trainer.frames-per-iter 3000000 \
-    --trainer.num-epochs 6.8 \
+    --trainer.num-epochs 10 \
     --trainer.optimization.num-jobs-initial 3 \
     --trainer.optimization.num-jobs-final 5 \
     --trainer.optimization.initial-effective-lrate 0.00025 \
@@ -217,7 +192,7 @@ fi
 if [ $stage -le 20 ]; then
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
-        --online-ivector-dir exp/ihm/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
+        --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
        $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
 fi
 exit 0
