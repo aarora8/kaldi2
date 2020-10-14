@@ -10,11 +10,9 @@ set -euo pipefail
 
 stage=0
 train_set=train_all
-test_sets="dev_worn dev_beamformit_ref"
 gmm=tri3
-nj=96
-
 nnet3_affix=_all
+nj=60
 
 . ./cmd.sh
 . ./path.sh

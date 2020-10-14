@@ -142,4 +142,8 @@ if [ $stage -le 13 ]; then
     data/train_all data/lang_nosp_test exp/tri3 exp/tri3_ali
 fi
 
+if [ $stage -le 14 ]; then
+  local/nnet3/run_ivector_common.sh
+fi
+
 exit 0
