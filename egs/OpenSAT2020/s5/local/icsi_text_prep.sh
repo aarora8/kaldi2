@@ -52,7 +52,7 @@ cp $outdir/match_with_dict/segments2 $outdir/all_final.txt
 echo "Preparing final train/dev/eval splits"
 # make final train/dev/eval splits
 for dset in train eval dev; do
-  grep -f local/split_$dset.$ext $outdir/all_final.txt > $outdir/$dset.txt
+  grep -f local/ICSI_split_$dset.$ext $outdir/all_final.txt > $outdir/$dset.txt
 done
 
 echo "ICSI text preparation succeeded"
