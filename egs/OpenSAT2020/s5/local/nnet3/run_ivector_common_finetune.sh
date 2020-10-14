@@ -69,4 +69,24 @@ if [ $stage -le 3 ]; then
     utils/fix_data_dir.sh data/${datadir}_hires || exit 1;
   done
 fi
+
+if [ $stage -le 6 ]; then
+  # We extract iVectors on the speed-perturbed training data after combining
+  # short segments, which will be what we train the system on.  With
+  # --utts-per-spk-max 2, the script pairs the utterances into twos, and treats
+  # each of these pairs as one speaker; this gives more diversity in iVectors..
+  # Note that these are extracted 'online'.
+
+  # note, we don't encode the 'max2' in the name of the ivectordir even though
+  # that's the data we extract the ivectors from, as it's still going to be
+  # valid for the non-'max2' data, the utterance list is the same.
+
+  # having a larger number of speakers is helpful for generalization, and to
+  # handle per-utterance decoding well (iVector starts at zero).
+  utils/data/modify_speaker_info.sh --utts-per-spk-max 2 \
+    data/${train_set}_sp_hires data/${train_set}_sp_hires_max2
+
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj ${nj} \
+    data/${train_set}_sp_hires_max2 $extractor $ivectordir
+fi
 exit 0
