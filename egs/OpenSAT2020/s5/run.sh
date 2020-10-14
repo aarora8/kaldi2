@@ -38,7 +38,7 @@ fi
 
 if [ $stage -le 2 ]; then
   #prepare annotations, note: dict is assumed to exist when this is called
-  local/icsi_run_prepare_shared.sh data/local/ICSI_annotations
+  local/icsi_run_prepare_shared.sh
   local/icsi_ihm_data_prep.sh $ICSI_DIR
   local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR dev
   local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR eval
