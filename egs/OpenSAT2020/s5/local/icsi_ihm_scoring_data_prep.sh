@@ -14,20 +14,18 @@
 . ./path.sh
 
 #check existing directories
-if [ $# -ne 3 ] || [ "$2" != "ihm" ]; then
-  echo "Usage: $0 /path/to/ICSI ihm set"
-  echo "e.g. $0 /foo/bar/ICSI ihm set"
-  echo "note: the 2nd 'ihm' argument is for compatibility with other scripts."
+if [ $# -ne 2 ]; then
+  echo "Usage: $0 /path/to/ICSI set"
+  echo "e.g. $0 /foo/bar/ICSI set"
   exit 1;
 fi
 
 ICSI_DIR=$1
-mic=$2
-SET=$3
+SET=$2
 
 SEGS=data/local/ICSI_annotations/$SET.txt
-dir=data/local/$mic/$SET
-odir=data/ihm/${SET}_orig
+dir=data/local/ICSI_ihm/$SET
+odir=data/ICSI/${SET}_orig
 mkdir -p $dir
 
 # Audio data directory check

@@ -20,7 +20,7 @@ amiurl=http://groups.inf.ed.ac.uk/ami
 annotver=ami_public_manual_1.6.1
 annot="$dir/$annotver"
 
-logdir=data/local/download mkdir -p $logdir/log
+logdir=data/local/download; mkdir -p $logdir/log
 [ ! -f $annot.zip ] && wget -nv -O $annot.zip $amiurl/AMICorpusAnnotations/$annotver.zip &> $logdir/log/download_ami_annot.log
 
 if [ ! -d $dir/AMI_annotations ]; then

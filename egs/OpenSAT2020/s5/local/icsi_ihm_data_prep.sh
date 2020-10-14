@@ -14,10 +14,9 @@
 . ./path.sh
 
 #check existing directories
-if [ $# -ne 2 ] || [ "$2" != "ihm" ]; then
-  echo "Usage: $0 /path/to/ICSI ihm"
-  echo "e.g. $0 /foo/bar/ICSI ihm"
-  echo "note: the 2nd 'ihm' argument is for compatibility with other scripts."
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 /path/to/ICSI"
+  echo "e.g. $0 /foo/bar/ICSI"
   exit 1;
 fi
 

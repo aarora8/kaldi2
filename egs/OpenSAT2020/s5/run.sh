@@ -40,16 +40,16 @@ fi
 if [ $stage -le 2 ]; then
   #prepare annotations, note: dict is assumed to exist when this is called
   local/icsi_text_prep.sh $ICSI_TRANS data/local/ICSI_annotations
-  local/icsi_ihm_data_prep.sh $ICSI_DIR ihm
-  local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR ihm dev
-  local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR ihm eval
+  local/icsi_ihm_data_prep.sh $ICSI_DIR
+  local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR dev
+  local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR eval
 fi
 
 if [ $stage -le 3 ]; then
   local/ami_text_prep.sh data/local/download
-  local/ami_ihm_data_prep.sh $AMI_DIR ihm
-  local/ami_ihm_scoring_data_prep.sh $AMI_DIR ihm dev
-  local/ami_ihm_scoring_data_prep.sh $AMI_DIR ihm eval
+  local/ami_ihm_data_prep.sh $AMI_DIR
+  local/ami_ihm_scoring_data_prep.sh $AMI_DIR dev
+  local/ami_ihm_scoring_data_prep.sh $AMI_DIR eval
 fi
 
 if [ $stage -le 4 ]; then
