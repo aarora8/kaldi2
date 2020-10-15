@@ -124,52 +124,55 @@ if [ $stage -le 7 ] ; then
     data/local/lexicon.txt  data/lang_nosp_test
 fi
 
-comb_data_dir=data/icsiami/
-comb_exp_dir=exp/icsiami/
-mkdir -p $comb_data_dir
-mkdir -p $comb_exp_dir
 if [ $stage -le 8 ] ; then
   utils/data/combine_data.sh  $comb_data_dir/train data/AMI/train data/ICSI/train
 fi
 
-# Feature extraction,
-if [ $stage -le 9 ]; then
-  steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" $comb_data_dir/train
-  steps/compute_cmvn_stats.sh $comb_data_dir/train
-  utils/fix_data_dir.sh $comb_data_dir/train
-fi
-
-# monophone training
-if [ $stage -le 10 ]; then
-  utils/subset_data_dir.sh $comb_data_dir/train 15000 $comb_data_dir/train_15k
-  steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
-    $comb_data_dir/train_15k data/lang_nosp_test $comb_exp_dir/mono
-  steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/mono $comb_exp_dir/mono_ali
-fi
-
-# context-dep. training with delta features.
-if [ $stage -le 11 ]; then
-  steps/train_deltas.sh --cmd "$train_cmd" \
-    5000 80000 $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/mono_ali $comb_exp_dir/tri1
-  steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri1 $comb_exp_dir/tri1_ali
-fi
-
-if [ $stage -le 12 ]; then
-  steps/train_lda_mllt.sh --cmd "$train_cmd" \
-    --splice-opts "--left-context=3 --right-context=3" \
-    5000 80000 $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri1_ali $comb_exp_dir/tri2
-  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri2 $comb_exp_dir/tri2_ali
-fi
-
-if [ $stage -le 13 ]; then
-  steps/train_sat.sh --cmd "$train_cmd" \
-    5000 80000 $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri2_ali $comb_exp_dir/tri3
-  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri3 $comb_exp_dir/tri3_ali
-fi
+for dataset in icsiami safet; do
+  comb_data_dir=data/$dataset/
+  comb_exp_dir=exp/$dataset/
+  mkdir -p $comb_data_dir
+  mkdir -p $comb_exp_dir
+  
+  # Feature extraction,
+  if [ $stage -le 9 ]; then
+    steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" $comb_data_dir/train
+    steps/compute_cmvn_stats.sh $comb_data_dir/train
+    utils/fix_data_dir.sh $comb_data_dir/train
+  fi
+  
+  # monophone training
+  if [ $stage -le 10 ]; then
+    utils/subset_data_dir.sh $comb_data_dir/train 15000 $comb_data_dir/train_15k
+    steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
+      $comb_data_dir/train_15k data/lang_nosp_test $comb_exp_dir/mono
+    steps/align_si.sh --nj $nj --cmd "$train_cmd" \
+      $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/mono $comb_exp_dir/mono_ali
+  fi
+  
+  # context-dep. training with delta features.
+  if [ $stage -le 11 ]; then
+    steps/train_deltas.sh --cmd "$train_cmd" \
+      5000 80000 $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/mono_ali $comb_exp_dir/tri1
+    steps/align_si.sh --nj $nj --cmd "$train_cmd" \
+      $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri1 $comb_exp_dir/tri1_ali
+  fi
+  
+  if [ $stage -le 12 ]; then
+    steps/train_lda_mllt.sh --cmd "$train_cmd" \
+      --splice-opts "--left-context=3 --right-context=3" \
+      5000 80000 $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri1_ali $comb_exp_dir/tri2
+    steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
+      $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri2 $comb_exp_dir/tri2_ali
+  fi
+  
+  if [ $stage -le 13 ]; then
+    steps/train_sat.sh --cmd "$train_cmd" \
+      5000 80000 $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri2_ali $comb_exp_dir/tri3
+    steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
+      $comb_data_dir/train data/lang_nosp_test $comb_exp_dir/tri3 $comb_exp_dir/tri3_ali
+  fi
+done
 
 if [ $stage -le 14 ]; then
   local/nnet3/run_ivector_common.sh
