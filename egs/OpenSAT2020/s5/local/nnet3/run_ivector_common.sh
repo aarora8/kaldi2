@@ -34,7 +34,7 @@ if [ $stage -le 1 ]; then
   echo "$0: preparing directory for low-resolution speed-perturbed data (for alignment)"
   utils/data/perturb_data_dir_speed_3way.sh data/${train_set} data/${train_set}_sp
   echo "$0: making MFCC features for low-resolution speed-perturbed data"
-  steps/make_mfcc.sh --cmd "$train_cmd" --nj 20 data/${train_set}_sp || exit 1;
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj data/${train_set}_sp || exit 1;
   steps/compute_cmvn_stats.sh data/${train_set}_sp || exit 1;
   utils/fix_data_dir.sh data/${train_set}_sp
 fi
@@ -63,7 +63,7 @@ if [ $stage -le 3 ]; then
   utils/data/perturb_data_dir_volume.sh data/${train_set}_sp_hires || exit 1;
 
   for datadir in ${train_set}_sp; do
-    steps/make_mfcc.sh --nj 20 --mfcc-config conf/mfcc_hires.conf \
+    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
       --cmd "$train_cmd" data/${datadir}_hires || exit 1;
     steps/compute_cmvn_stats.sh data/${datadir}_hires || exit 1;
     utils/fix_data_dir.sh data/${datadir}_hires || exit 1;

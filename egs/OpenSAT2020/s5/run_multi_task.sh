@@ -177,7 +177,7 @@ for dataset in icsiami safet; do
 done
 
 if [ $stage -le 14 ]; then
-  local/nnet3/run_ivector_common.sh
+  local/chain2/run_tdnn_conf.sh
 fi
 
 exit 0
