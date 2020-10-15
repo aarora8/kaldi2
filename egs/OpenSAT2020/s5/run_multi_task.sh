@@ -31,12 +31,6 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  local/safet_get_cmu_dict.sh
-  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
-  utils/validate_lang.pl data/lang_nosp
-fi
-
-if [ $stage -le 2 ]; then
   #prepare annotations, note: dict is assumed to exist when this is called
   local/icsi_run_prepare_shared.sh
   local/icsi_ihm_data_prep.sh $ICSI_DIR
@@ -44,14 +38,14 @@ if [ $stage -le 2 ]; then
   local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR eval
 fi
 
-if [ $stage -le 3 ]; then
+if [ $stage -le 2 ]; then
   local/ami_text_prep.sh data/local/download
   local/ami_ihm_data_prep.sh $AMI_DIR
   local/ami_ihm_scoring_data_prep.sh $AMI_DIR dev
   local/ami_ihm_scoring_data_prep.sh $AMI_DIR eval
 fi
 
-if [ $stage -le 4 ]; then
+if [ $stage -le 3 ]; then
   local/spine_data_prep.sh /export/corpora5/LDC/LDC2000S96  /export/corpora5/LDC/LDC2000T54 data/spine_eval
   local/spine_data_prep.sh /export/corpora5/LDC/LDC2000S87  /export/corpora5/LDC/LDC2000T49 data/spine_train
 
@@ -72,9 +66,9 @@ fi
 
 if [ $stage -le 5 ]; then
   utils/data/get_reco2dur.sh data/AMI/train
-  utils/data/get_reco2dur.sh data/AMI/train
+  utils/data/get_reco2dur.sh data/ICSI/train
 
-  utils/data/get_utt2dur.sh data/ICSI/train
+  utils/data/get_utt2dur.sh data/AMI/train
   utils/data/get_utt2dur.sh data/ICSI/train
 
   for dataset in AMI ICSI; do
@@ -84,6 +78,12 @@ if [ $stage -le 5 ]; then
       mv data/$dataset/$split/texttmp data/$dataset/$split/text
     done
   done
+fi
+
+if [ $stage -le 6 ]; then
+  local/safet_get_cmu_dict.sh
+  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
+  utils/validate_lang.pl data/lang_nosp
 fi
 
 if [ $stage -le 6 ]; then
@@ -133,7 +133,9 @@ for dataset in icsiami safet; do
   comb_exp_dir=exp/$dataset/
   mkdir -p $comb_data_dir
   mkdir -p $comb_exp_dir
-  
+
+  cp -r data/lang_nosp_test $comb_data_dir/ 
+
   # Feature extraction,
   if [ $stage -le 9 ]; then
     steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" $comb_data_dir/train
