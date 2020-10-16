@@ -78,19 +78,19 @@ if [ $stage -le 4 ]; then
 
   num_utts_total=$(wc -l <data/${train_set}_sp_hires/utt2spk)
   num_utts=$[$num_utts_total/4]
-  utils/data/subset_data_dir.sh data/${train_set}_sp_hires \
-     $num_utts ${temp_data_root}/${train_set}_sp_hires_subset
+#  utils/data/subset_data_dir.sh data/${train_set}_sp_hires \
+#     $num_utts ${temp_data_root}/${train_set}_sp_hires_subset
 
-  echo "$0: computing a PCA transform from the hires data."
-  steps/online/nnet2/get_pca_transform.sh --cmd "$train_cmd" \
-      --splice-opts "--left-context=3 --right-context=3" \
-      --max-utts 10000 --subsample 2 \
-       ${temp_data_root}/${train_set}_sp_hires_subset \
-       exp/nnet3${nnet3_affix}/pca_transform
+#  echo "$0: computing a PCA transform from the hires data."
+#  steps/online/nnet2/get_pca_transform.sh --cmd "$train_cmd" \
+#      --splice-opts "--left-context=3 --right-context=3" \
+#      --max-utts 10000 --subsample 2 \
+#       ${temp_data_root}/${train_set}_sp_hires_subset \
+#       exp/nnet3${nnet3_affix}/pca_transform
 
   echo "$0: training the diagonal UBM."
   # Use 512 Gaussians in the UBM.
-  steps/online/nnet2/train_diag_ubm.sh --cmd "$train_cmd" --nj 30 \
+  steps/online/nnet2/train_diag_ubm.sh --cmd "$train_cmd" --nj $nj \
     --num-frames 700000 \
     --num-threads 8 \
     ${temp_data_root}/${train_set}_sp_hires_subset 512 \
@@ -102,7 +102,7 @@ if [ $stage -le 5 ]; then
   # can be sensitive to the amount of data.  The script defaults to an iVector dimension of
   # 100.
   echo "$0: training the iVector extractor"
-  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj 20 \
+  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj $nj \
      data/${train_set}_sp_hires exp/nnet3${nnet3_affix}/diag_ubm \
      exp/nnet3${nnet3_affix}/extractor || exit 1;
 fi
