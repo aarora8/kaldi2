@@ -51,15 +51,15 @@ if [ $stage -le 3 ]; then
   local/ami_ihm_scoring_data_prep.sh $AMI_DIR eval
 fi
 
-if [ $stage -le 4 ]; then
-  local/spine_data_prep.sh /export/corpora5/LDC/LDC2000S96  /export/corpora5/LDC/LDC2000T54 data/spine_eval
-  local/spine_data_prep.sh /export/corpora5/LDC/LDC2000S87  /export/corpora5/LDC/LDC2000T49 data/spine_train
-
-  local/spine_data_prep.sh /export/corpora5/LDC/LDC2001S04  /export/corpora5/LDC/LDC2001T05 data/spine2_train1
-  local/spine_data_prep.sh /export/corpora5/LDC/LDC2001S06  /export/corpora5/LDC/LDC2001T07 data/spine2_train2
-  local/spine_data_prep.sh /export/corpora5/LDC/LDC2001S08  /export/corpora5/LDC/LDC2001T09 data/spine2_train3
-
-fi
+#if [ $stage -le 4 ]; then
+#  local/spine_data_prep.sh /export/corpora5/LDC/LDC2000S96  /export/corpora5/LDC/LDC2000T54 data/spine_eval
+#  local/spine_data_prep.sh /export/corpora5/LDC/LDC2000S87  /export/corpora5/LDC/LDC2000T49 data/spine_train
+#
+#  local/spine_data_prep.sh /export/corpora5/LDC/LDC2001S04  /export/corpora5/LDC/LDC2001T05 data/spine2_train1
+#  local/spine_data_prep.sh /export/corpora5/LDC/LDC2001S06  /export/corpora5/LDC/LDC2001T07 data/spine2_train2
+#  local/spine_data_prep.sh /export/corpora5/LDC/LDC2001S08  /export/corpora5/LDC/LDC2001T09 data/spine2_train3
+#
+#fi
 
 if [ $stage -le 4 ]; then
   for dset in train dev eval; do
@@ -72,9 +72,9 @@ fi
 
 if [ $stage -le 5 ]; then
   utils/data/get_reco2dur.sh data/AMI/train
-  utils/data/get_reco2dur.sh data/AMI/train
+  utils/data/get_reco2dur.sh data/ICSI/train
 
-  utils/data/get_utt2dur.sh data/ICSI/train
+  utils/data/get_utt2dur.sh data/AMI/train
   utils/data/get_utt2dur.sh data/ICSI/train
 
   for dataset in AMI ICSI; do
@@ -130,7 +130,7 @@ if [ $stage -le 8 ] ; then
 fi
 # Feature extraction,
 if [ $stage -le 9 ]; then
-  steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/train_$suffix
+  steps/make_mfcc.sh --nj 200 --cmd "$train_cmd" data/train_$suffix
   steps/compute_cmvn_stats.sh data/train_$suffix
   utils/fix_data_dir.sh data/train_$suffix
 fi

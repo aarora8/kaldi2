@@ -78,15 +78,15 @@ if [ $stage -le 4 ]; then
 
   num_utts_total=$(wc -l <data/${train_set}_sp_hires/utt2spk)
   num_utts=$[$num_utts_total/4]
-#  utils/data/subset_data_dir.sh data/${train_set}_sp_hires \
-#     $num_utts ${temp_data_root}/${train_set}_sp_hires_subset
+  utils/data/subset_data_dir.sh data/${train_set}_sp_hires \
+     $num_utts ${temp_data_root}/${train_set}_sp_hires_subset
 
-#  echo "$0: computing a PCA transform from the hires data."
-#  steps/online/nnet2/get_pca_transform.sh --cmd "$train_cmd" \
-#      --splice-opts "--left-context=3 --right-context=3" \
-#      --max-utts 10000 --subsample 2 \
-#       ${temp_data_root}/${train_set}_sp_hires_subset \
-#       exp/nnet3${nnet3_affix}/pca_transform
+  echo "$0: computing a PCA transform from the hires data."
+  steps/online/nnet2/get_pca_transform.sh --cmd "$train_cmd" \
+      --splice-opts "--left-context=3 --right-context=3" \
+      --max-utts 10000 --subsample 2 \
+       ${temp_data_root}/${train_set}_sp_hires_subset \
+       exp/nnet3${nnet3_affix}/pca_transform
 
   echo "$0: training the diagonal UBM."
   # Use 512 Gaussians in the UBM.

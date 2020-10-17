@@ -37,11 +37,12 @@ def read_transcript(wav_id, f):
         if spk[-1] == ':':
             spk = spk[:-1]
         chan = spk
-        spk = f'{wav_id}_{spk}'
+        #spk = f'{wav_id}_{spk}'
+        spk = '{0}_{1}'.format(wav_id, spk)
         start_t = str(int(float(start_t) * 100 + 0.5 ))
         end_t = str(int(float(end_t) * 100 + 0.5 ))
         if(int(start_t) >= int(end_t)):
-            print(f'Invalid line {line}', file=sys.stderr)
+            print('Invalid line', file=sys.stderr)
             continue
         utt = utterance_id(wav_id, chan, spk, start_t, end_t)
         transcript.append((utt, wav_id+'_'+chan, start_t, end_t, spk, text))

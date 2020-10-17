@@ -43,13 +43,13 @@ local/nnet3/run_ivector_common.sh --stage $stage \
 
 gmm_dir=exp/$gmm
 ali_dir=exp/${gmm}_${train_set}_ali_sp
-lores_train_data_dir=data/${train_set}
-train_data_dir=data/${train_set}_hires
+lores_train_data_dir=data/${train_set}_sp
+train_data_dir=data/${train_set}_sp_hires
 lang_dir=data/lang_nosp_test
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
 lat_dir=exp/tri3_${train_set}_lats_sp
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
-train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
+train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 xent_regularize=0.1
 
 for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
@@ -112,7 +112,7 @@ if [ $stage -le 15 ]; then
   mkdir -p $dir/configs
   cat <<EOF > $dir/configs/network.xconfig
   input dim=100 name=ivector
-  input dim=40 name=input
+  input dim=80 name=input
 
   # please note that it is important to have input layer with the name=input
   # as the layer immediately preceding the fixed-affine-layer to enable
@@ -154,7 +154,7 @@ if [ $stage -le 18 ]; then
   fi
 
 steps/nnet3/chain/train.py --stage $train_stage \
-    --cmd "$gpu_cmd" \
+    --cmd "$train_cmd" \
     --feat.online-ivector-dir $train_ivector_dir \
     --feat.cmvn-opts "--norm-means=false --norm-vars=false" \
     --chain.xent-regularize $xent_regularize \
