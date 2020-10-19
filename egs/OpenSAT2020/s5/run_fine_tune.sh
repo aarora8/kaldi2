@@ -92,33 +92,33 @@ if [ $stage -le 6 ]; then
     local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r11/transcripts data/safe_t_r11/transcripts.clean
     local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r20/transcripts data/safe_t_r20/transcripts.clean
 
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train1/transcripts data/spine2_train1/transcripts.clean
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train2/transcripts data/spine2_train2/transcripts.clean
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train3/transcripts data/spine2_train3/transcripts.clean
-    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine_train/transcripts   data/spine_train//transcripts.clean
+#    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train1/transcripts data/spine2_train1/transcripts.clean
+#    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train2/transcripts data/spine2_train2/transcripts.clean
+#    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine2_train3/transcripts data/spine2_train3/transcripts.clean
+#    local/safet_cleanup_transcripts.py data/local/lexicon.txt data/spine_train/transcripts   data/spine_train//transcripts.clean
   ) | sort > exp/cleanup_stage_1/oovs
 
   local/safet_cleanup_transcripts.py --no-unk-replace  data/local/lexicon.txt \
     data/safe_t_dev1/transcripts data/safe_t_dev1/transcripts.clean > exp/cleanup_stage_1/oovs.dev1
-  local/safet_cleanup_transcripts.py  --no-unk-replace  data/local/lexicon.txt \
-    data/spine_eval/transcripts data/spine_eval/transcripts.clean > exp/cleanup_stage_1/oovs.spine_eval
+#  local/safet_cleanup_transcripts.py  --no-unk-replace  data/local/lexicon.txt \
+#    data/spine_eval/transcripts data/spine_eval/transcripts.clean > exp/cleanup_stage_1/oovs.spine_eval
 
   local/safet_build_data_dir.sh data/safe_t_r11/ data/safe_t_r11/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_r20/ data/safe_t_r20/transcripts.clean
   local/safet_build_data_dir.sh data/safe_t_dev1/ data/safe_t_dev1/transcripts
 
-  local/safet_build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
-  local/safet_build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
-  local/safet_build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
-  local/safet_build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
-  local/safet_build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine2_train1/ data/spine2_train1/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine2_train2/ data/spine2_train2/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine2_train3/ data/spine2_train3/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine_train/ data/spine_train/transcripts.clean
+#  local/safet_build_data_dir.sh data/spine_eval/ data/spine_eval/transcripts.clean
 
   utils/data/combine_data.sh data/train_safet data/safe_t_r20 data/safe_t_r11
 fi
 
 if [ $stage -le 7 ] ; then
   local/safet_train_lms_srilm.sh \
-    --train_text data/train/text --dev_text data/safe_t_dev1/text  \
+    --train_text data/train_safet/text --dev_text data/safe_t_dev1/text  \
     data/ data/local/srilm
   utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
     data/local/lexicon.txt  data/lang_nosp_test
@@ -167,8 +167,48 @@ if [ $stage -le 13 ]; then
     data/train_$suffix data/lang_nosp_test exp/tri3 exp/tri3_ali
 fi
 
+suffix=safet
+# Feature extraction,
 if [ $stage -le 14 ]; then
-  local/nnet3/run_ivector_common.sh
+  steps/make_mfcc.sh --nj 200 --cmd "$train_cmd" data/train_$suffix
+  steps/compute_cmvn_stats.sh data/train_$suffix
+  utils/fix_data_dir.sh data/train_$suffix
+fi
+
+# monophone training
+if [ $stage -le 15 ]; then
+  utils/subset_data_dir.sh data/train_$suffix 15000 data/train_${suffix}_15k
+  steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
+    data/train_${suffix}_15k data/lang_nosp_test exp/mono_$suffix
+  steps/align_si.sh --nj $nj --cmd "$train_cmd" \
+    data/train_$suffix data/lang_nosp_test exp/mono_$suffix exp/mono_${suffix}_ali
+fi
+
+# context-dep. training with delta features.
+if [ $stage -le 16 ]; then
+  steps/train_deltas.sh --cmd "$train_cmd" \
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/mono_${suffix}_ali exp/tri1_$suffix
+  steps/align_si.sh --nj $nj --cmd "$train_cmd" \
+    data/train_$suffix data/lang_nosp_test exp/tri1_$suffix exp/tri1_${suffix}_ali
+fi
+
+if [ $stage -le 17 ]; then
+  steps/train_lda_mllt.sh --cmd "$train_cmd" \
+    --splice-opts "--left-context=3 --right-context=3" \
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri1_${suffix}_ali exp/tri2_$suffix
+  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
+    data/train_$suffix data/lang_nosp_test exp/tri2_$suffix exp/tri2_${suffix}_ali
+fi
+
+if [ $stage -le 18 ]; then
+  steps/train_sat.sh --cmd "$train_cmd" \
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri2_${suffix}_ali exp/tri3_$suffix
+  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
+    data/train_$suffix data/lang_nosp_test exp/tri3_$suffix exp/tri3_${suffix}_ali
+fi
+
+if [ $stage -le 19 ]; then
+  local/chain/run_tdnn_wsj_rm_1a.sh
 fi
 
 exit 0

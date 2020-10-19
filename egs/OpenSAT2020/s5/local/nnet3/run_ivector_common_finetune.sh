@@ -9,17 +9,17 @@ set -euo pipefail
 # of usage.
 
 stage=0
-nj=60
+nj=100
 train_set=train_all
 gmm=tri3
 nnet3_affix=_all
-
+extractor=
 . ./cmd.sh
 . ./path.sh
 . utils/parse_options.sh
 
 gmm_dir=exp/${gmm}
-ali_dir=exp/${gmm}_ali_sp
+ali_dir=exp/${gmm}_${train_set}_ali_sp
 
 for f in ${gmm_dir}/final.mdl; do
   if [ ! -f $f ]; then
@@ -34,7 +34,7 @@ if [ $stage -le 1 ]; then
   echo "$0: preparing directory for low-resolution speed-perturbed data (for alignment)"
   utils/data/perturb_data_dir_speed_3way.sh data/${train_set} data/${train_set}_sp
   echo "$0: making MFCC features for low-resolution speed-perturbed data"
-  steps/make_mfcc.sh --cmd "$train_cmd" --nj 20 data/${train_set}_sp || exit 1;
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj data/${train_set}_sp || exit 1;
   steps/compute_cmvn_stats.sh data/${train_set}_sp || exit 1;
   utils/fix_data_dir.sh data/${train_set}_sp
 fi
@@ -63,14 +63,14 @@ if [ $stage -le 3 ]; then
   utils/data/perturb_data_dir_volume.sh data/${train_set}_sp_hires || exit 1;
 
   for datadir in ${train_set}_sp; do
-    steps/make_mfcc.sh --nj 20 --mfcc-config conf/mfcc_hires.conf \
+    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
       --cmd "$train_cmd" data/${datadir}_hires || exit 1;
     steps/compute_cmvn_stats.sh data/${datadir}_hires || exit 1;
     utils/fix_data_dir.sh data/${datadir}_hires || exit 1;
   done
 fi
 
-if [ $stage -le 6 ]; then
+if [ $stage -le 4 ]; then
   # We extract iVectors on the speed-perturbed training data after combining
   # short segments, which will be what we train the system on.  With
   # --utts-per-spk-max 2, the script pairs the utterances into twos, and treats
@@ -83,6 +83,7 @@ if [ $stage -le 6 ]; then
 
   # having a larger number of speakers is helpful for generalization, and to
   # handle per-utterance decoding well (iVector starts at zero).
+  ivectordir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
   utils/data/modify_speaker_info.sh --utts-per-spk-max 2 \
     data/${train_set}_sp_hires data/${train_set}_sp_hires_max2
 

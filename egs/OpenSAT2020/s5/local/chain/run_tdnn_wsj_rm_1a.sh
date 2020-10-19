@@ -29,10 +29,10 @@ primary_lr_factor=0.25 # The learning-rate factor for transferred layers from so
                        # The learning-rate factor for new added layers is 1.0.
 
 nnet_affix=_finetune
-
+extractor=exp/nnet3_finetune/extractor
 set -e -o pipefail
 stage=0
-nj=30
+nj=100
 train_set=train_safet
 gmm=tri3_finetune
 num_epochs=10
@@ -63,10 +63,17 @@ where "nvcc" is installed.
 EOF
 fi
 
+#local/nnet3/run_ivector_common.sh --stage $stage \
+#                                  --nj $nj \
+#                                  --train-set $train_set \
+#                                  --nnet3-affix "$nnet3_affix" \
+#                                  --extractor $extractor
+
 local/nnet3/run_ivector_common_finetune.sh --stage $stage \
                                            --nj $nj \
                                            --train-set $train_set \
-                                           --nnet3-affix "$nnet3_affix"
+                                           --nnet3-affix "$nnet3_affix" \
+                                           --extractor $extractor
 
 gmm_dir=exp/$gmm
 ali_dir=exp/${gmm}_${train_set}_ali_sp
@@ -78,7 +85,7 @@ dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
 xent_regularize=0.1
 
-if [ $stage -le 4 ]; then
+if [ $stage -le 5 ]; then
   nj=$(cat $ali_dir/num_jobs) || exit 1;
   steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" $lores_train_data_dir \
     $lang_dir $gmm_dir $lat_dir
