@@ -1,33 +1,5 @@
 #!/usr/bin/env bash
 
-# This script uses weight transfer as a transfer learning method to transfer
-# already trained neural net model on ICSI+AMI to safet
-#
-# Model preparation: The last layer (prefinal and output layer) from
-# already-trained wsj model is removed and 3 randomly initialized layer
-# (new tdnn layer, prefinal, and output) are added to the model.
-#
-# Training: The transferred layers are retrained with smaller learning-rate,
-# while new added layers are trained with larger learning rate using rm data.
-set -e
-
-dir=exp/chain_finetune/tdnn_finetune
-src_mdl=exp/chain_icsiami/tdnn_icsiami/final.mdl # Input chain model
-                                                   # trained on source dataset (wsj).
-                                                   # This model is transfered to the target domain.
-
-src_mfcc_config=conf/mfcc_hires.conf # mfcc config used to extract higher dim
-                                                  # mfcc features for ivector and DNN training
-                                                  # in the source domain.
-src_ivec_extractor_dir=exp/nnet3_icsiami/extractor  # Source ivector extractor dir used to extract ivector for
-                         # source data. The ivector for target data is extracted using this extractor.
-                         # It should be nonempty, if ivector is used in the source model training.
-
-primary_lr_factor=0.25 # The learning-rate factor for transferred layers from source
-                       # model. e.g. if 0, the paramters transferred from source model
-                       # are fixed.
-                       # The learning-rate factor for new added layers is 1.0.
-
 set -e -o pipefail
 stage=0
 nj=100
@@ -38,10 +10,9 @@ num_epochs=10
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
-tree_affix=_finetune  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=_finetune  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
-nnet3_affix=_finetune
-extractor=exp/nnet3_finetune/extractor
+tree_affix=_${train_set}  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_${train_set}  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+nnet3_affix=_${train_set}
 common_egs_dir=
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
