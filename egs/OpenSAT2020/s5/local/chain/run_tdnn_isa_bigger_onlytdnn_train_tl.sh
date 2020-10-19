@@ -114,14 +114,14 @@ if [ $stage -le 12 ]; then
   fi
 fi
 
-if [ $stage -le 14 ]; then
+if [ $stage -le 13 ]; then
   steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
       --context-opts "--context-width=2 --central-position=1" \
       --leftmost-questions-truncate -1 \
       --cmd "$train_cmd" 5000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
 fi
 
-if [ $stage -le 15 ]; then
+if [ $stage -le 14 ]; then
   mkdir -p $dir
 
   echo "$0: creating neural net configs using the xconfig parser";
@@ -174,7 +174,7 @@ EOF
 
 fi
 
-if [ $stage -le 18 ]; then
+if [ $stage -le 15 ]; then
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $dir/egs/storage ]; then
     utils/create_split_dir.pl \
      /export/b0{5,6,7,8}/$USER/kaldi-data/egs/opensat-$(date +'%m_%d_%H_%M')/s5/$dir/egs/storage $dir/egs/storage
@@ -210,11 +210,11 @@ steps/nnet3/chain/train.py --stage $train_stage \
 fi
 
 
-if [ $stage -le 19 ]; then
+if [ $stage -le 16 ]; then
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
 fi
 
-if [ $stage -le 20 ]; then
+if [ $stage -le 17 ]; then
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
         --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \

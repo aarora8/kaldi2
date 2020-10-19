@@ -31,7 +31,7 @@ primary_lr_factor=0.25 # The learning-rate factor for transferred layers from so
 set -e -o pipefail
 stage=0
 nj=100
-train_set=train_icsiami
+train_set=train_safet
 gmm=tri3
 num_epochs=10
 
