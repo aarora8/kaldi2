@@ -31,7 +31,7 @@ primary_lr_factor=0.25 # The learning-rate factor for transferred layers from so
 set -e -o pipefail
 stage=0
 nj=100
-train_set=train_safet
+train_set=train_icsiami
 gmm=tri3
 num_epochs=10
 
@@ -62,27 +62,21 @@ where "nvcc" is installed.
 EOF
 fi
 
-#local/nnet3/run_ivector_common.sh --stage $stage \
-#                                  --nj $nj \
-#                                  --train-set $train_set \
-#                                  --nnet3-affix "$nnet3_affix" \
-#                                  --extractor $extractor
-
 local/nnet3/run_ivector_common_finetune.sh --stage $stage \
                                            --nj $nj \
                                            --train-set $train_set \
                                            --nnet3-affix "$nnet3_affix" \
                                            --extractor $extractor
 
-lores_train_data_dir=data/${train_set}
-train_data_dir=data/${train_set}_hires
+lores_train_data_dir=data/${train_set}_sp
+train_data_dir=data/${train_set}_sp_hires
 gmm_dir=exp/${gmm}_${train_set}
 ali_dir=exp/${gmm}_${train_set}_ali_sp
 lat_dir=exp/${gmm}_${train_set}_lats_sp
 lang_dir=data/lang_nosp_test
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
+train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 xent_regularize=0.1
 
 if [ $stage -le 5 ]; then
@@ -92,36 +86,7 @@ if [ $stage -le 5 ]; then
   rm $lat_dir/fsts.*.gz
 fi
 
-#if [ $stage -le 5 ]; then
-#  echo "$0: creating lang directory with one state per phone."
-#  # Create a version of the lang/ directory that has one state per phone in the
-#  # topo file. [note, it really has two states.. the first one is only repeated
-#  # once, the second one has zero or more repeats.]
-#  if [ -d data/lang_chain ]; then
-#    if [ data/lang_chain/L.fst -nt $lang_dir/L.fst ]; then
-#      echo "$0: data/lang_chain already exists, not overwriting it; continuing"
-#    else
-#      echo "$0: data/lang_chain already exists and seems to be older than data/lang..."
-#      echo " ... not sure what to do.  Exiting."
-#      exit 1;
-#    fi
-#  else
-#    cp -r $lang_dir data/lang_chain
-#    silphonelist=$(cat data/lang_chain/phones/silence.csl) || exit 1;
-#    nonsilphonelist=$(cat data/lang_chain/phones/nonsilence.csl) || exit 1;
-#    # Use our special topology... note that later on may have to tune this topology.
-#    steps/nnet3/chain/gen_topo.py $nonsilphonelist $silphonelist >data/lang_chain/topo
-#  fi
-#fi
-#
-#if [ $stage -le 6 ]; then
-#  steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
-#      --context-opts "--context-width=2 --central-position=1" \
-#      --leftmost-questions-truncate -1 \
-#      --cmd "$train_cmd" 5000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
-#fi
-
-if [ $stage -le 7 ]; then
+if [ $stage -le 6 ]; then
   echo "$0: Create neural net configs using the xconfig parser for";
   echo " generating new layers, that are specific to safet. These layers ";
   echo " are added to the transferred part of the AMI+ICSI network.";
@@ -140,7 +105,7 @@ EOF
       nnet3-init --srand=1 - $dir/configs/final.config $dir/input.raw  || exit 1;
 fi
 
-if [ $stage -le 8 ]; then
+if [ $stage -le 7 ]; then
   echo "$0: generate egs for chain to train new model on rm dataset."
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $dir/egs/storage ]; then
     utils/create_split_dir.pl \
@@ -175,14 +140,14 @@ if [ $stage -le 8 ]; then
     --dir $dir  || exit 1;
 fi
 
-if [ $stage -le 9 ]; then
+if [ $stage -le 8 ]; then
   utils/mkgraph.sh --self-loop-scale 1.0 $lang_dir $dir $dir/graph
 fi
 
-if [ $stage -le 10 ]; then
+if [ $stage -le 9 ]; then
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
         --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
-       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
+       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1_finetune_tl || exit 1;
 fi
 exit 0

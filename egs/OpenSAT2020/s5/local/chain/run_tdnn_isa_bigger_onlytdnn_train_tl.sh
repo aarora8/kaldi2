@@ -1,31 +1,58 @@
 #!/usr/bin/env bash
 
+# This script uses weight transfer as a transfer learning method to transfer
+# already trained neural net model on ICSI+AMI to safet
+#
+# Model preparation: The last layer (prefinal and output layer) from
+# already-trained wsj model is removed and 3 randomly initialized layer
+# (new tdnn layer, prefinal, and output) are added to the model.
+#
+# Training: The transferred layers are retrained with smaller learning-rate,
+# while new added layers are trained with larger learning rate using rm data.
+set -e
+
+dir=exp/chain_finetune/tdnn_finetune
+src_mdl=exp/chain_icsiami/tdnn_icsiami/final.mdl # Input chain model
+                                                   # trained on source dataset (wsj).
+                                                   # This model is transfered to the target domain.
+
+src_mfcc_config=conf/mfcc_hires.conf # mfcc config used to extract higher dim
+                                                  # mfcc features for ivector and DNN training
+                                                  # in the source domain.
+src_ivec_extractor_dir=exp/nnet3_icsiami/extractor  # Source ivector extractor dir used to extract ivector for
+                         # source data. The ivector for target data is extracted using this extractor.
+                         # It should be nonempty, if ivector is used in the source model training.
+
+primary_lr_factor=0.25 # The learning-rate factor for transferred layers from source
+                       # model. e.g. if 0, the paramters transferred from source model
+                       # are fixed.
+                       # The learning-rate factor for new added layers is 1.0.
+
 set -e -o pipefail
-# First the options that are passed through to run_ivector_common.sh
-# (some of which are also used in this script directly).
 stage=0
-mic=ihm
-nj=30
-train_set=train_all
+nj=100
+train_set=train_icsiami
 gmm=tri3
 num_epochs=10
 
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
-tree_affix=_all  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=_all  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
-nnet3_affix=_all
-common_egs_dir= 
+tree_affix=_finetune  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_finetune  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+nnet3_affix=_finetune
+extractor=exp/nnet3_finetune/extractor
+common_egs_dir=
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
+xent_regularize=0.1
+get_egs_stage=-10
 # End configuration section.
-echo "$0 $@"
+echo "$0 $@"  # Print the command line for logging
 
 . ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
-
 
 if ! cuda-compiled; then
   cat <<EOF && exit 1
@@ -41,14 +68,14 @@ local/nnet3/run_ivector_common.sh --stage $stage \
                                   --gmm $gmm \
                                   --nnet3-affix "$nnet3_affix"
 
-gmm_dir=exp/$gmm
-ali_dir=exp/${gmm}_${train_set}_ali_sp
 lores_train_data_dir=data/${train_set}_sp
 train_data_dir=data/${train_set}_sp_hires
+gmm_dir=exp/${gmm}_${train_set}
+ali_dir=exp/${gmm}_${train_set}_ali_sp
+lat_dir=exp/${gmm}_${train_set}_lats_sp
 lang_dir=data/lang_nosp_test
-tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-lat_dir=exp/tri3_${train_set}_lats_sp
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
+tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 xent_regularize=0.1
 
@@ -150,7 +177,7 @@ fi
 if [ $stage -le 18 ]; then
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $dir/egs/storage ]; then
     utils/create_split_dir.pl \
-     /export/b0{5,6,7,8}/$USER/kaldi-data/egs/ami-$(date +'%m_%d_%H_%M')/s5/$dir/egs/storage $dir/egs/storage
+     /export/b0{5,6,7,8}/$USER/kaldi-data/egs/opensat-$(date +'%m_%d_%H_%M')/s5/$dir/egs/storage $dir/egs/storage
   fi
 
 steps/nnet3/chain/train.py --stage $train_stage \
@@ -191,7 +218,7 @@ if [ $stage -le 20 ]; then
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
         --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
-       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
+       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1_train_tl || exit 1;
 fi
 exit 0
 

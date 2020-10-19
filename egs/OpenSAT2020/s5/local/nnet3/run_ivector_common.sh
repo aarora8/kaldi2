@@ -18,7 +18,7 @@ nnet3_affix=_all
 . ./path.sh
 . utils/parse_options.sh
 
-gmm_dir=exp/${gmm}
+gmm_dir=exp/${gmm}_${train_set}
 ali_dir=exp/${gmm}_ali_sp
 
 for f in ${gmm_dir}/final.mdl; do
