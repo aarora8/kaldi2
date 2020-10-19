@@ -130,81 +130,81 @@ if [ $stage -le 8 ] ; then
 fi
 # Feature extraction,
 if [ $stage -le 9 ]; then
-  steps/make_mfcc.sh --nj 200 --cmd "$train_cmd" data/train_$suffix
-  steps/compute_cmvn_stats.sh data/train_$suffix
-  utils/fix_data_dir.sh data/train_$suffix
+  steps/make_mfcc.sh --nj 200 --cmd "$train_cmd" data/train_${suffix}
+  steps/compute_cmvn_stats.sh data/train_${suffix}
+  utils/fix_data_dir.sh data/train_${suffix}
 fi
 
 # monophone training
 if [ $stage -le 10 ]; then
-  utils/subset_data_dir.sh data/train_$suffix 15000 data/train_15k
+  utils/subset_data_dir.sh data/train_${suffix} 15000 data/train_15k
   steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
-    data/train_15k data/lang_nosp_test exp/mono
+    data/train_15k data/lang_nosp_test exp/mono_train_${suffix}
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/mono exp/mono_ali
+    data/train_${suffix} data/lang_nosp_test exp/mono_train_${suffix} exp/mono_train_${suffix}_ali
 fi
 
 # context-dep. training with delta features.
 if [ $stage -le 11 ]; then
   steps/train_deltas.sh --cmd "$train_cmd" \
-    5000 80000 data/train_$suffix data/lang_nosp_test exp/mono_ali exp/tri1
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/mono_ali exp/tri1_train_${suffix}
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/tri1 exp/tri1_ali
+    data/train_${suffix} data/lang_nosp_test exp/tri1_train_${suffix} exp/tri1_train_${suffix}_ali
 fi
 
 if [ $stage -le 12 ]; then
   steps/train_lda_mllt.sh --cmd "$train_cmd" \
     --splice-opts "--left-context=3 --right-context=3" \
-    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri1_ali exp/tri2
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri1_train_${suffix}_ali exp/tri2_train_${suffix}
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/tri2 exp/tri2_ali
+    data/train_${suffix} data/lang_nosp_test exp/tri2_train_${suffix} exp/tri2_train_${suffix}_ali
 fi
 
 if [ $stage -le 13 ]; then
   steps/train_sat.sh --cmd "$train_cmd" \
-    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri2_ali exp/tri3
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri2_train_${suffix}_ali exp/tri3_train_${suffix}
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/tri3 exp/tri3_ali
+    data/train_${suffix} data/lang_nosp_test exp/tri3_train_${suffix} exp/tri3_train_${suffix}_ali
 fi
 
-suffix=safet
+suffix=train_safet
 # Feature extraction,
 if [ $stage -le 14 ]; then
-  steps/make_mfcc.sh --nj 200 --cmd "$train_cmd" data/train_$suffix
-  steps/compute_cmvn_stats.sh data/train_$suffix
-  utils/fix_data_dir.sh data/train_$suffix
+  steps/make_mfcc.sh --nj 200 --cmd "$train_cmd" data/$dataset
+  steps/compute_cmvn_stats.sh data/$dataset
+  utils/fix_data_dir.sh data/$dataset
 fi
 
 # monophone training
 if [ $stage -le 15 ]; then
-  utils/subset_data_dir.sh data/train_$suffix 15000 data/train_${suffix}_15k
+  utils/subset_data_dir.sh data/train_${suffix} 15000 data/train_15k
   steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
-    data/train_${suffix}_15k data/lang_nosp_test exp/mono_$suffix
+    data/train_15k data/lang_nosp_test exp/mono_train_${suffix}
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/mono_$suffix exp/mono_${suffix}_ali
+    data/train_${suffix} data/lang_nosp_test exp/mono_train_${suffix} exp/mono_train_${suffix}_ali
 fi
 
 # context-dep. training with delta features.
 if [ $stage -le 16 ]; then
   steps/train_deltas.sh --cmd "$train_cmd" \
-    5000 80000 data/train_$suffix data/lang_nosp_test exp/mono_${suffix}_ali exp/tri1_$suffix
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/mono_ali exp/tri1_train_${suffix}
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/tri1_$suffix exp/tri1_${suffix}_ali
+    data/train_${suffix} data/lang_nosp_test exp/tri1_train_${suffix} exp/tri1_train_${suffix}_ali
 fi
 
 if [ $stage -le 17 ]; then
   steps/train_lda_mllt.sh --cmd "$train_cmd" \
     --splice-opts "--left-context=3 --right-context=3" \
-    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri1_${suffix}_ali exp/tri2_$suffix
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri1_train_${suffix}_ali exp/tri2_train_${suffix}
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/tri2_$suffix exp/tri2_${suffix}_ali
+    data/train_${suffix} data/lang_nosp_test exp/tri2_train_${suffix} exp/tri2_train_${suffix}_ali
 fi
 
 if [ $stage -le 18 ]; then
   steps/train_sat.sh --cmd "$train_cmd" \
-    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri2_${suffix}_ali exp/tri3_$suffix
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri2_train_${suffix}_ali exp/tri3_train_${suffix}
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/train_$suffix data/lang_nosp_test exp/tri3_$suffix exp/tri3_${suffix}_ali
+    data/train_${suffix} data/lang_nosp_test exp/tri3_train_${suffix} exp/tri3_train_${suffix}_ali
 fi
 
 if [ $stage -le 19 ]; then

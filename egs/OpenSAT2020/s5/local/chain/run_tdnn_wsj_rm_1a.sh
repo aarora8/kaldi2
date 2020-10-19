@@ -28,13 +28,11 @@ primary_lr_factor=0.25 # The learning-rate factor for transferred layers from so
                        # are fixed.
                        # The learning-rate factor for new added layers is 1.0.
 
-nnet_affix=_finetune
-extractor=exp/nnet3_finetune/extractor
 set -e -o pipefail
 stage=0
 nj=100
 train_set=train_safet
-gmm=tri3_finetune
+gmm=tri3
 num_epochs=10
 
 # The rest are configs specific to this script.  Most of the parameters
@@ -43,6 +41,7 @@ train_stage=-10
 tree_affix=_finetune  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
 tdnn_affix=_finetune  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 nnet3_affix=_finetune
+extractor=exp/nnet3_finetune/extractor
 common_egs_dir=
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
@@ -75,13 +74,14 @@ local/nnet3/run_ivector_common_finetune.sh --stage $stage \
                                            --nnet3-affix "$nnet3_affix" \
                                            --extractor $extractor
 
-gmm_dir=exp/$gmm
-ali_dir=exp/${gmm}_${train_set}_ali_sp
-tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-lang_dir=data/lang_nosp_test
 lores_train_data_dir=data/${train_set}
 train_data_dir=data/${train_set}_hires
+gmm_dir=exp/${gmm}_${train_set}
+ali_dir=exp/${gmm}_${train_set}_ali_sp
+lat_dir=exp/${gmm}_${train_set}_lats_sp
+lang_dir=data/lang_nosp_test
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
+tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
 xent_regularize=0.1
 
@@ -176,7 +176,7 @@ if [ $stage -le 8 ]; then
 fi
 
 if [ $stage -le 9 ]; then
-  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
+  utils/mkgraph.sh --self-loop-scale 1.0 $lang_dir $dir $dir/graph
 fi
 
 if [ $stage -le 10 ]; then
