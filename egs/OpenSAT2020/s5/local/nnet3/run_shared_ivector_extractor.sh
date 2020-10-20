@@ -14,7 +14,6 @@ feat_suffix=_hires # feat_suffix used in train_set for lda_mllt training.
 nnet3_affix=
 numLeavesMLLT=2500
 numGaussMLLT=36000
-boost_sil=1.0 # Factor by which to boost silence likelihoods in alignment
 ivector_transform_type=lda # transformation used for iVector extraction
 . parse_options.sh || exit 1;
 
@@ -43,7 +42,6 @@ if [ $stage -le 4 ]; then
   lda)
     steps/train_lda_mllt.sh --cmd "$train_cmd" --num-iters 13 \
       --splice-opts "--left-context=3 --right-context=3" \
-      --boost-silence $boost_sil \
       $numLeavesMLLT $numGaussMLLT data/$lda_mllt_lang/train${suffix}${feat_suffix} \
       data/$lda_mllt_lang/lang exp/$lda_mllt_lang/tri3_ali${suffix} exp/$lda_mllt_lang/nnet3${nnet3_affix}/tri3b
     ;;

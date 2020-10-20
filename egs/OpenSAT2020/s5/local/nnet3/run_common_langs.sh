@@ -35,7 +35,6 @@ train_set=train_sp
 if [ $stage -le 2 ]; then
   steps/align_fmllr.sh \
     --nj 70 --cmd "$train_cmd" \
-    --boost-silence $boost_sil \
     data/$lang/$train_set data/$lang/lang_nosp_test exp/$lang/tri3 exp/$lang/tri3_ali_sp || exit 1
   touch exp/$lang/tri3_ali_sp/.done
 fi
