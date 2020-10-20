@@ -122,7 +122,6 @@ if [ ! -f $global_extractor/extractor/.done ]; then
     --ivector-transform-type pca \
     --stage $stage multi \
     $multi_data_dir_for_ivec $global_extractor || exit 1;
-  touch $global_extractor/extractor/.done
 fi
 echo "$0: Extracts ivector for all languages using $global_extractor/extractor."
 for lang_index in `seq 0 $[$num_langs-1]`; do
