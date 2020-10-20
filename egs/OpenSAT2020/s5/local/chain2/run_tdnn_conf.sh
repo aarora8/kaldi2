@@ -30,7 +30,7 @@ nnet3_affix=_multi  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
 tree_affix=_multi  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
 tdnn_affix=_multi  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 feat_suffix=_hires      
-
+suffix=_sp
 frame_subsampling_factor=3
 xent_regularize=0.1
 max_param_change=2.0
@@ -75,13 +75,13 @@ done
 dir=exp/chain2${nnet3_affix}/tdnn${tdnn_affix}
 ivec_feat_suffix=${feat_suffix}
 
-# this script will extract high dimensional features
+## this script will extract high dimensional features
 for lang_index in `seq 0 $[$num_langs-1]`; do
   echo "$0: extract high resolution 40dim MFCC"
   echo "and extract alignment."
-  local/nnet3/run_common_langs.sh --stage $stage \
-    --feat-suffix $feat_suffix \
-    ${lang_list[$lang_index]} || exit 1;
+#  local/nnet3/run_common_langs.sh --stage $stage \
+#    --feat-suffix $feat_suffix \
+#    ${lang_list[$lang_index]} || exit 1;
   featdir=data/${lang_list[$lang_index]}/train${feat_suffix}
   ivec_featdir=data/${lang_list[$lang_index]}/train${ivec_feat_suffix}
 done
@@ -101,18 +101,18 @@ if [ -z "$ivector_extractor" ]; then
   echo ---------------------------------------------------------------------
   mkdir -p $multi_data_dir_for_ivec
   combine_lang_list=""
-  for lang_index in `seq 0 $[$num_langs-1]`;do
-    lang_name=${lang_list[$lang_index]}
-    utils/copy_data_dir.sh --spk-prefix ${lang_name}- --utt-prefix ${lang_name}- data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix} data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix}_prefixed || exit 1
-    combine_lang_list="$combine_lang_list data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix}_prefixed"
-  done
-  utils/combine_data.sh $multi_data_dir_for_ivec $combine_lang_list
-  utils/validate_data_dir.sh --no-feats $multi_data_dir_for_ivec
-  for lang_index in `seq 0 $[$num_langs-1]`;do
-    lang_name=${lang_list[$lang_index]}
-    rm -r data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix}_prefixed
-  done
-  touch $multi_data_dir_for_ivec/.done
+#  for lang_index in `seq 0 $[$num_langs-1]`;do
+#    lang_name=${lang_list[$lang_index]}
+#    utils/copy_data_dir.sh --spk-prefix ${lang_name}- --utt-prefix ${lang_name}- data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix} data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix}_prefixed || exit 1
+#    combine_lang_list="$combine_lang_list data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix}_prefixed"
+#  done
+#  utils/combine_data.sh $multi_data_dir_for_ivec $combine_lang_list
+#  utils/validate_data_dir.sh --no-feats $multi_data_dir_for_ivec
+#  for lang_index in `seq 0 $[$num_langs-1]`;do
+#    lang_name=${lang_list[$lang_index]}
+#    rm -r data/${lang_list[$lang_index]}/train${suffix}${ivec_feat_suffix}_prefixed
+#  done
+#  touch $multi_data_dir_for_ivec/.done
 fi
 
 if [ ! -f $global_extractor/extractor/.done ]; then
@@ -123,7 +123,9 @@ if [ ! -f $global_extractor/extractor/.done ]; then
     --stage $stage multi \
     $multi_data_dir_for_ivec $global_extractor || exit 1;
 fi
+
 echo "$0: Extracts ivector for all languages using $global_extractor/extractor."
+ivector_extractor=$global_extractor/extractor
 for lang_index in `seq 0 $[$num_langs-1]`; do
   local/nnet3/extract_ivector_lang.sh --stage $stage \
     --train-set train${suffix}${ivec_feat_suffix} \
@@ -132,6 +134,7 @@ for lang_index in `seq 0 $[$num_langs-1]`; do
     ${lang_list[$lang_index]} \
     $ivector_extractor || exit;
 done
+
 dir_basename=`basename $dir`
 for lang_index in `seq 0 $[$num_langs-1]`; do
   lang_name=${lang_list[$lang_index]}

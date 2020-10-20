@@ -14,9 +14,10 @@ feat_suffix=_hires # feat_suffix used in train_set for lda_mllt training.
 nnet3_affix=
 numLeavesMLLT=2500
 numGaussMLLT=36000
+numGaussUBM=1024
 ivector_transform_type=lda # transformation used for iVector extraction
 . parse_options.sh || exit 1;
-
+echo "$0 $@"  # Print the command line for logging
 if [ $# -ne 3 ]; then
   echo "Usage: $0 [options] <lda-mllt-lang> <data-dir> <ivector-extractor-dir>"
   echo "e.g.: $0  102-assamese data/multi/train exp/multi/nnet3"
@@ -26,12 +27,7 @@ fi
 lda_mllt_lang=$1 # lda-mllt transform used to train global-ivector
 multi_data_dir=$2
 global_extractor_dir=$3
-
-langconf=conf/$lda_mllt_lang/lang.conf
-[ ! -f $langconf ] && \
-   echo "Language configuration lang.conf does not exist.  Start with configurations in conf/${lda_mllt_lang}/*." && exit 1
-. $langconf || exit 1;
-
+echo "$0 $@"  # Print the command line for logging
 if [ $stage -le 4 ]; then
   # We need to build a small system just because we need the LDA+MLLT or PCA transform
   # to train the diag-UBM on top of.  We use --num-iters 13 because after we get

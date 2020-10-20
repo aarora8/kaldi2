@@ -40,19 +40,13 @@ if [ $stage -le 2 ]; then
 fi
 
 if [ $stage -le 3 ]; then
-  if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $mfccdir/storage ]; then
-    date=$(date +'%m_%d_%H_%M')
-    utils/create_split_dir.pl /export/b0{1,2,3,4}/$USER/kaldi-data/egs/$lang-$date/s5c/$mfccdir/storage $mfccdir/storage
-  fi
-
   for dataset in $train_set ; do
     utils/copy_data_dir.sh data/$lang/$dataset data/$lang/${dataset}_hires
     utils/data/perturb_data_dir_volume.sh data/$lang/${dataset}_hires
-    steps/make_mfcc.sh --nj 70 conf/mfcc_hires.conf --cmd "$train_cmd" \
+    steps/make_mfcc.sh --nj 70 --mfcc-config conf/mfcc_hires.conf --cmd "$train_cmd" \
       data/$lang/${dataset}_hires
     steps/compute_cmvn_stats.sh data/$lang/${dataset}_hires
     utils/fix_data_dir.sh data/$lang/${dataset}_hires
   done
-  touch data/$lang/${dataset}_hires/.done
 fi
 exit 0;
