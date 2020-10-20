@@ -26,9 +26,9 @@ nj=30
 train_set=train
 gmm=tri3  # the gmm for the target data
 langdir=data/lang_nosp_test
-nnet3_affix=_multi_task  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
-tree_affix=_multi_task  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=_multi_task  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+nnet3_affix=_multi  # cleanup affix for nnet3 and chain dirs, e.g. _cleaned
+tree_affix=_multi  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_multi  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 feat_suffix=_hires      
 
 frame_subsampling_factor=3
@@ -74,24 +74,16 @@ for lang_index in `seq 0 $[$num_langs-1]`; do
 done
 dir=exp/chain2${nnet3_affix}/tdnn${tdnn_affix}
 ivec_feat_suffix=${feat_suffix}
-
-#for lang_index in `seq 0 $[$num_langs-1]`; do
-#  echo "$0: extract high resolution 40dim MFCC + pitch for speed-perturbed data "
-#  echo "and extract alignment."
-#  featdir=data/${lang_list[$lang_index]}/train${feat_suffix}
-#  ivec_featdir=data/${lang_list[$lang_index]}/train${ivec_feat_suffix}
-#done
-
 for lang_index in `seq 0 $[$num_langs-1]`; do
-  echo "$0: extract high resolution 40dim MFCC + pitch for speed-perturbed data "
+  echo "$0: extract high resolution 40dim MFCC"
   echo "and extract alignment."
   local/nnet3/run_common_langs.sh --stage $stage \
     --feat-suffix $feat_suffix \
-    --speed-perturb $speed_perturb ${lang_list[$lang_index]} || exit 1;
+    ${lang_list[$lang_index]} || exit 1;
   featdir=data/${lang_list[$lang_index]}/train${feat_suffix}
   ivec_featdir=data/${lang_list[$lang_index]}/train${ivec_feat_suffix}
 done
-
+exit
 #if $use_ivector; then
 #  ivector_suffix=""
 #  mkdir -p data/multi
