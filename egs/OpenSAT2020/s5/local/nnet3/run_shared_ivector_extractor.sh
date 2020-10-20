@@ -16,11 +16,6 @@ numLeavesMLLT=2500
 numGaussMLLT=36000
 boost_sil=1.0 # Factor by which to boost silence likelihoods in alignment
 ivector_transform_type=lda # transformation used for iVector extraction
-
-[ ! -f ./conf/common_vars.sh ] && echo 'the file conf/common_vars.sh does not exist!' && exit 1;
-
-. conf/common_vars.sh || exit 1;
-
 . parse_options.sh || exit 1;
 
 if [ $# -ne 3 ]; then
@@ -50,7 +45,7 @@ if [ $stage -le 4 ]; then
       --splice-opts "--left-context=3 --right-context=3" \
       --boost-silence $boost_sil \
       $numLeavesMLLT $numGaussMLLT data/$lda_mllt_lang/train${suffix}${feat_suffix} \
-      data/$lda_mllt_lang/lang exp/$lda_mllt_lang/tri5_ali${suffix} exp/$lda_mllt_lang/nnet3${nnet3_affix}/tri3b
+      data/$lda_mllt_lang/lang exp/$lda_mllt_lang/tri3_ali${suffix} exp/$lda_mllt_lang/nnet3${nnet3_affix}/tri3b
     ;;
   pca)
     echo "$0: computing a PCA transform from the hires data."
