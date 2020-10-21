@@ -27,7 +27,6 @@ fi
 lda_mllt_lang=$1 # lda-mllt transform used to train global-ivector
 multi_data_dir=$2
 global_extractor_dir=$3
-echo "$0 $@"  # Print the command line for logging
 if [ $stage -le 4 ]; then
   # We need to build a small system just because we need the LDA+MLLT or PCA transform
   # to train the diag-UBM on top of.  We use --num-iters 13 because after we get
@@ -64,7 +63,7 @@ if [ $stage -le 6 ]; then
   # iVector extractors can be sensitive to the amount of data, but this one has a
   # fairly small dim (defaults to 100) so we don't use all of it, we use just the
   # 100k subset (just under half the data).
-  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj 200 \
+  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj 60 \
     $multi_data_dir  $global_extractor_dir/diag_ubm $global_extractor_dir/extractor || exit 1;
 fi
 exit 0;
