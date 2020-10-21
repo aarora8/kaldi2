@@ -115,25 +115,25 @@ if [ -z "$ivector_extractor" ]; then
 #  touch $multi_data_dir_for_ivec/.done
 fi
 
-if [ ! -f $global_extractor/extractor/.done ]; then
-  local/nnet3/run_shared_ivector_extractor.sh  \
-    --suffix "$suffix" --nnet3-affix "$nnet3_affix" \
-    --feat-suffix "$ivec_feat_suffix" \
-    --ivector-transform-type pca \
-    --stage $stage multi \
-    $multi_data_dir_for_ivec $global_extractor || exit 1;
-fi
-
-echo "$0: Extracts ivector for all languages using $global_extractor/extractor."
-ivector_extractor=$global_extractor/extractor
-for lang_index in `seq 0 $[$num_langs-1]`; do
-  local/nnet3/extract_ivector_lang.sh --stage $stage \
-    --train-set train${suffix}${ivec_feat_suffix} \
-    --ivector-suffix "$ivector_suffix" \
-    --nnet3-affix "$nnet3_affix" \
-    ${lang_list[$lang_index]} \
-    $ivector_extractor || exit;
-done
+#if [ ! -f $global_extractor/extractor/.done ]; then
+#  local/nnet3/run_shared_ivector_extractor.sh  \
+#    --suffix "$suffix" --nnet3-affix "$nnet3_affix" \
+#    --feat-suffix "$ivec_feat_suffix" \
+#    --ivector-transform-type pca \
+#    --stage $stage multi \
+#    $multi_data_dir_for_ivec $global_extractor || exit 1;
+#fi
+#
+#echo "$0: Extracts ivector for all languages using $global_extractor/extractor."
+#ivector_extractor=$global_extractor/extractor
+#for lang_index in `seq 0 $[$num_langs-1]`; do
+#  local/nnet3/extract_ivector_lang.sh --stage $stage \
+#    --train-set train${suffix}${ivec_feat_suffix} \
+#    --ivector-suffix "$ivector_suffix" \
+#    --nnet3-affix "$nnet3_affix" \
+#    ${lang_list[$lang_index]} \
+#    $ivector_extractor || exit;
+#done
 
 dir_basename=`basename $dir`
 for lang_index in `seq 0 $[$num_langs-1]`; do
@@ -145,7 +145,7 @@ for lang_index in `seq 0 $[$num_langs-1]`; do
   multi_ivector_dirs[$lang_index]=exp/${lang_list[$lang_index]}/nnet3${nnet3_affix}/ivectors_train${suffix}${ivec_feat_suffix}${ivector_suffix}
   multi_ali_treedirs[$lang_index]=exp/${lang_list[$lang_index]}/tree${tree_affix}
   multi_ali_latdirs[$lang_index]=exp/${lang_list[$lang_index]}/chain/${gmm}_train${suffix}_lats
-  multi_lang[$lang_index]=data/${lang_list[$lang_index]}/lang
+  multi_lang[$lang_index]=data/${lang_list[$lang_index]}/lang_nosp_test
   multi_lfmmi_lang[$lang_index]=data/${lang_list[$lang_index]}/lang_chain
   multi_gmm_dir[$lang_index]=exp/${lang_list[$lang_index]}/$gmm
   multi_chain_dir[$lang_index]=exp/${lang_list[$lang_index]}/chain/$dir_basename
@@ -220,7 +220,7 @@ if [ $stage -le 11 ]; then
 
   cat <<EOF > $dir/configs/network.xconfig
   input dim=100 name=ivector
-  input dim=40 name=input
+  input dim=80 name=input
 
   # please note that it is important to have input layer with the name=input
   # as the layer immediately preceding the fixed-affine-layer to enable
@@ -375,8 +375,9 @@ fi
 if [ $stage -le 17 ]; then
     echo "$0: Training pre-conditioning matrix"
     num_lda_jobs=`find ${dir}/egs/ -iname 'train.*.scp' | wc -l | cut -d ' ' -f2`
+    echo "$num_lda_jobs"
     steps/chain2/compute_preconditioning_matrix.sh --cmd "$train_cmd" \
-        --nj $num_lda_jobs \
+        --nj 100 \
         $dir/configs/init.raw \
         $dir/egs \
         $dir || exit 1
@@ -384,20 +385,20 @@ fi
 
 if [ $stage -le 18 ]; then
     echo "$0: Preparing initial acoustic model"
-    $gpu_cmd ${dir}/log/init_model.log \
+    $cuda_cmd ${dir}/log/init_model.log \
            nnet3-init --srand=${srand} ${dir}/configs/final.config ${dir}/init/multi.raw || exit 1
 fi
 
 if [ $stage -le 19 ]; then
   echo "$0: Starting model training"
   steps/chain2/train.sh \
-    --stage $train_stage --cmd "$gpu_cmd" \
+    --stage $train_stage --cmd "$cuda_cmd" \
     --multilingual-eg true \
     --xent-regularize $xent_regularize --leaky-hmm-coefficient 0.1  \
     --initial-effective-lrate 0.0005 \
     --final-effective-lrate 0.00005 \
     --max-param-change 2.0 \
-    --groups-per-minibatch 64 \
+    --minibatch_size 64 \
     --srand 1 --dropout-schedule $dropout_schedule \
     --shuffle-buffer-size 5000 --apply-deriv-weights false \
     --l2-regularize 0.0 --num-epochs 10 \

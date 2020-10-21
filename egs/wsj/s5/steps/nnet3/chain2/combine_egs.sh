@@ -160,7 +160,7 @@ if [ $stage -le 2 ]; then
     echo "$0: Clean up"
     for lang in $(seq 0 $[$num_langs-1]);do
         lang_name=${lang_list[$lang]}
-        rm -r $dir/temp_${lang_name}/
+        #rm -r $dir/temp_${lang_name}/
     done
 fi
 
