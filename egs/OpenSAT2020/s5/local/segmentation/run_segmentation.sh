@@ -52,7 +52,7 @@ fi
 
 if [ $stage -le 3 ]; then
   # score uniform segmentation
-  steps/get_ctm_fast.sh --cmd "$train_cmd" --frame-shift 0.03 data/${uni_segmented_data_dir}_hires \
+  steps/get_ctm_fast.sh --cmd "$train_cmd" --frame-shift 0.03 --lmwt 8 data/${uni_segmented_data_dir}_hires \
     $dir/graph_3 $dir/decode_$uni_segmented_data_dir $dir/decode_$uni_segmented_data_dir/score_10_0.0
 
   awk '{print $1" "$1" 1"}' data/${uni_segmented_data_dir}_hires/wav.scp > data/${uni_segmented_data_dir}_hires/reco2file_and_channel
@@ -122,7 +122,7 @@ if [ $stage -le 7 ]; then
 fi
 
 if [ $stage -le 8 ]; then
-  steps/get_ctm_fast.sh --cmd "$train_cmd" --frame-shift 0.03 data/${uni_segmented_data_dir}_reseg_hires \
+  steps/get_ctm_fast.sh --cmd "$train_cmd" --frame-shift 0.03 --lmwt 8 data/${uni_segmented_data_dir}_reseg_hires \
     $dir/graph_3 $dir/decode_${uni_segmented_data_dir}_reseg $dir/decode_${uni_segmented_data_dir}_reseg/score_10_0.0
 
   awk '{print $1" "$1" 1"}' data/${uni_segmented_data_dir}_reseg_hires/wav.scp > data/${uni_segmented_data_dir}_reseg_hires/reco2file_and_channel
