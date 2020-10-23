@@ -69,7 +69,8 @@ if [ $stage -le 3 ]; then
 
   cat $dir/decode_$uni_segmented_data_dir/score_10_0.0/ctm_out.concat | local/wer_output_filter > $dir/decode_$uni_segmented_data_dir/score_10_0.0/hyp.txt
 
-  compute-wer --text --mode=present ark:$dir/decode_$whole_data_dir/scoring_kaldi/test_filt.txt  ark:$dir/decode_$uni_segmented_data_dir/score_10_0.0/hyp.txt
+  cat $dir/decode_$dataset/scoring_kaldi/test_filt.txt | local/segmentation/combine_line_txt_to_paragraph.py > $dir/decode_$uni_segmented_data_dir/score_10_0.0/ref.txt
+  compute-wer --text --mode=present ark:$dir/decode_$uni_segmented_data_dir/score_10_0.0/ref.txt  ark:$dir/decode_$uni_segmented_data_dir/score_10_0.0/hyp.txt
 fi
 
 ##############################################################################################################
@@ -138,5 +139,6 @@ if [ $stage -le 8 ]; then
 
   cat $dir/decode_${uni_segmented_data_dir}_reseg/score_10_0.0/ctm.concat.final | local/wer_output_filter > $dir/decode_${uni_segmented_data_dir}_reseg/score_10_0.0/hyp.txt
 
-  compute-wer --text --mode=present ark:$dir/decode_$whole_data_dir/scoring_kaldi/test_filt.txt  ark:$dir/decode_${uni_segmented_data_dir}_reseg/score_10_0.0/hyp.txt
+  cat $dir/decode_$dataset/scoring_kaldi/test_filt.txt | local/segmentation/combine_line_txt_to_paragraph.py > $dir/decode_${uni_segmented_data_dir}_reseg/scoring_10_0.0/ref.txt
+  compute-wer --text --mode=present ark:$dir/decode_${uni_segmented_data_dir}_reseg/score_10_0.0/ref.txt  ark:$dir/decode_${uni_segmented_data_dir}_reseg/score_10_0.0/hyp.txt
 fi
