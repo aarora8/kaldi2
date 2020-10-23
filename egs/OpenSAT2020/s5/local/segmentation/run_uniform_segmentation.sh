@@ -1,54 +1,69 @@
 #!/usr/bin/env bash
+# This script performs decoding on whole directory, uniform segmentation
+
+dataset=safe_t_dev1
+dir=exp/chain_all/tdnn_all
+extractor=exp/nnet3_all
+nj=$(cat data/${dataset}/spk2utt | wc -l)
+
 stage=0
 cmd=queue.pl
 . ./utils/parse_options.sh
 . ./cmd.sh
 . ./path.sh
 set -e -o pipefail
-set -o nounset                              # Treat unset variables as an error
+set -o nounset
 
-dataset=safe_t_dev1
 whole_data_dir=${dataset}_whole
-datadev=data/safe_t_dev1
+uni_segmented_data_dir=${dataset}_segmented
 
 if [ $stage -le 0 ]; then
+  local/run_decooding.sh --dataset $dataset
+fi
+
+if [ $stage -le 1 ]; then
   utils/data/convert_data_dir_to_whole.sh data/$dataset data/$whole_data_dir
+  local/run_decooding.sh --dataset $whole_data_dir
 fi
 
 
-utils/data/get_utt2dur.sh --nj 4 --cmd "$train_cmd" data/safe_t_dev1_whole
+if [ $stage -le 2 ]; then
+  # create uniform segmentation
+  utils/data/convert_data_dir_to_whole.sh data/$dataset data/$whole_data_dir
 
-utils/data/get_segments_for_data.sh data/safe_t_dev1_whole > data/safe_t_dev1_whole/segments
+  utils/data/get_utt2dur.sh --nj 4 --cmd "$train_cmd" data/$whole_data_dir
 
-utils/data/get_uniform_subsegments.py --max-segment-duration=30 --overlap-duration=5 \
-  --max-remaining-duration=15 ${datadev}_whole/segments > ${datadev}_whole/uniform_sub_segments
+  utils/data/get_segments_for_data.sh data/$whole_data_dir > data/$whole_data_dir/segments
 
-local/run_decooding.sh
+  utils/data/get_uniform_subsegments.py --max-segment-duration=30 --overlap-duration=5 \
+    --max-remaining-duration=15 data/$whole_data_dir/segments > data/$whole_data_dir/uniform_sub_segments
 
+  utils/data/subsegment_data_dir.sh data/$whole_data_dir \
+      data/$whole_data_dir/uniform_sub_segments data/$uni_segmented_data_dir
 
-local/postprocess_test.sh ${data}_segmented ${tree_dir}/graph${graph_affix} ${decode_dir}
+  local/run_decooding.sh --dataset $uni_segmented_data_dir
+fi
 
-steps/get_ctm_fast.sh --cmd "$train_cmd" --frame-shift 0.03 data/safe_t_dev1_segmented_hires  exp/ihm/chain_1a/tdnn_b_bigger_2_aug/graph_3 exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0
+if [ $stage -le 3 ]; then
+  # score uniform segmentation
+  #local/segmentation/postprocess_test.sh $uni_segmented_data_dir ${dir}/graph_3 $dir/decode_$uni_segmented_data_dir
 
-utils/ctm/resolve_ctm_overlaps.py data/${data}_hires/segments \
-    ${decode_dir}/score_10_0.0/ctm \
-    - | utils/convert_ctm.pl data/${data}_hires/segments data/${data}_hires/reco2file_and_channel > \
-    ${decode_dir}/score_10_0.0/${data}_hires.ctm
+  steps/get_ctm_fast.sh --cmd "$train_cmd" --frame-shift 0.03 data/${uni_segmented_data_dir}_hires \
+    $dir/graph_3 $dir/decode_$uni_segmented_data_dir $dir/decode_$uni_segmented_data_dir/score_10_0.0
 
+  awk '{print $1" "$1" 1"}' data/${uni_segmented_data_dir}_hires/wav.scp > data/${uni_segmented_data_dir}_hires/reco2file_and_channel
 
-awk '{print $1" "$1" 1"}' data/safe_t_dev1_segmented_hires/wav.scp > data/safe_t_dev1_segmented_hires/reco2file_and_channel
+  utils/ctm/resolve_ctm_overlaps.py data/${uni_segmented_data_dir}_hires/segments \
+    $dir/decode_$uni_segmented_data_dir/score_10_0.0/ctm \
+    - | utils/convert_ctm.pl data/${uni_segmented_data_dir}_hires/segments \
+    data/${uni_segmented_data_dir}_hires/reco2file_and_channel > \
+    $dir/decode_$uni_segmented_data_dir/score_10_0.0/${dataset}_hires.ctm
 
-utils/ctm/resolve_ctm_overlaps.py data/safe_t_dev1_segmented_hires/segments  exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0/ctm \
-    - | utils/convert_ctm.pl data/safe_t_dev1_segmented_hires/segments data/safe_t_dev1_segmented_hires/reco2file_and_channel > \
-    exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0/safe_t_dev1_segmented_hires.ctm
+  awk '{a[$1]=a[$1]" "$5;}END{for(i in a)print i""a[i];}'     $dir/decode_$uni_segmented_data_dir/score_10_0.0/${dataset}_hires.ctm > tmpconcat
 
+  cat tmpconcat > $dir/decode_$uni_segmented_data_dir/score_10_0.0/ctm_out.concat
 
-awk '{a[$1]=a[$1]" "$5;}END{for(i in a)print i""a[i];}'     exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0/safe_t_dev1_segmented_hires.ctm > tmpconcat
+  cat $dir/decode_$uni_segmented_data_dir/score_10_0.0/ctm_out.concat | local/wer_output_filter > $dir/decode_$uni_segmented_data_dir/score_10_0.0/hyp.txt
 
-cat tmpconcat > exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0/ctm_out.concat
-
-cat exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0/ctm_out.concat | local/wer_output_filter >exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0/hyp.txt
-
-compute-wer --text --mode=present ark:exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_whole/scoring_kaldi/test_filt.txt  ark:exp/ihm/chain_1a/tdnn_b_bigger_2_aug/decode_safe_t_dev1_segmented/score_10_0.0/hyp.txt
-
-
+  compute-wer --text --mode=present ark:$dir/decode_$whole_data_dir/scoring_kaldi/test_filt.txt  ark:$dir/decode_$uni_segmented_data_dir/score_10_0.0/hyp.txt
+fi

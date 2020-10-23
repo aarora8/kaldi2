@@ -4,13 +4,13 @@
 
 stage=0
 cmd=queue.pl
+dataset=safe_t_dev1
 . ./utils/parse_options.sh
 . ./cmd.sh
 . ./path.sh
 set -e -o pipefail
 set -o nounset
 
-dataset=safe_t_dev1
 dir=exp/chain_all/tdnn_all
 extractor=exp/nnet3_all
 nj=$(cat data/${dataset}/spk2utt | wc -l)
