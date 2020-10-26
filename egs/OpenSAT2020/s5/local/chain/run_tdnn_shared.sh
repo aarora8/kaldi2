@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# %WER 14.17 [ 2763 / 19498, 233 ins, 1303 del, 1227 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_9_0.5
+# exp/chain_all/tdnn_all: num-iters=502 nj=3..5 num-params=18.1M dim=80+100->4520 combine=-0.048->-0.045 (over 10) xent:train/valid[333,501,final]=(-1.31,-0.993,-0.967/-1.36,-1.13,-1.10) logprob:train/valid[333,501,final]=(-0.071,-0.044,-0.043/-0.091,-0.077,-0.076)
 set -e -o pipefail
 # First the options that are passed through to run_ivector_common.sh
 # (some of which are also used in this script directly).
