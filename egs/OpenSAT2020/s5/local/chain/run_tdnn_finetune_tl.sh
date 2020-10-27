@@ -2,31 +2,34 @@
 
 # This script uses weight transfer as a transfer learning method to transfer
 # already trained neural net model on ICSI+AMI to safet
-#
-# Model preparation: The last layer (prefinal and output layer) from
-# already-trained wsj model is removed and 3 randomly initialized layer
-# (new tdnn layer, prefinal, and output) are added to the model.
-#
-# Training: The transferred layers are retrained with smaller learning-rate,
-# while new added layers are trained with larger learning rate using rm data.
 set -e
 
 dir=exp/chain_finetune/tdnn_finetune
-src_mdl=exp/chain_icsiami/tdnn_icsiami/final.mdl # Input chain model
-                                                   # trained on source dataset (wsj).
+
+src_mdl=exp/chain_train_icsiami/tdnn_train_icsiami/final.mdl # Input chain model
+                                                   # trained on source dataset (icsi and ami).
                                                    # This model is transfered to the target domain.
 
 src_mfcc_config=conf/mfcc_hires.conf # mfcc config used to extract higher dim
-                                                  # mfcc features for ivector and DNN training
-                                                  # in the source domain.
-src_ivec_extractor_dir=exp/nnet3_icsiami/extractor  # Source ivector extractor dir used to extract ivector for
+                                     # mfcc features for ivector and DNN training
+                                     # in the source domain.
+src_ivec_extractor_dir=exp/nnet3_train_icsiami/extractor  # Source ivector extractor dir used to extract ivector for
                          # source data. The ivector for target data is extracted using this extractor.
                          # It should be nonempty, if ivector is used in the source model training.
+
+
+src_tree_dir=exp/chain_train_icsiami/tree_bi_train_icsiami # chain tree-dir for src data;
+                                         # the alignment in target domain is
+                                         # converted using src-tree
 
 primary_lr_factor=0.25 # The learning-rate factor for transferred layers from source
                        # model. e.g. if 0, the paramters transferred from source model
                        # are fixed.
                        # The learning-rate factor for new added layers is 1.0.
+
+phone_lm_scales="1,10" # comma-separated list of positive integer multiplicities
+                       # to apply to the different source data directories (used
+                       # to give the RM data a higher weight).
 
 set -e -o pipefail
 stage=0
@@ -38,10 +41,8 @@ num_epochs=10
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
-tree_affix=_finetune  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
 tdnn_affix=_finetune  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 nnet3_affix=_finetune
-extractor=exp/nnet3_finetune/extractor
 common_egs_dir=
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
@@ -66,7 +67,7 @@ local/nnet3/run_ivector_common_finetune.sh --stage $stage \
                                            --nj $nj \
                                            --train-set $train_set \
                                            --nnet3-affix "$nnet3_affix" \
-                                           --extractor $extractor
+                                           --extractor $src_ivec_extractor_dir
 
 lores_train_data_dir=data/${train_set}_sp
 train_data_dir=data/${train_set}_sp_hires
@@ -75,42 +76,42 @@ ali_dir=exp/${gmm}_${train_set}_ali_sp
 lat_dir=exp/${gmm}_${train_set}_lats_sp
 lang_dir=data/lang_nosp_test
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
-tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 xent_regularize=0.1
 
 if [ $stage -le 5 ]; then
   nj=$(cat $ali_dir/num_jobs) || exit 1;
-  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" $lores_train_data_dir \
-    $lang_dir $gmm_dir $lat_dir
+  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" \
+    --generate-ali-from-lats true \
+  $lores_train_data_dir  $lang_dir $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz
 fi
 
 if [ $stage -le 6 ]; then
-  echo "$0: Create neural net configs using the xconfig parser for";
-  echo " generating new layers, that are specific to safet. These layers ";
-  echo " are added to the transferred part of the AMI+ICSI network.";
-  num_targets=$(tree-info --print-args=false $tree_dir/tree |grep num-pdfs|awk '{print $2}')
-  learning_rate_factor=$(echo "print (0.5/$xent_regularize)" | python)
-  mkdir -p $dir
-  mkdir -p $dir/configs
-  cat <<EOF > $dir/configs/network.xconfig
-EOF
-  steps/nnet3/xconfig_to_configs.py --existing-model $src_mdl \
-    --xconfig-file  $dir/configs/network.xconfig  \
-    --config-dir $dir/configs/
-
+  # Set the learning-rate-factor for all transferred layers but the last output
+  # layer to primary_lr_factor.
   $train_cmd $dir/log/generate_input_mdl.log \
-    nnet3-copy --edits="set-learning-rate-factor name=* learning-rate-factor=$primary_lr_factor" $src_mdl - \| \
-      nnet3-init --srand=1 - $dir/configs/final.config $dir/input.raw  || exit 1;
+    nnet3-am-copy --raw=true --edits="set-learning-rate-factor name=* learning-rate-factor=$primary_lr_factor; set-learning-rate-factor name=output* learning-rate-factor=1.0" \
+      $src_mdl $dir/input.raw || exit 1;
 fi
 
 if [ $stage -le 7 ]; then
+  echo "$0: compute {den,normalization}.fst using weighted phone LM with icsi,ami and safet weight $phone_lm_scales."
+  steps/nnet3/chain/make_weighted_den_fst.sh --cmd "$train_cmd" \
+    --num-repeats $phone_lm_scales \
+    --lm-opts '--num-extra-lm-states=200' \
+    $src_tree_dir $lat_dir $dir || exit 1;
+fi
+
+if [ $stage -le 8 ]; then
   echo "$0: generate egs for chain to train new model on rm dataset."
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $dir/egs/storage ]; then
     utils/create_split_dir.pl \
      /export/b0{3,4,5,6}/$USER/kaldi-data/egs/opensat-$(date +'%m_%d_%H_%M')/s5/$dir/egs/storage $dir/egs/storage
   fi
+
+  # exclude phone_LM and den.fst generation training stages
+  if [ $train_stage -lt -4 ]; then train_stage=-4 ; fi
 
   steps/nnet3/chain/train.py --stage $train_stage \
     --cmd "$decode_cmd" \
@@ -127,7 +128,7 @@ if [ $stage -le 7 ]; then
     --egs.chunk-width 140,100,160 \
     --trainer.num-chunk-per-minibatch 64 \
     --trainer.frames-per-iter 3000000 \
-    --trainer.num-epochs 10 \
+    --trainer.num-epochs 1 \
     --trainer.optimization.num-jobs-initial 3 \
     --trainer.optimization.num-jobs-final 5 \
     --trainer.optimization.initial-effective-lrate 0.00025 \
@@ -135,7 +136,7 @@ if [ $stage -le 7 ]; then
     --trainer.max-param-change 2.0 \
     --cleanup.remove-egs $remove_egs \
     --feat-dir $train_data_dir \
-    --tree-dir $tree_dir \
+    --tree-dir $src_tree_dir \
     --lat-dir $lat_dir \
     --dir $dir  || exit 1;
 fi
