@@ -5,7 +5,7 @@
 # exp/chain_all/tdnn_all_cnn: num-iters=502 nj=3..5 num-params=15.1M dim=80+100->4520 combine=-0.065->-0.063 (over 7) xent:train/valid[333,501,final]=(-1.40,-1.16,-1.14/-1.41,-1.23,-1.21) logprob:train/valid[333,501,final]=(-0.076,-0.057,-0.056/-0.090,-0.075,-0.074)
 
 # 40 dim results
-# Running
+# 40 dim good data: %WER 12.00 [ 2340 / 19507, 289 ins, 830 del, 1221 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_8_0.0
 
 set -e -o pipefail
 stage=0
@@ -45,16 +45,16 @@ local/nnet3/run_ivector_common.sh --stage $stage \
                                   --train-set $train_set \
                                   --gmm $gmm \
                                   --nnet3-affix "$nnet3_affix"
-
+exit
 gmm_dir=exp/$gmm
 ali_dir=exp/${gmm}_${train_set}_ali_sp
 lores_train_data_dir=data/${train_set}
-train_data_dir=data/${train_set}_hires
+train_data_dir=data/${train_set}_sp_hires
 lang_dir=data/lang_nosp_test
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
 lat_dir=exp/tri3_${train_set}_lats_sp
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
-train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_hires
+train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 
 for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
    $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp; do

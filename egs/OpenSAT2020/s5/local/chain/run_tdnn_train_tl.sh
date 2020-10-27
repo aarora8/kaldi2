@@ -38,7 +38,7 @@ local/nnet3/run_ivector_common.sh --stage $stage \
                                   --train-set $train_set \
                                   --gmm $gmm \
                                   --nnet3-affix "$nnet3_affix"
-
+exit
 lores_train_data_dir=data/${train_set}_sp
 train_data_dir=data/${train_set}_sp_hires
 gmm_dir=exp/${gmm}_${train_set}
