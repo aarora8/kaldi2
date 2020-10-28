@@ -39,11 +39,11 @@ if [ $stage -le 1 ]; then
   utils/fix_data_dir.sh data/${train_set}_sp
 fi
 
-if [ $stage -le 2 ]; then
-  echo "$0: aligning with the perturbed low-resolution data"
-  steps/align_fmllr.sh --nj ${nj} --cmd "$train_cmd" \
-    data/${train_set}_sp data/lang_nosp_test $gmm_dir $ali_dir || exit 1
-fi
+#if [ $stage -le 2 ]; then
+#  echo "$0: aligning with the perturbed low-resolution data"
+#  steps/align_fmllr.sh --nj ${nj} --cmd "$train_cmd" \
+#    data/${train_set}_sp data/lang_nosp_test $gmm_dir $ali_dir || exit 1
+#fi
 
 if [ $stage -le 3 ]; then
   # Create high-resolution MFCC features (with 40 cepstra instead of 13).

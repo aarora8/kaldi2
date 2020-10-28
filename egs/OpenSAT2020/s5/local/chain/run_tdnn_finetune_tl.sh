@@ -6,19 +6,19 @@ set -e
 
 dir=exp/chain_finetune/tdnn_finetune
 
-src_mdl=exp/chain_train_icsiami/tdnn_train_icsiami/final.mdl # Input chain model
+src_mdl=exp/chain_all/tdnn_all//final.mdl # Input chain model
                                                    # trained on source dataset (icsi and ami).
                                                    # This model is transfered to the target domain.
 
 src_mfcc_config=conf/mfcc_hires.conf # mfcc config used to extract higher dim
                                      # mfcc features for ivector and DNN training
                                      # in the source domain.
-src_ivec_extractor_dir=exp/nnet3_train_icsiami/extractor  # Source ivector extractor dir used to extract ivector for
+src_ivec_extractor_dir=exp/nnet3_all/extractor  # Source ivector extractor dir used to extract ivector for
                          # source data. The ivector for target data is extracted using this extractor.
                          # It should be nonempty, if ivector is used in the source model training.
 
 
-src_tree_dir=exp/chain_train_icsiami/tree_bi_train_icsiami # chain tree-dir for src data;
+src_tree_dir=exp/chain_all/tree_bi_all # chain tree-dir for src data;
                                          # the alignment in target domain is
                                          # converted using src-tree
 
@@ -36,7 +36,7 @@ stage=0
 nj=100
 train_set=train_safet
 gmm=tri3
-num_epochs=10
+num_epochs=1
 
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
@@ -80,7 +80,6 @@ train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 xent_regularize=0.1
 
 if [ $stage -le 5 ]; then
-  nj=$(cat $ali_dir/num_jobs) || exit 1;
   steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" \
     --generate-ali-from-lats true \
   $lores_train_data_dir  $lang_dir $gmm_dir $lat_dir
@@ -128,7 +127,7 @@ if [ $stage -le 8 ]; then
     --egs.chunk-width 140,100,160 \
     --trainer.num-chunk-per-minibatch 64 \
     --trainer.frames-per-iter 3000000 \
-    --trainer.num-epochs 1 \
+    --trainer.num-epochs $num_epochs \
     --trainer.optimization.num-jobs-initial 3 \
     --trainer.optimization.num-jobs-final 5 \
     --trainer.optimization.initial-effective-lrate 0.00025 \
