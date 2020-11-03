@@ -2,6 +2,19 @@
 
 # This script uses weight transfer as a transfer learning method to transfer
 # already trained neural net model on ICSI+AMI to safet
+# %WER 13.03 [ 2542 / 19507, 335 ins, 1069 del, 1138 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_8_0.0
+# %WER 13.00 [ 2536 / 19507, 319 ins, 1146 del, 1071 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_9_0.0
+# %WER 12.97 [ 2531 / 19507, 389 ins, 1106 del, 1036 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_9_0.0
+# %WER 12.84 [ 2505 / 19507, 356 ins, 1091 del, 1058 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_9_0.0
+# %WER 12.70 [ 2477 / 19507, 334 ins, 1071 del, 1072 sub ] exp/chain_finetune/tdnn_finetune_25/decode_safe_t_dev1_finetune_tl/wer_9_0.0
+# %WER 12.80 [ 2496 / 19507, 243 ins, 1202 del, 1051 sub ] exp/chain_finetune/tdnn_finetune_30/decode_safe_t_dev1_finetune_tl/wer_8_1.0
+# %WER 12.70 [ 2478 / 19507, 334 ins, 1078 del, 1066 sub ] exp/chain_finetune/tdnn_finetune_25_100/decode_safe_t_dev1_finetune_tl/wer_9_0.0
+# %WER 12.83 [ 2502 / 19507, 336 ins, 1089 del, 1077 sub ] exp/chain_finetune/tdnn_finetune_30_100/decode_safe_t_dev1_finetune_tl/wer_9_0.0
+# %WER 12.63 [ 2464 / 19507, 308 ins, 1089 del, 1067 sub ] exp/chain_finetune/tdnn_finetune_40_100/decode_safe_t_dev1_finetune_tl/wer_9_0.0
+# %WER 12.67 [ 2471 / 19507, 282 ins, 1080 del, 1109 sub ] exp/chain_finetune/tdnn_finetune_50_100/decode_safe_t_dev1_finetune_tl/wer_8_0.5
+# %WER 12.81 [ 2499 / 19507, 226 ins, 1202 del, 1071 sub ] exp/chain_finetune/tdnn_finetune_60_100/decode_safe_t_dev1_finetune_tl/wer_9_0.5
+
+# %WER 14.19 [ 2768 / 19507, 281 ins, 1183 del, 1304 sub ] exp/chain_finetune/tdnn_finetune_40_100/decode_safe_t_dev1_finetune_tl/wer_8_0.0
 set -e
 
 dir=exp/chain_finetune/tdnn_finetune
@@ -22,7 +35,7 @@ src_tree_dir=exp/chain_all/tree_bi_all # chain tree-dir for src data;
                                          # the alignment in target domain is
                                          # converted using src-tree
 
-primary_lr_factor=0.25 # The learning-rate factor for transferred layers from source
+primary_lr_factor=0.70 # The learning-rate factor for transferred layers from source
                        # model. e.g. if 0, the paramters transferred from source model
                        # are fixed.
                        # The learning-rate factor for new added layers is 1.0.
@@ -41,7 +54,7 @@ num_epochs=1
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
-tdnn_affix=_finetune  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_finetune_70_100  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 nnet3_affix=_finetune
 common_egs_dir=
 dropout_schedule='0,0@0.20,0.5@0.50,0'
@@ -77,7 +90,6 @@ lat_dir=exp/${gmm}_${train_set}_lats_sp
 lang_dir=data/lang_nosp_test
 dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
-xent_regularize=0.1
 
 if [ $stage -le 5 ]; then
   steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" \
@@ -111,7 +123,6 @@ if [ $stage -le 8 ]; then
 
   # exclude phone_LM and den.fst generation training stages
   if [ $train_stage -lt -4 ]; then train_stage=-4 ; fi
-
   steps/nnet3/chain/train.py --stage $train_stage \
     --cmd "$decode_cmd" \
     --trainer.input-model $dir/input.raw \
@@ -123,7 +134,7 @@ if [ $stage -le 8 ]; then
     --chain.apply-deriv-weights false \
     --chain.lm-opts="--num-extra-lm-states=2000" \
     --egs.dir "$common_egs_dir" \
-    --egs.opts "--frames-overlap-per-eg 0" \
+    --egs.opts "--frames-overlap-per-eg 0 --constrained false" \
     --egs.chunk-width 140,100,160 \
     --trainer.num-chunk-per-minibatch 64 \
     --trainer.frames-per-iter 3000000 \
@@ -133,6 +144,8 @@ if [ $stage -le 8 ]; then
     --trainer.optimization.initial-effective-lrate 0.00025 \
     --trainer.optimization.final-effective-lrate 0.000025 \
     --trainer.max-param-change 2.0 \
+    --trainer.dropout-schedule $dropout_schedule \
+    --trainer.add-option="--optimization.memory-compression-level=2" \
     --cleanup.remove-egs $remove_egs \
     --feat-dir $train_data_dir \
     --tree-dir $src_tree_dir \
@@ -140,11 +153,16 @@ if [ $stage -le 8 ]; then
     --dir $dir  || exit 1;
 fi
 
-if [ $stage -le 8 ]; then
+if [ $stage -le 9 ]; then
   utils/mkgraph.sh --self-loop-scale 1.0 $lang_dir $dir $dir/graph
 fi
 
-if [ $stage -le 9 ]; then
+if [ $stage -le 10 ]; then
+
+    steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
+    data/safe_t_dev1_hires $src_ivec_extractor_dir \
+    exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires
+
     steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
         --acwt 1.0 --post-decode-acwt 10.0 \
         --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
