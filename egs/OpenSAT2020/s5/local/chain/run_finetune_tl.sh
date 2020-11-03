@@ -2,19 +2,10 @@
 
 # This script uses weight transfer as a transfer learning method to transfer
 # already trained neural net model on ICSI+AMI to safet
-# %WER 13.03 [ 2542 / 19507, 335 ins, 1069 del, 1138 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_8_0.0
-# %WER 13.00 [ 2536 / 19507, 319 ins, 1146 del, 1071 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_9_0.0
-# %WER 12.97 [ 2531 / 19507, 389 ins, 1106 del, 1036 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_9_0.0
-# %WER 12.84 [ 2505 / 19507, 356 ins, 1091 del, 1058 sub ] exp/chain_finetune/tdnn_finetune/decode_safe_t_dev1_finetune_tl/wer_9_0.0
-# %WER 12.70 [ 2477 / 19507, 334 ins, 1071 del, 1072 sub ] exp/chain_finetune/tdnn_finetune_25/decode_safe_t_dev1_finetune_tl/wer_9_0.0
-# %WER 12.80 [ 2496 / 19507, 243 ins, 1202 del, 1051 sub ] exp/chain_finetune/tdnn_finetune_30/decode_safe_t_dev1_finetune_tl/wer_8_1.0
-# %WER 12.70 [ 2478 / 19507, 334 ins, 1078 del, 1066 sub ] exp/chain_finetune/tdnn_finetune_25_100/decode_safe_t_dev1_finetune_tl/wer_9_0.0
-# %WER 12.83 [ 2502 / 19507, 336 ins, 1089 del, 1077 sub ] exp/chain_finetune/tdnn_finetune_30_100/decode_safe_t_dev1_finetune_tl/wer_9_0.0
-# %WER 12.63 [ 2464 / 19507, 308 ins, 1089 del, 1067 sub ] exp/chain_finetune/tdnn_finetune_40_100/decode_safe_t_dev1_finetune_tl/wer_9_0.0
-# %WER 12.67 [ 2471 / 19507, 282 ins, 1080 del, 1109 sub ] exp/chain_finetune/tdnn_finetune_50_100/decode_safe_t_dev1_finetune_tl/wer_8_0.5
-# %WER 12.81 [ 2499 / 19507, 226 ins, 1202 del, 1071 sub ] exp/chain_finetune/tdnn_finetune_60_100/decode_safe_t_dev1_finetune_tl/wer_9_0.5
 
+# %WER 45.91 [ 8956 / 19507, 445 ins, 6660 del, 1851 sub ] exp/chain_train_icsiami/tdnn_train_icsiami/decode_safe_t_dev1_train_tl/wer_8_0.0
 # %WER 14.19 [ 2768 / 19507, 281 ins, 1183 del, 1304 sub ] exp/chain_finetune/tdnn_finetune_40_100/decode_safe_t_dev1_finetune_tl/wer_8_0.0
+# %WER 13.94 [ 2720 / 19507, 289 ins, 1108 del, 1323 sub ] exp/chain_finetune/tdnn_finetune_40_100_ep2/decode_safe_t_dev1_finetune_tl/wer_8_0.0
 set -e
 
 dir=exp/chain_finetune/tdnn_finetune
