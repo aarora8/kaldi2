@@ -168,7 +168,7 @@ if [ $stage -le 13 ]; then
 fi
 
 if [ $stage -le 14 ]; then
-  local/nnet3/run_ivector_common.sh
+  local/chain/run_cnn_tdnn_shared.sh
 fi
 
 exit 0
