@@ -52,7 +52,7 @@ fi
 
 if [ $stage -le 3 ] ; then
   local/safet_train_lms_srilm.sh \
-    --train_text data/train_safet/text --dev_text data/safe_t_dev1/text  \
+    --train_text data/train/text --dev_text data/safe_t_dev1/text  \
     data/ data/local/srilm
   utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
     data/local/lexicon.txt  data/lang_nosp_test
