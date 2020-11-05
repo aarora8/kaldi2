@@ -19,7 +19,7 @@ nnet3_affix=_all
 . utils/parse_options.sh
 
 gmm_dir=exp/${gmm}_${train_set}
-ali_dir=exp/${gmm}_ali_sp
+ali_dir=exp/${gmm}_${train_set}_ali_sp
 
 for f in ${gmm_dir}/final.mdl; do
   if [ ! -f $f ]; then
