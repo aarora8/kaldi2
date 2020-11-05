@@ -33,7 +33,7 @@ if [ $stage -le 1 ]; then
   utils/validate_lang.pl data/lang_nosp
 fi
 
-if [ $stage -le 4 ]; then
+if [ $stage -le 2 ]; then
   for dset in train dev eval; do
     utils/data/modify_speaker_info.sh --seconds-per-spk-max 30 \
       data/AMI/${dset}_orig data/AMI/$dset
@@ -42,7 +42,7 @@ if [ $stage -le 4 ]; then
   done
 fi
 
-if [ $stage -le 6 ]; then
+if [ $stage -le 3 ]; then
   mkdir -p exp/cleanup_stage_1
   (
     local/safet_cleanup_transcripts.py data/local/lexicon.txt data/safe_t_r11/transcripts data/safe_t_r11/transcripts.clean
@@ -59,7 +59,7 @@ if [ $stage -le 6 ]; then
   utils/data/combine_data.sh data/train data/safe_t_r20 data/safe_t_r11
 fi
 
-if [ $stage -le 7 ] ; then
+if [ $stage -le 4 ] ; then
   local/safet_train_lms_srilm.sh \
     --train_text data/train_safet/text --dev_text data/safe_t_dev1/text  \
     data/ data/local/srilm
@@ -68,14 +68,14 @@ if [ $stage -le 7 ] ; then
 fi
 
 # Feature extraction,
-if [ $stage -le 9 ]; then
+if [ $stage -le 5 ]; then
   steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/train
   steps/compute_cmvn_stats.sh data/train
   utils/fix_data_dir.sh data/train
 fi
 
 # monophone training
-if [ $stage -le 10 ]; then
+if [ $stage -le 6 ]; then
   utils/subset_data_dir.sh data/train 15000 data/train_15k
   steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
     data/train data/lang_nosp_test exp/mono
@@ -84,14 +84,14 @@ if [ $stage -le 10 ]; then
 fi
 
 # context-dep. training with delta features.
-if [ $stage -le 11 ]; then
+if [ $stage -le 7 ]; then
   steps/train_deltas.sh --cmd "$train_cmd" \
     5000 80000 data/train data/lang_nosp_test exp/mono_ali exp/tri1
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
     data/train data/lang_nosp_test exp/tri1 exp/tri1_ali
 fi
 
-if [ $stage -le 12 ]; then
+if [ $stage -le 8 ]; then
   steps/train_lda_mllt.sh --cmd "$train_cmd" \
     --splice-opts "--left-context=3 --right-context=3" \
     5000 80000 data/train data/lang_nosp_test exp/tri1_ali exp/tri2
@@ -99,15 +99,15 @@ if [ $stage -le 12 ]; then
     data/train data/lang_nosp_test exp/tri2 exp/tri2_ali
 fi
 
-if [ $stage -le 13 ]; then
+if [ $stage -le 9 ]; then
   steps/train_sat.sh --cmd "$train_cmd" \
     5000 80000 data/train data/lang_nosp_test exp/tri2_ali exp/tri3
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
     data/train data/lang_nosp_test exp/tri3 exp/tri3_ali
 fi
 
-if [ $stage -le 14 ]; then
-  local/chain/run_cnn_tdnn_shared.sh
+if [ $stage -le 10 ]; then
+  local/chain/run_cnn_tdnn.sh
 fi
 
 exit 0
