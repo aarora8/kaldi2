@@ -332,7 +332,7 @@ if [ $stage -le 22 ]; then
     --xent-regularize $xent_regularize --leaky-hmm-coefficient 0.1 \
     --max-param-change 2.0 \
     --num-jobs-initial 2 --num-jobs-final 5 \
-    --groups-per-minibatch 256,128,64 \
+    --minibatch_size 256,128,64 \
      $dir/egs $dir || exit 1;
 fi
 

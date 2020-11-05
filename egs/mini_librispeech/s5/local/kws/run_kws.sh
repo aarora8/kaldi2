@@ -83,7 +83,7 @@ if [ $stage -le 3 ] ; then
   ##
 fi
 
-system=exp/chain/tdnn1h_sp_online/decode_tglarge_dev_clean_2/
+system=exp/chain2/tdnn1a_sp/decode_tglarge_dev_clean_2
 if [ $stage -le 4 ]; then
   ## this is not exactly necessary for a single system and single keyword set
   ## but if you have multiple keyword sets, then it avoids having to recompute
@@ -104,5 +104,3 @@ if [ $stage -le 5 ]; then
 fi
 
 echo "Done"
-
-
