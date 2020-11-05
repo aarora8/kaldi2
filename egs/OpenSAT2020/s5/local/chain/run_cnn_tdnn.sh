@@ -47,9 +47,9 @@ local/nnet3/run_ivector_common.sh --stage $stage \
                                   --gmm $gmm \
                                   --nnet3-affix "$nnet3_affix"
 
-gmm_dir=exp/$gmm
+gmm_dir=exp/${gmm}_${train_set}
 ali_dir=exp/${gmm}_${train_set}_ali_sp
-lores_train_data_dir=data/${train_set}
+lores_train_data_dir=data/${train_set}_sp
 train_data_dir=data/${train_set}_sp_hires
 lang_dir=data/lang_nosp_test
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
