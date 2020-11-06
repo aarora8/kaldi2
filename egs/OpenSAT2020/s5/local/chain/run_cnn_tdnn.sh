@@ -10,7 +10,7 @@
 
 set -e -o pipefail
 stage=0
-nj=30
+nj=60
 train_set=train
 gmm=tri3
 num_epochs=10
@@ -26,6 +26,7 @@ nnet3_affix=_a
 common_egs_dir= 
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
+chunk_width=140,100,160
 # End configuration section.
 echo "$0 $@"
 
@@ -174,7 +175,7 @@ if [ $stage -le 16 ]; then
     --chain.lm-opts="--num-extra-lm-states=2000" \
     --trainer.dropout-schedule $dropout_schedule \
     --trainer.add-option="--optimization.memory-compression-level=2" \
-    --trainer.srand=$srand \
+    --trainer.srand=0 \
     --trainer.max-param-change=2.0 \
     --trainer.num-epochs=10 \
     --trainer.frames-per-iter=3000000 \
@@ -185,10 +186,6 @@ if [ $stage -le 16 ]; then
     --trainer.num-chunk-per-minibatch=256,128,64 \
     --trainer.optimization.momentum=0.0 \
     --egs.chunk-width=$chunk_width \
-    --egs.chunk-left-context=$chunk_left_context \
-    --egs.chunk-right-context=$chunk_right_context \
-    --egs.chunk-left-context-initial=0 \
-    --egs.chunk-right-context-final=0 \
     --egs.dir="$common_egs_dir" \
     --egs.opts="--frames-overlap-per-eg 0" \
     --cleanup.remove-egs=$remove_egs \

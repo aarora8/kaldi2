@@ -7,10 +7,10 @@
 # 40 dim results
 # 40 dim good data: %WER 12.00 [ 2340 / 19507, 289 ins, 830 del, 1221 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_8_0.0
 # 40 dim new data: %WER 12.85 [ 2507 / 19507, 254 ins, 1107 del, 1146 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_8_1.0
-
+# 40 dim new data: %WER 12.61 [ 2460 / 19507, 245 ins, 1119 del, 1096 sub ] exp/chain_all/tdnn_all_2/decode_safe_t_dev1/wer_9_0.5
 set -e -o pipefail
 stage=0
-nj=30
+nj=90
 train_set=train_all
 gmm=tri3
 num_epochs=10
@@ -26,6 +26,7 @@ nnet3_affix=_all
 common_egs_dir= 
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
+chunk_width=140,100,160
 # End configuration section.
 echo "$0 $@"
 
