@@ -7,7 +7,7 @@
 #
 
 # Begin configuration section.
-nj=96
+nj=50
 decode_nj=20
 stage=0
 nnet_stage=-10

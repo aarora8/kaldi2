@@ -7,7 +7,7 @@
 # 40 dim results
 # 40 dim good data: %WER 12.00 [ 2340 / 19507, 289 ins, 830 del, 1221 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_8_0.0
 # 40 dim new data: %WER 12.85 [ 2507 / 19507, 254 ins, 1107 del, 1146 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_8_1.0
-
+# %WER 14.74 [ 2875 / 19507, 217 ins, 1237 del, 1421 sub ] exp/chain_a/tdnn_a/decode_safe_t_dev1/wer_8_0.0
 set -e -o pipefail
 stage=0
 nj=60

@@ -48,7 +48,7 @@ local/nnet3/run_ivector_common.sh --stage $stage \
                                   --gmm $gmm \
                                   --nnet3-affix "$nnet3_affix"
 
-gmm_dir=exp/$gmm
+gmm_dir=exp/${gmm}_${train_set}
 ali_dir=exp/${gmm}_${train_set}_ali_sp
 lores_train_data_dir=data/${train_set}
 train_data_dir=data/${train_set}_sp_hires
@@ -198,6 +198,10 @@ fi
 
 
 if [ $stage -le 19 ]; then
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
+    data/safe_t_dev1_hires exp/nnet3${nnet3_affix}/extractor \
+    exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires
+
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
 fi
 
