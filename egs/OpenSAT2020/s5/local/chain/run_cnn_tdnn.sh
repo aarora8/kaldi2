@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
 
-# 80 dim, results
-# %WER 12.48 [ 2433 / 19498, 229 ins, 1122 del, 1082 sub ] exp/chain_all/tdnn_all_cnn/decode_safe_t_dev1/wer_8_1.0
-# exp/chain_all/tdnn_all_cnn: num-iters=502 nj=3..5 num-params=15.1M dim=80+100->4520 combine=-0.065->-0.063 (over 7) xent:train/valid[333,501,final]=(-1.40,-1.16,-1.14/-1.41,-1.23,-1.21) logprob:train/valid[333,501,final]=(-0.076,-0.057,-0.056/-0.090,-0.075,-0.074)
-
-# 40 dim results
-# 40 dim good data: %WER 12.00 [ 2340 / 19507, 289 ins, 830 del, 1221 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_8_0.0
-# 40 dim new data: %WER 12.85 [ 2507 / 19507, 254 ins, 1107 del, 1146 sub ] exp/chain_all/tdnn_all/decode_safe_t_dev1/wer_8_1.0
 # %WER 14.74 [ 2875 / 19507, 217 ins, 1237 del, 1421 sub ] exp/chain_a/tdnn_a/decode_safe_t_dev1/wer_8_0.0
+# %WER 13.36 [ 2606 / 19507, 217 ins, 1110 del, 1279 sub ] exp/chain_a/tdnn_a_spec_wsj/decode_safe_t_dev1/wer_8_0.0
 set -e -o pipefail
 stage=0
 nj=60
@@ -127,7 +121,8 @@ if [ $stage -le 15 ]; then
   linear-component name=ivector-linear $ivector_affine_opts dim=200 input=ReplaceIndex(ivector, t, 0)
   batchnorm-component name=ivector-batchnorm target-rms=0.025
   batchnorm-component name=idct-batchnorm input=idct
-  combine-feature-maps-layer name=combine_inputs input=Append(idct-batchnorm, ivector-batchnorm) num-filters1=1 num-filters2=5 height=40
+  spec-augment-layer name=idct-spec-augment freq-max-proportion=0.5 time-zeroed-proportion=0.2 time-mask-max-frames=20
+  combine-feature-maps-layer name=combine_inputs input=Append(idct-spec-augment, ivector-batchnorm) num-filters1=1 num-filters2=5 height=40
   conv-relu-batchnorm-layer name=cnn1 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=48 learning-rate-factor=0.333 max-change=0.25
   conv-relu-batchnorm-layer name=cnn2 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=48
   conv-relu-batchnorm-layer name=cnn3 $cnn_opts height-in=40 height-out=20 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
@@ -177,7 +172,7 @@ if [ $stage -le 16 ]; then
     --trainer.add-option="--optimization.memory-compression-level=2" \
     --trainer.srand=0 \
     --trainer.max-param-change=2.0 \
-    --trainer.num-epochs=10 \
+    --trainer.num-epochs=8 \
     --trainer.frames-per-iter=3000000 \
     --trainer.optimization.num-jobs-initial=2 \
     --trainer.optimization.num-jobs-final=5 \
