@@ -6,11 +6,11 @@
 flen=0.01
 stage=0
 cmd=run.pl
-lexicon=data/local/lexicon_3.txt
-lexicomp=data/local/lang_nosp_3
-lang=data/lang_nosp_test_3
-data=data/safe_t_dev1_norm_3
-output=data/safe_t_dev1_norm_3/kws
+lexicon=data/local/lexicon.txt
+lexicomp=data/local/lang_nosp
+lang=data/lang_nosp_test
+data=data/safe_t_dev1_norm
+output=data/safe_t_dev1_norm/kws
 keywords=local/kws/example/kwlist/keywords_opensat2019.txt
 # End configuration section
 
@@ -21,7 +21,7 @@ set -e -o pipefail
 set -o nounset                              # Treat unset variables as an error
 
 mkdir -p $output
-if [ $stage -le -1 ] ; then
+if [ $stage -le 0 ] ; then
   echo "generating normalized data/safe_t_dev1 ..."
   utils/copy_data_dir.sh data/safe_t_dev1 $data
   local/safet_cleanup_transcripts.py --no-unk-replace $lexicon \
@@ -75,9 +75,9 @@ if [ $stage -le 2 ] ; then
   ## we create the alignments of the data directory
   ## this is only so that we can obtain the hitlist
 
-  # gmm alignment file is not available
-  steps/align_fmllr.sh --nj 5 --cmd "$cmd" \
-    $data $lang exp/tri3_train_all exp/tri3_ali_safe_t_dev1_norm
+  # gmm alignment file is not available for large lexicon
+  #steps/align_fmllr.sh --nj 5 --cmd "$cmd" \
+  #  $data $lang exp/tri3_train_all exp/tri3_ali_safe_t_dev1_norm
 
   local/kws/create_hitlist.sh data/safe_t_dev1_norm $lang $lexicomp \
     exp/tri3_ali_safe_t_dev1_norm $output
