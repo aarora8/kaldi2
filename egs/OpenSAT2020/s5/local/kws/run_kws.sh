@@ -6,11 +6,12 @@
 flen=0.01
 stage=0
 cmd=run.pl
-data=data/safe_t_dev1_norm
+lexicon=data/local/lexicon_3.txt
+lexicomp=data/local/lang_nosp_3
 lang=data/lang_nosp_test_3
-keywords=local/kws/example/opensat_dev.words.keywords.txt
-#keywords=local/kws/example/keywords_opensat2019.txt
-output=data/safe_t_dev1_norm/kws
+data=data/safe_t_dev1_norm_3
+output=data/safe_t_dev1_norm_3/kws
+keywords=local/kws/example/kwlist/keywords_opensat2019.txt
 # End configuration section
 
 . ./utils/parse_options.sh
@@ -22,13 +23,13 @@ set -o nounset                              # Treat unset variables as an error
 mkdir -p $output
 if [ $stage -le -1 ] ; then
   echo "generating normalized data/safe_t_dev1 ..."
-  utils/copy_data_dir.sh data/safe_t_dev1 data/safe_t_dev1_norm
-  local/safet_cleanup_transcripts.py --no-unk-replace data/local/lexicon.txt \
-      data/safe_t_dev1/transcripts data/safe_t_dev1_norm/transcripts.clean > /dev/null
+  utils/copy_data_dir.sh data/safe_t_dev1 $data
+  local/safet_cleanup_transcripts.py --no-unk-replace $lexicon \
+      data/safe_t_dev1/transcripts $data/transcripts.clean > /dev/null
 
-  cat data/safe_t_dev1_norm/transcripts.clean | \
+  cat $data/transcripts.clean | \
       awk '{printf $1""FS;for(i=6; i<=NF; ++i) printf "%s",$i""FS; print""}' | \
-      sort > data/safe_t_dev1_norm/text
+      sort > $data/text
 fi 
 
 # default_kws=${output%s*}s  # https://stackoverflow.com/questions/27658675/how-to-remove-last-n-characters-from-a-string-in-bash
@@ -74,14 +75,12 @@ if [ $stage -le 2 ] ; then
   ## we create the alignments of the data directory
   ## this is only so that we can obtain the hitlist
 
-  #steps/align_fmllr.sh --nj 5 --cmd "$cmd" \
-  #  $data $lang exp/tri3_train_all exp/tri3_ali_safe_t_dev1_norm
+  # gmm alignment file is not available
+  steps/align_fmllr.sh --nj 5 --cmd "$cmd" \
+    $data $lang exp/tri3_train_all exp/tri3_ali_safe_t_dev1_norm
 
-  local/kws/create_hitlist.sh data/safe_t_dev1_norm data/lang_nosp_test data/local/lang_nosp \
+  local/kws/create_hitlist.sh data/safe_t_dev1_norm $lang $lexicomp \
     exp/tri3_ali_safe_t_dev1_norm $output
-
-  #cp /export/fs04/a12/rhuang/kaldi/egs/opensat2020/s5/meta_dexp/safet_hub4_bugfixed/data/safe_t_dev1_norm/kws/hitlist data/safe_t_dev1_norm/kws_givenhlist/hitlist
-
 fi
 
 if [ $stage -le 3 ] ; then
