@@ -13,6 +13,7 @@ ali=exp/tri3_ali_safe_t_dev1_norm_3
 data=data/safe_t_dev1_norm
 output=data/safe_t_dev1_norm/kws
 keywords=local/kws/example/kwlist/query2350.keywords.txt
+system=exp/chain_all/tdnn_all/decode_safe_t_dev1/
 # End configuration section
 
 . ./utils/parse_options.sh
@@ -90,7 +91,6 @@ if [ $stage -le 3 ] ; then
   cp $output/tmp.2/keywords.fsts $output/keywords.fsts
 fi
 
-system=exp/chain_all/tdnn_all/decode_safe_t_dev1/
 if [ $stage -le 4 ]; then
   for lmwt in `seq 8 14` ; do
     steps/make_index.sh --cmd "$cmd" --lmwt $lmwt --acwt 1.0 \
