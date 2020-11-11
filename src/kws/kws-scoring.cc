@@ -420,6 +420,8 @@ float TwvMetrics::Atwv() {
     float pfa = it->second.nof_fa / (audio_duration_ - nof_targets);
     float twv = 1 - pmiss - beta_ * pfa;
 
+    std::cout << "kw-id: " << it->first << ", twv= " << twv << std::endl;
+
     atwv = atwv * (nof_kw)/(nof_kw + 1.0) + twv / (nof_kw + 1.0);
     nof_kw++;
   }

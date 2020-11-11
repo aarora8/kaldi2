@@ -6,12 +6,13 @@
 flen=0.01
 stage=0
 cmd=run.pl
-lexicon=data/local/lexicon.txt
-lexicomp=data/local/lang_nosp
-lang=data/lang_nosp_test
+lexicon=data/local/lexicon_3.txt
+lexicomp=data/local/lang_nosp_3
+lang=data/lang_nosp_test_3
+ali=exp/tri3_ali_safe_t_dev1_norm_3
 data=data/safe_t_dev1_norm
 output=data/safe_t_dev1_norm/kws
-keywords=local/kws/example/kwlist/keywords_opensat2019.txt
+keywords=local/kws/example/kwlist/query2350.keywords.txt
 # End configuration section
 
 . ./utils/parse_options.sh
@@ -76,11 +77,11 @@ if [ $stage -le 2 ] ; then
   ## this is only so that we can obtain the hitlist
 
   # gmm alignment file is not available for large lexicon
-  #steps/align_fmllr.sh --nj 5 --cmd "$cmd" \
-  #  $data $lang exp/tri3_train_all exp/tri3_ali_safe_t_dev1_norm
+  steps/align_fmllr.sh --nj 5 --cmd "$cmd" \
+    $data $lang exp/tri3_train_all $ali
 
   local/kws/create_hitlist.sh data/safe_t_dev1_norm $lang $lexicomp \
-    exp/tri3_ali_safe_t_dev1_norm $output
+    $ali $output
 fi
 
 if [ $stage -le 3 ] ; then
