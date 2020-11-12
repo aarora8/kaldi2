@@ -32,7 +32,7 @@ set -e # exit on error
 
 # chime5 main directory path
 # please change the path accordingly
-chime5_corpus=/export/corpora4/CHiME5
+chime5_corpus=/export/corpora5/CHiME5
 # chime6 data directories, which are generated from ${chime5_corpus},
 # to synchronize audio files across arrays and modify the annotation (JSON) file accordingly
 chime6_corpus=${PWD}/CHiME6
@@ -62,12 +62,12 @@ test_sets="dev_${enhancement} eval_${enhancement}"
 # which is installed via miniconda in ./local/check_tools.sh
 ###########################################################################
 
-if [ $stage -le 0 ]; then
-  local/generate_chime6_data.sh \
-    --cmd "$train_cmd" \
-    ${chime5_corpus} \
-    ${chime6_corpus}
-fi
+#if [ $stage -le 0 ]; then
+#  local/generate_chime6_data.sh \
+#    --cmd "$train_cmd" \
+#    ${chime5_corpus} \
+#    ${chime6_corpus}
+#fi
 
 #########################################################################################
 # In stage 1, we perform GSS based enhancement or beamformit for the test sets. multiarray = true
