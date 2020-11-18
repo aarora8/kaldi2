@@ -79,7 +79,14 @@ GSYMS
 /egs/*/*/data
 /egs/*/*/wav
 /egs/*/*/enhan
-
+/egs/*/*/RIRS_NOISES
+/egs/*/*/CHiME6
+/egs/*/*/distant_noises
+/egs/*/*/distant_noise_list
+/egs/*/*/enhanced_multiarray
+/egs/*/*/enhanced_multiarray_decode
+/egs/*/*/rir_distribution
+/egs/*/*/rirs_noises.zip
 # /tools/
 /tools/pocolm/
 /tools/ATLAS/

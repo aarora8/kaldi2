@@ -1,0 +1,2350 @@
+KW-1 ablaze
+KW-2 able
+KW-3 about
+KW-4 above
+KW-5 absolutely
+KW-6 accessible
+KW-7 ach
+KW-8 across
+KW-9 action
+KW-10 actions
+KW-11 activity
+KW-12 actually
+KW-13 add
+KW-14 additional
+KW-15 addressing
+KW-16 adds
+KW-17 adjacent
+KW-18 advance
+KW-19 advantage
+KW-20 advise
+KW-21 afraid
+KW-22 after
+KW-23 again
+KW-24 against
+KW-25 ahead
+KW-26 alarm
+KW-27 alarms
+KW-28 alive
+KW-29 almost
+KW-30 along
+KW-31 already
+KW-32 alright
+KW-33 also
+KW-34 although
+KW-35 always
+KW-36 ambulance
+KW-37 amount
+KW-38 angle
+KW-39 another
+KW-40 anymore
+KW-41 anyone
+KW-42 anything
+KW-43 anyway
+KW-44 anywhere
+KW-45 apologies
+KW-46 appearing
+KW-47 appears
+KW-48 approach
+KW-49 approaching
+KW-50 area
+KW-51 around
+KW-52 asleep
+KW-53 assuming
+KW-54 attempt
+KW-55 automatically
+KW-56 away
+KW-57 awesome
+KW-58 awhile
+KW-59 back
+KW-60 backtrack
+KW-61 bad
+KW-62 bank
+KW-63 banked
+KW-64 banking
+KW-65 based
+KW-66 bat
+KW-67 bath
+KW-68 bathroom
+KW-69 beast
+KW-70 because
+KW-71 become
+KW-72 becomes
+KW-73 bed
+KW-74 bedroom
+KW-75 bedrooms
+KW-76 before
+KW-77 behind
+KW-78 believe
+KW-79 belly
+KW-80 below
+KW-81 beside
+KW-82 best
+KW-83 bet
+KW-84 better
+KW-85 between
+KW-86 big
+KW-87 bigger
+KW-88 bit
+KW-89 bits
+KW-90 blank
+KW-91 blast
+KW-92 blasting
+KW-93 blaze
+KW-94 bless
+KW-95 blew
+KW-96 block
+KW-97 blocking
+KW-98 blow
+KW-99 blowing
+KW-100 blown
+KW-101 blowout
+KW-102 blows
+KW-103 blue
+KW-104 board
+KW-105 boom
+KW-106 boy
+KW-107 bravo
+KW-108 breach
+KW-109 break
+KW-110 breaking
+KW-111 bring
+KW-112 bringing
+KW-113 broken
+KW-114 brought
+KW-115 building
+KW-116 bunch
+KW-117 business
+KW-118 bust
+KW-119 busted
+KW-120 busts
+KW-121 bypass
+KW-122 call
+KW-123 came
+KW-124 cannot
+KW-125 captain
+KW-126 care
+KW-127 careful
+KW-128 carry
+KW-129 carrying
+KW-130 case
+KW-131 casualty
+KW-132 cat
+KW-133 catch
+KW-134 catching
+KW-135 cats
+KW-136 caucasian
+KW-137 caught
+KW-138 cause
+KW-139 caused
+KW-140 causing
+KW-141 caves
+KW-142 ccoming
+KW-143 change
+KW-144 check
+KW-145 checking
+KW-146 chief
+KW-147 child
+KW-148 choose
+KW-149 chop
+KW-150 chopping
+KW-151 clean
+KW-152 clear
+KW-153 cleared
+KW-154 clearest
+KW-155 clearing
+KW-156 close
+KW-157 closed
+KW-158 closer
+KW-159 come
+KW-160 coming
+KW-161 completely
+KW-162 concentrating
+KW-163 concern
+KW-164 concerning
+KW-165 condition
+KW-166 confirmed
+KW-167 contain
+KW-168 contained
+KW-169 containment
+KW-170 continue
+KW-171 continuing
+KW-172 control
+KW-173 convenient
+KW-174 convert
+KW-175 converting
+KW-176 cool
+KW-177 coordinate
+KW-178 coordinates
+KW-179 copy
+KW-180 corner
+KW-181 correct
+KW-182 cost
+KW-183 costs
+KW-184 couch
+KW-185 could
+KW-186 counters
+KW-187 couple
+KW-188 course
+KW-189 covered
+KW-190 crap
+KW-191 crazy
+KW-192 create
+KW-193 created
+KW-194 creating
+KW-195 crunch
+KW-196 currently
+KW-197 damage
+KW-198 damaged
+KW-199 damages
+KW-200 damaging
+KW-201 damn
+KW-202 danger
+KW-203 dangerous
+KW-204 dangerously
+KW-205 dare
+KW-206 day
+KW-207 dead
+KW-208 deal
+KW-209 dealing
+KW-210 dear
+KW-211 death
+KW-212 defeat
+KW-213 definitely
+KW-214 demolish
+KW-215 demolished
+KW-216 destruction
+KW-217 developing
+KW-218 die
+KW-219 diminish
+KW-220 dining
+KW-221 direction
+KW-222 directions
+KW-223 directly
+KW-224 disorienting
+KW-225 dog
+KW-226 doggie
+KW-227 dogs
+KW-228 done
+KW-229 door
+KW-230 doors
+KW-231 doorway
+KW-232 double
+KW-233 down
+KW-234 drag
+KW-235 dragging
+KW-236 dude
+KW-237 due
+KW-238 easier
+KW-239 east
+KW-240 easy
+KW-241 eight
+KW-242 either
+KW-243 eliminate
+KW-244 eliminating
+KW-245 else
+KW-246 end
+KW-247 ending
+KW-248 ends
+KW-249 energy
+KW-250 engulfed
+KW-251 engulfing
+KW-252 enough
+KW-253 enter
+KW-254 entered
+KW-255 entering
+KW-256 entire
+KW-257 entirely
+KW-258 entrance
+KW-259 entry
+KW-260 erupt
+KW-261 erupting
+KW-262 even
+KW-263 everybody
+KW-264 everything
+KW-265 everywhere
+KW-266 excellent
+KW-267 except
+KW-268 excuse
+KW-269 exit
+KW-270 exiting
+KW-271 expend
+KW-272 explode
+KW-273 exploded
+KW-274 explosion
+KW-275 explosions
+KW-276 extend
+KW-277 extends
+KW-278 exterior
+KW-279 extinguish
+KW-280 extinguished
+KW-281 extinguishing
+KW-282 extra
+KW-283 extremity
+KW-284 eyes
+KW-285 fact
+KW-286 fair
+KW-287 false
+KW-288 family
+KW-289 fantastic
+KW-290 far
+KW-291 fast
+KW-292 fastest
+KW-293 fatality
+KW-294 favors
+KW-295 feel
+KW-296 feeling
+KW-297 feet
+KW-298 female
+KW-299 fern
+KW-300 fifteen
+KW-301 fight
+KW-302 fighter
+KW-303 fighting
+KW-304 figure
+KW-305 filling
+KW-306 find
+KW-307 finding
+KW-308 fine
+KW-309 finish
+KW-310 finishing
+KW-311 fire
+KW-312 fire-wise
+KW-313 firefighter
+KW-314 fireman
+KW-315 fires
+KW-316 first
+KW-317 five
+KW-318 fix
+KW-319 flag
+KW-320 flame
+KW-321 flames
+KW-322 flank
+KW-323 flip
+KW-324 flipping
+KW-325 focus
+KW-326 focusing
+KW-327 folk
+KW-328 folks
+KW-329 following
+KW-330 forbid
+KW-331 forgot
+KW-332 forgotten
+KW-333 forward
+KW-334 found
+KW-335 four
+KW-336 fourth
+KW-337 free
+KW-338 friend
+KW-339 front
+KW-340 fuck
+KW-341 full
+KW-342 fully
+KW-343 fun
+KW-344 further
+KW-345 future
+KW-346 game
+KW-347 gas
+KW-348 general
+KW-349 generous
+KW-350 get
+KW-351 gets
+KW-352 getting
+KW-353 girl
+KW-354 give
+KW-355 god
+KW-356 goes
+KW-357 going
+KW-358 gone
+KW-359 good
+KW-360 goodness
+KW-361 gosh
+KW-362 got
+KW-363 grab
+KW-364 grabbing
+KW-365 grease
+KW-366 great
+KW-367 green
+KW-368 grow
+KW-369 guess
+KW-370 guy
+KW-371 half
+KW-372 hallway
+KW-373 handle
+KW-374 hang
+KW-375 hanging
+KW-376 happen
+KW-377 happened
+KW-378 happening
+KW-379 happens
+KW-380 hard
+KW-381 hazard
+KW-382 head
+KW-383 headed
+KW-384 heading
+KW-385 hear
+KW-386 heard
+KW-387 heater
+KW-388 heavy
+KW-389 hell
+KW-390 hello
+KW-391 help
+KW-392 hey
+KW-393 hit
+KW-394 hits
+KW-395 hold
+KW-396 hole
+KW-397 holes
+KW-398 honestly
+KW-399 hop
+KW-400 hope
+KW-401 hopefully
+KW-402 hoping
+KW-403 hospital
+KW-404 hot
+KW-405 hotter
+KW-406 house
+KW-407 however
+KW-408 huh
+KW-409 human
+KW-410 hurry
+KW-411 hydra
+KW-412 idea
+KW-413 identified
+KW-414 identify
+KW-415 identifying
+KW-416 ignore
+KW-417 imagine
+KW-418 immediately
+KW-419 impossible
+KW-420 impressed
+KW-421 incinerated
+KW-422 including
+KW-423 indeed
+KW-424 individual
+KW-425 individually
+KW-426 inside
+KW-427 instance
+KW-428 instantly
+KW-429 instead
+KW-430 int
+KW-431 integrity
+KW-432 intense
+KW-433 interest
+KW-434 interested
+KW-435 interests
+KW-436 investigate
+KW-437 investigating
+KW-438 jeez
+KW-439 jesus
+KW-440 job
+KW-441 join
+KW-442 jump
+KW-443 keep
+KW-444 keeps
+KW-445 kid
+KW-446 kids'
+KW-447 kind
+KW-448 kitchen
+KW-449 kitty
+KW-450 knock
+KW-451 knocked
+KW-452 knocking
+KW-453 know
+KW-454 lady
+KW-455 large
+KW-456 last
+KW-457 later
+KW-458 lead
+KW-459 leading
+KW-460 leads
+KW-461 least
+KW-462 leave
+KW-463 leaving
+KW-464 left
+KW-465 leftover
+KW-466 less
+KW-467 let
+KW-468 life
+KW-469 light
+KW-470 like
+KW-471 likely
+KW-472 liking
+KW-473 line
+KW-474 little
+KW-475 live
+KW-476 living
+KW-477 located
+KW-478 location
+KW-479 long
+KW-480 longest
+KW-481 look
+KW-482 looking
+KW-483 looks
+KW-484 lose
+KW-485 lost
+KW-486 lot
+KW-487 lots
+KW-488 luck
+KW-489 luckily
+KW-490 lucky
+KW-491 made
+KW-492 maintain
+KW-493 make
+KW-494 makes
+KW-495 making
+KW-496 male
+KW-497 man
+KW-498 manage
+KW-499 manageable
+KW-500 many
+KW-501 map
+KW-502 marker
+KW-503 markers
+KW-504 mask
+KW-505 master
+KW-506 matter
+KW-507 may
+KW-508 maybe
+KW-509 mean
+KW-510 means
+KW-511 meantime
+KW-512 meanwhile
+KW-513 mhm
+KW-514 middle
+KW-515 might
+KW-516 mind
+KW-517 mine
+KW-518 minute
+KW-519 minutes
+KW-520 misinterpreting
+KW-521 missing
+KW-522 mm-hm
+KW-523 moment
+KW-524 mostly
+KW-525 move
+KW-526 moved
+KW-527 movements
+KW-528 moves
+KW-529 moving
+KW-530 much
+KW-531 must
+KW-532 myself
+KW-533 naughty
+KW-534 near
+KW-535 nearby
+KW-536 need
+KW-537 needed
+KW-538 needs
+KW-539 never
+KW-540 new
+KW-541 news
+KW-542 next
+KW-543 nice
+KW-544 nicely
+KW-545 nope
+KW-546 normally
+KW-547 north
+KW-548 nothing
+KW-549 okay
+KW-550 one
+KW-551 onto
+KW-552 oof
+KW-553 ooh
+KW-554 oops
+KW-555 open
+KW-556 opened
+KW-557 opening
+KW-558 opens
+KW-559 orange
+KW-560 otherwise
+KW-561 outdoors
+KW-562 outside
+KW-563 over
+KW-564 part
+KW-565 partially
+KW-566 party
+KW-567 patch
+KW-568 patches
+KW-569 path
+KW-570 pay
+KW-571 peace
+KW-572 people
+KW-573 per
+KW-574 perfect
+KW-575 perhaps
+KW-576 person
+KW-577 pet
+KW-578 phone
+KW-579 piano
+KW-580 pick
+KW-581 pieces
+KW-582 pillow
+KW-583 place
+KW-584 placed
+KW-585 placement
+KW-586 plan
+KW-587 plant
+KW-588 player
+KW-589 playing
+KW-590 please
+KW-591 point
+KW-592 points
+KW-593 poor
+KW-594 popping
+KW-595 position
+KW-596 positioned
+KW-597 positions
+KW-598 possible
+KW-599 potential
+KW-600 pretty
+KW-601 prevent
+KW-602 probably
+KW-603 problem
+KW-604 proceed
+KW-605 proceeding
+KW-606 process
+KW-607 progress
+KW-608 puppy
+KW-609 put
+KW-610 puts
+KW-611 putting
+KW-612 question
+KW-613 quick
+KW-614 quickly
+KW-615 quite
+KW-616 raging
+KW-617 rapidly
+KW-618 rather
+KW-619 rats
+KW-620 re-roll
+KW-621 reach
+KW-622 reached
+KW-623 ready
+KW-624 real
+KW-625 really
+KW-626 record
+KW-627 red
+KW-628 redhead
+KW-629 reduce
+KW-630 reenter
+KW-631 reference
+KW-632 regret
+KW-633 relative
+KW-634 remaining
+KW-635 remember
+KW-636 remove
+KW-637 removing
+KW-638 repair
+KW-639 repairing
+KW-640 repeat
+KW-641 replaced
+KW-642 report
+KW-643 reported
+KW-644 rescue
+KW-645 rescued
+KW-646 rescuing
+KW-647 rest
+KW-648 returning
+KW-649 reveal
+KW-650 rid
+KW-651 rigged
+KW-652 right
+KW-653 risk
+KW-654 roger
+KW-655 roll
+KW-656 rolled
+KW-657 rolling
+KW-658 romeo
+KW-659 room
+KW-660 round
+KW-661 ruin
+KW-662 run
+KW-663 running
+KW-664 safe
+KW-665 safely
+KW-666 safest
+KW-667 safety
+KW-668 said
+KW-669 save
+KW-670 saved
+KW-671 saving
+KW-672 say
+KW-673 saying
+KW-674 second
+KW-675 seconds
+KW-676 secure
+KW-677 see
+KW-678 seeing
+KW-679 seem
+KW-680 seems
+KW-681 sending
+KW-682 sense
+KW-683 set
+KW-684 seven
+KW-685 shape
+KW-686 shit
+KW-687 shoot
+KW-688 shored
+KW-689 short
+KW-690 shortly
+KW-691 shower
+KW-692 showing
+KW-693 side
+KW-694 sign
+KW-695 signs
+KW-696 since
+KW-697 sitting
+KW-698 situation
+KW-699 six
+KW-700 slightly
+KW-701 slow
+KW-702 slowly
+KW-703 small
+KW-704 smart
+KW-705 smoke
+KW-706 smokes
+KW-707 smoking
+KW-708 smoky
+KW-709 smoldering
+KW-710 somebody
+KW-711 someone
+KW-712 something
+KW-713 somewhat
+KW-714 soon
+KW-715 sorry
+KW-716 sort
+KW-717 sound
+KW-718 sounds
+KW-719 south
+KW-720 space
+KW-721 spaces
+KW-722 spend
+KW-723 spending
+KW-724 spoke
+KW-725 spot
+KW-726 spread
+KW-727 spreading
+KW-728 spreads
+KW-729 square
+KW-730 stable
+KW-731 stand
+KW-732 standing
+KW-733 start
+KW-734 started
+KW-735 starting
+KW-736 status
+KW-737 stay
+KW-738 stayed
+KW-739 stays
+KW-740 steal
+KW-741 step
+KW-742 stepping
+KW-743 steps
+KW-744 still
+KW-745 stop
+KW-746 stove
+KW-747 street
+KW-748 strike
+KW-749 strikes
+KW-750 structural
+KW-751 stuck
+KW-752 stuff
+KW-753 suggest
+KW-754 suppose
+KW-755 supposed
+KW-756 sure
+KW-757 surrounded
+KW-758 table
+KW-759 tackle
+KW-760 take
+KW-761 taken
+KW-762 takes
+KW-763 taking
+KW-764 talk
+KW-765 team
+KW-766 technically
+KW-767 tell
+KW-768 terms
+KW-769 thank
+KW-770 thanks
+KW-771 thing
+KW-772 things
+KW-773 think
+KW-774 thinking
+KW-775 third
+KW-776 though
+KW-777 thought
+KW-778 three
+KW-779 through
+KW-780 throughout
+KW-781 time
+KW-782 together
+KW-783 toilet
+KW-784 token
+KW-785 tokens
+KW-786 took
+KW-787 top
+KW-788 totally
+KW-789 touching
+KW-790 tough
+KW-791 toward
+KW-792 towards
+KW-793 trigger
+KW-794 trouble
+KW-795 troubles
+KW-796 troubling
+KW-797 true
+KW-798 try
+KW-799 trying
+KW-800 turn
+KW-801 turned
+KW-802 turning
+KW-803 turns
+KW-804 twin
+KW-805 two
+KW-806 uh-huh
+KW-807 uh-oh
+KW-808 unable
+KW-809 unconscious
+KW-810 under
+KW-811 underneath
+KW-812 understand
+KW-813 understood
+KW-814 unfortunately
+KW-815 unidentified
+KW-816 until
+KW-817 unveil
+KW-818 unveiled
+KW-819 update
+KW-820 urgent
+KW-821 use
+KW-822 used
+KW-823 useful
+KW-824 using
+KW-825 victim
+KW-826 victims
+KW-827 video
+KW-828 wait
+KW-829 walk
+KW-830 walking
+KW-831 wall
+KW-832 walls
+KW-833 want
+KW-834 watch
+KW-835 way
+KW-836 well
+KW-837 west
+KW-838 whatever
+KW-839 whenever
+KW-840 whether
+KW-841 whoever
+KW-842 whole
+KW-843 whoops
+KW-844 wish
+KW-845 without
+KW-846 woman
+KW-847 wonder
+KW-848 wonderful
+KW-849 wondering
+KW-850 woo
+KW-851 work
+KW-852 worked
+KW-853 working
+KW-854 world
+KW-855 worried
+KW-856 worries
+KW-857 worry
+KW-858 worse
+KW-859 worth
+KW-860 would
+KW-861 wow
+KW-862 wrong
+KW-863 yeah
+KW-864 yellow
+KW-865 yep
+KW-866 yes
+KW-867 yet
+KW-868 yikes
+KW-869 young
+KW-870 yup
+KW-871 zone
+KW-872 ablaze your
+KW-873 about half
+KW-874 about your
+KW-875 action marker
+KW-876 action markers
+KW-877 action token
+KW-878 action tokens
+KW-879 actions left
+KW-880 actually before
+KW-881 actually head
+KW-882 adage roger
+KW-883 additional damage
+KW-884 additional fires
+KW-885 adjacent tile
+KW-886 advance towards
+KW-887 advised orange
+KW-888 aerial view
+KW-889 african american
+KW-890 again correct
+KW-891 again nothing
+KW-892 again raises
+KW-893 again reserve
+KW-894 ain't good
+KW-895 alarm false
+KW-896 all across
+KW-897 all around
+KW-898 almighty guided
+KW-899 almost completely
+KW-900 almost done
+KW-901 almost entirely
+KW-902 almost killed
+KW-903 almost seventy-five
+KW-904 already anyways
+KW-905 already carrying
+KW-906 already mostly
+KW-907 already rolled
+KW-908 already took
+KW-909 also getting
+KW-910 also making
+KW-911 also need
+KW-912 also taking
+KW-913 america's national
+KW-914 american male
+KW-915 another condition
+KW-916 another space
+KW-917 any actions
+KW-918 any additional
+KW-919 any any
+KW-920 any false
+KW-921 any possible
+KW-922 any trouble
+KW-923 anything else
+KW-924 anyways if
+KW-925 anywhere else
+KW-926 appease all
+KW-927 around us
+KW-928 as fast
+KW-929 automatic fire
+KW-930 away crap
+KW-931 away red
+KW-932 axing reputation
+KW-933 babbling brook
+KW-934 backup dude
+KW-935 backup has
+KW-936 bad isn't
+KW-937 bad luck
+KW-938 bad shape
+KW-939 bad spot
+KW-940 barely could
+KW-941 because nothing
+KW-942 because they're
+KW-943 becomes standing
+KW-944 bedroom's completely
+KW-945 bedroom's getting
+KW-946 bedroom's pretty
+KW-947 been any
+KW-948 been saved
+KW-949 been smashed
+KW-950 been under
+KW-951 being affected
+KW-952 being underneath
+KW-953 ben obama
+KW-954 best thing
+KW-955 better focus
+KW-956 better hurry
+KW-957 between us
+KW-958 big deal
+KW-959 big hole
+KW-960 bit better
+KW-961 bit closer
+KW-962 bit safe
+KW-963 bit smoky
+KW-964 bit troubling
+KW-965 bit worried
+KW-966 black blocks
+KW-967 blasting holes
+KW-968 blaze pop
+KW-969 blew open
+KW-970 blonde haired
+KW-971 blowing open
+KW-972 blown wide
+KW-973 blue checking
+KW-974 blue danger
+KW-975 boom boom
+KW-976 boom gone
+KW-977 boop boop
+KW-978 both these
+KW-979 boy they're
+KW-980 brain fart
+KW-981 break down
+KW-982 broken as
+KW-983 broken wall
+KW-984 brown haired
+KW-985 brown man
+KW-986 brute force
+KW-987 building they
+KW-988 burning fast
+KW-989 burning up
+KW-990 business man
+KW-991 busted wall
+KW-992 by making
+KW-993 came from
+KW-994 can't carry
+KW-995 can't even
+KW-996 can't handle
+KW-997 can't happen
+KW-998 can't hear
+KW-999 can't quite
+KW-1000 can't reach
+KW-1001 can't really
+KW-1002 can't support
+KW-1003 can't tell
+KW-1004 cannot reach
+KW-1005 car crash
+KW-1006 carbon monoxide
+KW-1007 cardboard cutout
+KW-1008 careful red
+KW-1009 carpenter's apprentice
+KW-1010 carry her
+KW-1011 carrying somebody
+KW-1012 cat has
+KW-1013 caucasian female
+KW-1014 caucasian male
+KW-1015 caucasian person
+KW-1016 caught behind
+KW-1017 causes another
+KW-1018 causing damage
+KW-1019 ceiling tile's
+KW-1020 chain effect
+KW-1021 chain reaction
+KW-1022 change these
+KW-1023 chief how
+KW-1024 children's bed
+KW-1025 chop down
+KW-1026 cindy lou
+KW-1027 clear path
+KW-1028 close call
+KW-1029 close nice
+KW-1030 closed between
+KW-1031 closed door
+KW-1032 closest exit
+KW-1033 coffee pot
+KW-1034 collapse before
+KW-1035 collapsing all
+KW-1036 come around
+KW-1037 come back
+KW-1038 come help
+KW-1039 come join
+KW-1040 come toward
+KW-1041 coming down
+KW-1042 coming up
+KW-1043 completely ablaze
+KW-1044 completely blown
+KW-1045 completely covered
+KW-1046 completely destroyed
+KW-1047 completely engulfed
+KW-1048 completely inflamed
+KW-1049 completely surrounded
+KW-1050 concerning though
+KW-1051 condition coming
+KW-1052 conditions coming
+KW-1053 condoleezza rice
+KW-1054 conflagration truly
+KW-1055 continue breaching
+KW-1056 continue moving
+KW-1057 continue trying
+KW-1058 convenient okay
+KW-1059 cool backup
+KW-1060 cool cool
+KW-1061 cool deal
+KW-1062 cool yellow
+KW-1063 coordinates completely
+KW-1064 copy entering
+KW-1065 corner it'll
+KW-1066 cost anything
+KW-1067 could easily
+KW-1068 could finish
+KW-1069 could prove
+KW-1070 could put
+KW-1071 could use
+KW-1072 counter top
+KW-1073 couple smoldering
+KW-1074 crazier than
+KW-1075 current location
+KW-1076 currently being
+KW-1077 currently located
+KW-1078 damage counter
+KW-1079 damage sustained
+KW-1080 damaged too
+KW-1081 damaged walls
+KW-1082 damaging two
+KW-1083 danger blue
+KW-1084 dangerous place
+KW-1085 dangerous situation
+KW-1086 dangerous than
+KW-1087 dear okay
+KW-1088 death wish
+KW-1089 deaths today
+KW-1090 debating whether
+KW-1091 decide whether
+KW-1092 depend figuring
+KW-1093 didn't realize
+KW-1094 different location
+KW-1095 direction putting
+KW-1096 dirty blonde
+KW-1097 doesn't cost
+KW-1098 doesn't explode
+KW-1099 doesn't seem
+KW-1100 dog again
+KW-1101 dog drag
+KW-1102 dog toward
+KW-1103 dog's been
+KW-1104 dog's life
+KW-1105 doing nothing
+KW-1106 don't fix
+KW-1107 don't know
+KW-1108 don't need
+KW-1109 don't they
+KW-1110 done new
+KW-1111 done your
+KW-1112 doodle guy
+KW-1113 doodle head
+KW-1114 door blows
+KW-1115 door opens
+KW-1116 door yet
+KW-1117 door's already
+KW-1118 door's blown
+KW-1119 door's closed
+KW-1120 doors blasting
+KW-1121 doors blown
+KW-1122 doors open
+KW-1123 downed electrical
+KW-1124 drag johnson
+KW-1125 drinking from
+KW-1126 duct tape
+KW-1127 during her
+KW-1128 e m
+KW-1129 easiest thing
+KW-1130 easiest way
+KW-1131 easily tackle
+KW-1132 electrical wire
+KW-1133 else happening
+KW-1134 eminent emily
+KW-1135 energy left
+KW-1136 enough points
+KW-1137 enough walls
+KW-1138 entire kitchen
+KW-1139 entire living
+KW-1140 entirely engulfed
+KW-1141 entry way
+KW-1142 evac point
+KW-1143 even crazier
+KW-1144 even though
+KW-1145 even worse
+KW-1146 every time
+KW-1147 everybody keeps
+KW-1148 exit plan
+KW-1149 exit route
+KW-1150 exit yet
+KW-1151 explode again
+KW-1152 explosion cubes
+KW-1153 explosion happening
+KW-1154 explosions which
+KW-1155 exterior door
+KW-1156 exterior wall
+KW-1157 exterior walls
+KW-1158 external wall
+KW-1159 extra turn
+KW-1160 extracting point
+KW-1161 fair enough
+KW-1162 fall down
+KW-1163 false alarm
+KW-1164 false alarms
+KW-1165 false flag
+KW-1166 far corner
+KW-1167 far from
+KW-1168 fart machine
+KW-1169 fast as
+KW-1170 fast burning
+KW-1171 fastest way
+KW-1172 faulty logic
+KW-1173 feel bad
+KW-1174 feel free
+KW-1175 feel like
+KW-1176 feeling better
+KW-1177 female outside
+KW-1178 few minutes
+KW-1179 fifteen seconds
+KW-1180 fifth point
+KW-1181 fight these
+KW-1182 fighter attempting
+KW-1183 fighter extinguishing
+KW-1184 fighting fires
+KW-1185 finish blasting
+KW-1186 finish knocking
+KW-1187 finishing knocking
+KW-1188 fire anymore
+KW-1189 fire however
+KW-1190 fire indicators
+KW-1191 fire's doing
+KW-1192 fire's spread
+KW-1193 fire's spreading
+KW-1194 firefighter entering
+KW-1195 firefighter exiting
+KW-1196 firefighter green
+KW-1197 firefighter proceeding
+KW-1198 firefighter taking
+KW-1199 firefighter's going
+KW-1200 firefighter's heading
+KW-1201 first hint
+KW-1202 first sights
+KW-1203 first thing
+KW-1204 first things
+KW-1205 five minutes
+KW-1206 flame advancing
+KW-1207 flame underneath
+KW-1208 flawless track
+KW-1209 fools errand
+KW-1210 forward inward
+KW-1211 forward removing
+KW-1212 found has
+KW-1213 four moves
+KW-1214 fourth action
+KW-1215 from last
+KW-1216 frying turkey
+KW-1217 full blaze
+KW-1218 full collapse
+KW-1219 full hole
+KW-1220 fully aflame
+KW-1221 fully engulfed
+KW-1222 fully engulfing
+KW-1223 gallows humor
+KW-1224 game room's
+KW-1225 general catastrophe
+KW-1226 general direction
+KW-1227 gentleman very
+KW-1228 get exploded
+KW-1229 get rid
+KW-1230 get worse
+KW-1231 gets blown
+KW-1232 gets broken
+KW-1233 gets knocked
+KW-1234 gets outside
+KW-1235 getting folks
+KW-1236 getting hotter
+KW-1237 getting kind
+KW-1238 getting knocked
+KW-1239 getting loud
+KW-1240 getting pretty
+KW-1241 getting ready
+KW-1242 getting reports
+KW-1243 getting rid
+KW-1244 getting smokier
+KW-1245 getting smoky
+KW-1246 getting these
+KW-1247 getting under
+KW-1248 getting word
+KW-1249 getting worse
+KW-1250 girl appears
+KW-1251 god damn
+KW-1252 god they
+KW-1253 goes down
+KW-1254 goes straight
+KW-1255 good call
+KW-1256 good choice
+KW-1257 good luck
+KW-1258 good piano
+KW-1259 good question
+KW-1260 good shape
+KW-1261 gosh explosion
+KW-1262 got lots
+KW-1263 gotten bigger
+KW-1264 gotten reports
+KW-1265 grace period
+KW-1266 grand piano
+KW-1267 great because
+KW-1268 great idea
+KW-1269 great job
+KW-1270 great news
+KW-1271 great thank
+KW-1272 green guy
+KW-1273 green player
+KW-1274 growth spurt
+KW-1275 guess i'll
+KW-1276 guess join
+KW-1277 guy has
+KW-1278 had several
+KW-1279 haired boy
+KW-1280 hand hello
+KW-1281 hang tight
+KW-1282 hanging fruit
+KW-1283 happened once
+KW-1284 has arrived
+KW-1285 has become
+KW-1286 has been
+KW-1287 has had
+KW-1288 has resulted
+KW-1289 has spread
+KW-1290 has taken
+KW-1291 hasn't been
+KW-1292 haven't gotten
+KW-1293 he gets
+KW-1294 he ran
+KW-1295 head back
+KW-1296 head straight
+KW-1297 head towards
+KW-1298 headed back
+KW-1299 headed towards
+KW-1300 heading towards
+KW-1301 hear anything
+KW-1302 heard screams
+KW-1303 heavily engulfed
+KW-1304 heavy breathing
+KW-1305 hell yeah
+KW-1306 helping hand
+KW-1307 helpless creature
+KW-1308 hep cat
+KW-1309 her because
+KW-1310 her hand
+KW-1311 hey green
+KW-1312 high pressure
+KW-1313 high stakes
+KW-1314 high visibility
+KW-1315 hm hm
+KW-1316 hold onto
+KW-1317 holding onto
+KW-1318 hole bigger
+KW-1319 holy moly
+KW-1320 honestly would
+KW-1321 hop him
+KW-1322 hop hop
+KW-1323 hop towards
+KW-1324 hope these
+KW-1325 hopefully extinguishing
+KW-1326 hopefully i'll
+KW-1327 hopefully isn't
+KW-1328 hopefully that'll
+KW-1329 hors d'oeuvres
+KW-1330 hot spot
+KW-1331 house yet
+KW-1332 how convenient
+KW-1333 how did
+KW-1334 how many
+KW-1335 how much
+KW-1336 how they
+KW-1337 huh hello
+KW-1338 human being
+KW-1339 hundred percent
+KW-1340 i'd rather
+KW-1341 i'd say
+KW-1342 i'll still
+KW-1343 if they're
+KW-1344 immediate danger
+KW-1345 incredibly unlikely
+KW-1346 inner support
+KW-1347 insurance adjuster
+KW-1348 interest established
+KW-1349 interest reported
+KW-1350 interesting how
+KW-1351 interesting questions
+KW-1352 interior walls
+KW-1353 internal walls
+KW-1354 isn't causing
+KW-1355 jeez don't
+KW-1356 jeez okay
+KW-1357 jesus christ
+KW-1358 job green
+KW-1359 job team
+KW-1360 job yellow
+KW-1361 john smith
+KW-1362 judy fields
+KW-1363 justin bieber
+KW-1364 keep attempting
+KW-1365 keep getting
+KW-1366 keep heading
+KW-1367 keep popping
+KW-1368 keep putting
+KW-1369 keep taking
+KW-1370 keep track
+KW-1371 keep working
+KW-1372 keeping their
+KW-1373 keeps showing
+KW-1374 kellyanne conway
+KW-1375 kid's bedroom
+KW-1376 kid's bedroom's
+KW-1377 kitchen extinguishing
+KW-1378 kitty cat
+KW-1379 knocked down
+KW-1380 knocking down
+KW-1381 know how
+KW-1382 know if
+KW-1383 know low
+KW-1384 know why
+KW-1385 lady outside
+KW-1386 lady toward
+KW-1387 last time
+KW-1388 lava lamp
+KW-1389 learn things
+KW-1390 least find
+KW-1391 least moderately
+KW-1392 least reduce
+KW-1393 leave yet
+KW-1394 left hang
+KW-1395 leftover ham
+KW-1396 less fire
+KW-1397 less likely
+KW-1398 let's find
+KW-1399 let's hope
+KW-1400 let's see
+KW-1401 life saved
+KW-1402 lion's den
+KW-1403 literally everything
+KW-1404 little area
+KW-1405 little better
+KW-1406 little bit
+KW-1407 little doggie
+KW-1408 little further
+KW-1409 little girl
+KW-1410 little hospital
+KW-1411 little less
+KW-1412 little pink
+KW-1413 little too
+KW-1414 little while
+KW-1415 little worried
+KW-1416 little worse
+KW-1417 living room's
+KW-1418 local localized
+KW-1419 long haired
+KW-1420 look good
+KW-1421 looking around
+KW-1422 looking bad
+KW-1423 looking hot
+KW-1424 looking like
+KW-1425 looking pretty
+KW-1426 looking really
+KW-1427 looking they're
+KW-1428 looks like
+KW-1429 loony tunes
+KW-1430 loose cannon
+KW-1431 losing control
+KW-1432 lost somebody
+KW-1433 lot better
+KW-1434 lot less
+KW-1435 louder please
+KW-1436 love seat
+KW-1437 low hanging
+KW-1438 low numbers
+KW-1439 low visibility
+KW-1440 luck today
+KW-1441 lung health
+KW-1442 m may
+KW-1443 m ts
+KW-1444 made contact
+KW-1445 made earlier
+KW-1446 maine coon
+KW-1447 make knock
+KW-1448 make our
+KW-1449 make sense
+KW-1450 make sure
+KW-1451 make your
+KW-1452 makes sense
+KW-1453 making our
+KW-1454 making progress
+KW-1455 male victim
+KW-1456 man down
+KW-1457 man outside
+KW-1458 many holes
+KW-1459 many moves
+KW-1460 many people
+KW-1461 master bath
+KW-1462 master bedroom's
+KW-1463 may need
+KW-1464 maybe extinguishing
+KW-1465 maybe make
+KW-1466 maybe try
+KW-1467 maybe unnecessary
+KW-1468 mean sorry
+KW-1469 meth lab
+KW-1470 michelle michelle's
+KW-1471 middle name
+KW-1472 might actually
+KW-1473 might as
+KW-1474 might want
+KW-1475 minutes until
+KW-1476 missed something
+KW-1477 missing one
+KW-1478 mm hm
+KW-1479 moderately useful
+KW-1480 monoxide poisoning
+KW-1481 mostly contained
+KW-1482 mostly engulfed
+KW-1483 mostly three-quarters
+KW-1484 move onto
+KW-1485 move outward
+KW-1486 movement left
+KW-1487 movement point
+KW-1488 moves left
+KW-1489 moving forward
+KW-1490 much catching
+KW-1491 much danger
+KW-1492 much engulfed
+KW-1493 much worse
+KW-1494 nah whatever
+KW-1495 narrow hallways
+KW-1496 national treasure
+KW-1497 naughty little
+KW-1498 near future
+KW-1499 nearest exit
+KW-1500 need our
+KW-1501 never ends
+KW-1502 never mind
+KW-1503 new blaze
+KW-1504 new potential
+KW-1505 news bears
+KW-1506 next availability
+KW-1507 next round
+KW-1508 next time
+KW-1509 nice job
+KW-1510 nice work
+KW-1511 nicely done
+KW-1512 nobody likes
+KW-1513 non-smoky non-flamy
+KW-1514 nondestructive principles
+KW-1515 north side
+KW-1516 northeast section
+KW-1517 nothing else
+KW-1518 nothing happens
+KW-1519 nowhere near
+KW-1520 officer green
+KW-1521 okey dokey
+KW-1522 old adage
+KW-1523 once again
+KW-1524 one block
+KW-1525 one piece
+KW-1526 one tile
+KW-1527 only fifteen
+KW-1528 only really
+KW-1529 only takes
+KW-1530 ontological questions
+KW-1531 oof man
+KW-1532 open doors
+KW-1533 other side
+KW-1534 other thing
+KW-1535 other victim
+KW-1536 our e
+KW-1537 our fires
+KW-1538 our last
+KW-1539 our plan
+KW-1540 our third
+KW-1541 our twin
+KW-1542 outer wall
+KW-1543 partial breach
+KW-1544 partially breached
+KW-1545 peace good
+KW-1546 per block
+KW-1547 per usual
+KW-1548 percent engulfed
+KW-1549 person's dead
+KW-1550 person's safe
+KW-1551 pet has
+KW-1552 piano player
+KW-1553 pink floral
+KW-1554 places make
+KW-1555 places plus
+KW-1556 plus also
+KW-1557 pop up
+KW-1558 popped up
+KW-1559 popping up
+KW-1560 possible hopefully
+KW-1561 possible situation
+KW-1562 possible victims
+KW-1563 potential victim
+KW-1564 potential victims
+KW-1565 potentially injured
+KW-1566 potentially someone
+KW-1567 power points
+KW-1568 pressure tense
+KW-1569 pretty bad
+KW-1570 pretty clear
+KW-1571 pretty dangerous
+KW-1572 pretty fiery
+KW-1573 pretty hairy
+KW-1574 pretty much
+KW-1575 pretty rough
+KW-1576 pretty scary
+KW-1577 pretty sensitive
+KW-1578 pretty smoky
+KW-1579 pretty unstable
+KW-1580 probably before
+KW-1581 probably spread
+KW-1582 process carrying
+KW-1583 prove useful
+KW-1584 pull-out strength
+KW-1585 puppy's safe
+KW-1586 putting water
+KW-1587 question mark
+KW-1588 questions about
+KW-1589 quick boom
+KW-1590 quickest way
+KW-1591 quickly assess
+KW-1592 quite hear
+KW-1593 quite yet
+KW-1594 raises interesting
+KW-1595 ran away
+KW-1596 reach any
+KW-1597 reaction happening
+KW-1598 real bad
+KW-1599 real fast
+KW-1600 real hep
+KW-1601 real quick
+KW-1602 really bad
+KW-1603 really close
+KW-1604 really convenient
+KW-1605 really disorienting
+KW-1606 really given
+KW-1607 really help
+KW-1608 really hot
+KW-1609 really nice
+KW-1610 really quick
+KW-1611 really smokes
+KW-1612 really smoky
+KW-1613 really spreading
+KW-1614 recovering from
+KW-1615 red firefighter's
+KW-1616 red shirted
+KW-1617 relatively safe
+KW-1618 remaining points
+KW-1619 remember correctly
+KW-1620 repeat chief
+KW-1621 reputation precedes
+KW-1622 rescue her
+KW-1623 rescue underway
+KW-1624 rescued somebody
+KW-1625 returning back
+KW-1626 right beside
+KW-1627 roger thank
+KW-1628 room's getting
+KW-1629 room's looking
+KW-1630 round let
+KW-1631 run around
+KW-1632 run inside
+KW-1633 run toward
+KW-1634 running back
+KW-1635 running forward
+KW-1636 running toward
+KW-1637 safely outside
+KW-1638 said earlier
+KW-1639 sally fields
+KW-1640 same corner
+KW-1641 same thing
+KW-1642 same tile
+KW-1643 sarah somers
+KW-1644 save first
+KW-1645 save these
+KW-1646 save yourself
+KW-1647 saved checking
+KW-1648 saved someone
+KW-1649 saving lives
+KW-1650 saving people
+KW-1651 say maybe
+KW-1652 saying anything
+KW-1653 scattered fires
+KW-1654 scattered throughout
+KW-1655 secondary explosion
+KW-1656 seconds left
+KW-1657 see something
+KW-1658 see who's
+KW-1659 seeing who's
+KW-1660 seem like
+KW-1661 seem too
+KW-1662 seems fine
+KW-1663 seems like
+KW-1664 seems still
+KW-1665 sensitive situation
+KW-1666 serious damage
+KW-1667 serious situation
+KW-1668 seventy percent
+KW-1669 seventy-five percent
+KW-1670 several explosions
+KW-1671 severely damaged
+KW-1672 shape as
+KW-1673 shared between
+KW-1674 she's safe
+KW-1675 shirted caucasian
+KW-1676 shirted female
+KW-1677 shit show
+KW-1678 shock wave
+KW-1679 shored up
+KW-1680 short little
+KW-1681 shortest distance
+KW-1682 should make
+KW-1683 should start
+KW-1684 should work
+KW-1685 showing up
+KW-1686 sign finding
+KW-1687 since things
+KW-1688 since you're
+KW-1689 situation coming
+KW-1690 sized holes
+KW-1691 slow moving
+KW-1692 small amount
+KW-1693 small bathroom
+KW-1694 smell something
+KW-1695 smelling something
+KW-1696 smoke accumulating
+KW-1697 smoke appearing
+KW-1698 smoke filling
+KW-1699 smoke growing
+KW-1700 smoke inhalation
+KW-1701 smokes around
+KW-1702 smokes nearby
+KW-1703 smoky area
+KW-1704 smoky making
+KW-1705 smoky too
+KW-1706 solid anymore
+KW-1707 somebody ahead
+KW-1708 somebody else
+KW-1709 somebody unconscious
+KW-1710 somebody very
+KW-1711 someone else
+KW-1712 something burning
+KW-1713 something else
+KW-1714 something new
+KW-1715 something you're
+KW-1716 somewhere along
+KW-1717 sorry about
+KW-1718 sorry repeat
+KW-1719 sound effect
+KW-1720 south end
+KW-1721 south side
+KW-1722 speak louder
+KW-1723 spending another
+KW-1724 spoke too
+KW-1725 spread orange
+KW-1726 spread throughout
+KW-1727 spread too
+KW-1728 spreading from
+KW-1729 spreading rapidly
+KW-1730 start blasting
+KW-1731 start blowing
+KW-1732 start repairing
+KW-1733 start swinging
+KW-1734 start tackling
+KW-1735 start walking
+KW-1736 status report
+KW-1737 status update
+KW-1738 stay safe
+KW-1739 stays stable
+KW-1740 step closer
+KW-1741 step forward
+KW-1742 stepping forward
+KW-1743 still haven't
+KW-1744 still need
+KW-1745 still raining
+KW-1746 still saving
+KW-1747 still seems
+KW-1748 straight line
+KW-1749 strategy might
+KW-1750 strict codes
+KW-1751 structural integrity
+KW-1752 structural problems
+KW-1753 suggestion yellow
+KW-1754 support walls
+KW-1755 support your
+KW-1756 surprised by
+KW-1757 surrounded by
+KW-1758 swinging away
+KW-1759 switched roles
+KW-1760 take care
+KW-1761 taken care
+KW-1762 taken her
+KW-1763 takes care
+KW-1764 taking care
+KW-1765 taking todd
+KW-1766 taking twin
+KW-1767 talk about
+KW-1768 tank top
+KW-1769 tarzan's jane
+KW-1770 teenage girl
+KW-1771 tell exactly
+KW-1772 tell she's
+KW-1773 terrible idea
+KW-1774 thank god
+KW-1775 thank goodness
+KW-1776 thanks bud
+KW-1777 thanks chief
+KW-1778 thanks control
+KW-1779 thanks red
+KW-1780 their meth
+KW-1781 these extra
+KW-1782 these fires
+KW-1783 these people
+KW-1784 these victims
+KW-1785 these walls
+KW-1786 they aren't
+KW-1787 they can't
+KW-1788 they could
+KW-1789 they keep
+KW-1790 they were
+KW-1791 they're dead
+KW-1792 they're keeping
+KW-1793 they're kind
+KW-1794 they're looking
+KW-1795 they're under
+KW-1796 thing excellent
+KW-1797 things first
+KW-1798 things getting
+KW-1799 things happening
+KW-1800 think maybe
+KW-1801 those places
+KW-1802 tile does
+KW-1803 tile without
+KW-1804 time i'll
+KW-1805 time limit
+KW-1806 time rolling
+KW-1807 timely fashion
+KW-1808 tiny bit
+KW-1809 token down
+KW-1810 too bad
+KW-1811 too concerned
+KW-1812 too concerning
+KW-1813 too far
+KW-1814 too many
+KW-1815 too much
+KW-1816 too personal
+KW-1817 too soon
+KW-1818 too surprised
+KW-1819 took your
+KW-1820 totally covered
+KW-1821 tough break
+KW-1822 toxic little
+KW-1823 track record
+KW-1824 trouble hearing
+KW-1825 troubling because
+KW-1826 true alright
+KW-1827 turned additional
+KW-1828 twin number
+KW-1829 two spots
+KW-1830 two tokens
+KW-1831 two victim's
+KW-1832 unconscious female
+KW-1833 unconscious male
+KW-1834 under containment
+KW-1835 under control
+KW-1836 under us
+KW-1837 unfortunately has
+KW-1838 up again
+KW-1839 up from
+KW-1840 update though
+KW-1841 us whoever
+KW-1842 used up
+KW-1843 using all
+KW-1844 using another
+KW-1845 very close
+KW-1846 very fancy
+KW-1847 very generous
+KW-1848 very much
+KW-1849 very serious
+KW-1850 very very
+KW-1851 victim's located
+KW-1852 victim's safe
+KW-1853 video too
+KW-1854 wait how
+KW-1855 wait let
+KW-1856 wait sorry
+KW-1857 walk around
+KW-1858 walking forward
+KW-1859 wall's blown
+KW-1860 wall's coming
+KW-1861 walls blown
+KW-1862 walls broken
+KW-1863 walls collapsing
+KW-1864 walls they
+KW-1865 want backup
+KW-1866 wasn't sure
+KW-1867 way toward
+KW-1868 we'll address
+KW-1869 well actually
+KW-1870 well done
+KW-1871 well hold
+KW-1872 well let
+KW-1873 were doing
+KW-1874 whatever firefighters
+KW-1875 when you're
+KW-1876 where they're
+KW-1877 which has
+KW-1878 while because
+KW-1879 while they
+KW-1880 white caucasian
+KW-1881 white house
+KW-1882 who let
+KW-1883 who's who's
+KW-1884 whoever gets
+KW-1885 whole bunch
+KW-1886 whole living
+KW-1887 whole north
+KW-1888 whole side
+KW-1889 whole team
+KW-1890 why don't
+KW-1891 wide open
+KW-1892 wish against
+KW-1893 wish wish
+KW-1894 without being
+KW-1895 woman outside
+KW-1896 won't spread
+KW-1897 wood flooring
+KW-1898 worried about
+KW-1899 worse situation
+KW-1900 worth taking
+KW-1901 would rescue
+KW-1902 would say
+KW-1903 would take
+KW-1904 would work
+KW-1905 wrap around
+KW-1906 yeah things
+KW-1907 yellow maybe
+KW-1908 yellow tank
+KW-1909 yes ma'am
+KW-1910 you're already
+KW-1911 you're interested
+KW-1912 you're near
+KW-1913 you're very
+KW-1914 you're welcome
+KW-1915 youch papa
+KW-1916 young boy
+KW-1917 young girl
+KW-1918 young human
+KW-1919 young lad
+KW-1920 young lady
+KW-1921 young male
+KW-1922 young man
+KW-1923 young woman
+KW-1924 youngish woman
+KW-1925 your area
+KW-1926 your end
+KW-1927 your plan
+KW-1928 your rescue
+KW-1929 your save
+KW-1930 your weight
+KW-1931 yup yup
+KW-1932 about your plan
+KW-1933 action points remaining
+KW-1934 action points take
+KW-1935 actions left hang
+KW-1936 adjacent tile without
+KW-1937 advised red firefighter
+KW-1938 aerial view especially
+KW-1939 african american male
+KW-1940 again raises interesting
+KW-1941 all around us
+KW-1942 almost completely filled
+KW-1943 almost completely full
+KW-1944 almost entirely engulfed
+KW-1945 almost seventy-five percent
+KW-1946 already anyways if
+KW-1947 already mostly engulfed
+KW-1948 already took your
+KW-1949 alright danger blue
+KW-1950 also completely taken
+KW-1951 america's national treasure
+KW-1952 another life saved
+KW-1953 another person rescued
+KW-1954 any actions left
+KW-1955 any false alarms
+KW-1956 any possible victims
+KW-1957 as fast as
+KW-1958 away red firefighter
+KW-1959 axing reputation precedes
+KW-1960 backup has arrived
+KW-1961 bad luck today
+KW-1962 bad news bears
+KW-1963 barack's brother ben
+KW-1964 because nothing else
+KW-1965 because they're kind
+KW-1966 bedroom let's see
+KW-1967 bet everybody says
+KW-1968 bit smoky making
+KW-1969 bit troubling because
+KW-1970 bit worried about
+KW-1971 blaze pop up
+KW-1972 blonde haired boy
+KW-1973 blowing open doors
+KW-1974 blown wide open
+KW-1975 blue firefighter taking
+KW-1976 boom boom gone
+KW-1977 boop boop boop
+KW-1978 bravo black romeo
+KW-1979 brother ben obama
+KW-1980 can't hear anything
+KW-1981 can't leave yet
+KW-1982 can't quite get
+KW-1983 can't quite hear
+KW-1984 can't quite make
+KW-1985 can't support your
+KW-1986 can't tell exactly
+KW-1987 cannot reach any
+KW-1988 carbon monoxide poisoning
+KW-1989 cat has been
+KW-1990 caucasian male child
+KW-1991 causes another explosion
+KW-1992 ceiling tile's caving
+KW-1993 chain reaction happening
+KW-1994 chief how much
+KW-1995 coffee pot barking
+KW-1996 collapsing all around
+KW-1997 condition coming up
+KW-1998 conflagration truly spectacular
+KW-1999 cool backup has
+KW-2000 coordinates completely engulfed
+KW-2001 could easily tackle
+KW-2002 could finish knocking
+KW-2003 currently being affected
+KW-2004 damaged too many
+KW-2005 danger blue checking
+KW-2006 death wish against
+KW-2007 deep frying turkey
+KW-2008 doesn't cost anything
+KW-2009 doesn't explode again
+KW-2010 don't know if
+KW-2011 don't know why
+KW-2012 door gets blown
+KW-2013 door's already open
+KW-2014 downed electrical wire
+KW-2015 enough walls broken
+KW-2016 entire living room
+KW-2017 even crazier than
+KW-2018 excellent well done
+KW-2019 explosion bad news
+KW-2020 exterior wall damage
+KW-2021 false alarm alright
+KW-2022 false alarm false
+KW-2023 false alarm yeah
+KW-2024 field's sister judy
+KW-2025 fifteen seconds left
+KW-2026 fight these fires
+KW-2027 fire fighter entering
+KW-2028 fire sign finding
+KW-2029 fire's spreading okay
+KW-2030 firefighting slang yesterday
+KW-2031 first things first
+KW-2032 five looks like
+KW-2033 five next time
+KW-2034 found has been
+KW-2035 four looks like
+KW-2036 four three four
+KW-2037 fucking jet engine
+KW-2038 full breach towards
+KW-2039 full collapse before
+KW-2040 general direction putting
+KW-2041 gentleman very fancy
+KW-2042 get back inside
+KW-2043 gets broken as
+KW-2044 getting pretty fiery
+KW-2045 getting pretty hot
+KW-2046 getting pretty smoky
+KW-2047 getting really smoky
+KW-2048 getting these people
+KW-2049 getting under containment
+KW-2050 god they could
+KW-2051 goes bravo eight
+KW-2052 going back inside
+KW-2053 going right back
+KW-2054 good piano player
+KW-2055 goodness thank goodness
+KW-2056 got blown open
+KW-2057 guy has become
+KW-2058 had several explosions
+KW-2059 has been smashed
+KW-2060 has been under
+KW-2061 has had several
+KW-2062 hasn't been any
+KW-2063 he gets blown
+KW-2064 he ran away
+KW-2065 head back towards
+KW-2066 heading towards romeo
+KW-2067 her hand hello
+KW-2068 high pressure tense
+KW-2069 holding onto two
+KW-2070 hole blown open
+KW-2071 honestly would rescue
+KW-2072 hop hop him
+KW-2073 hopefully isn't causing
+KW-2074 how they keep
+KW-2075 huge conflagration truly
+KW-2076 human being underneath
+KW-2077 inner support walls
+KW-2078 interest false alarm
+KW-2079 interest last time
+KW-2080 interest possible person
+KW-2081 interest real quick
+KW-2082 interesting how they
+KW-2083 interesting questions about
+KW-2084 jesus christ alright
+KW-2085 keeping their meth
+KW-2086 keeps showing up
+KW-2087 kid's bedroom great
+KW-2088 kid's bedroom still
+KW-2089 kid's bedroom's completely
+KW-2090 kitchen's completely engulfed
+KW-2091 know if they're
+KW-2092 know low hanging
+KW-2093 last action marker
+KW-2094 last point rolling
+KW-2095 lava lamp burned
+KW-2096 least moderately useful
+KW-2097 leftover ham continue
+KW-2098 little bit better
+KW-2099 little bit closer
+KW-2100 little bit safe
+KW-2101 little pink floral
+KW-2102 little too personal
+KW-2103 little worse situation
+KW-2104 living room seems
+KW-2105 looking good either
+KW-2106 looking pretty bad
+KW-2107 looking pretty rough
+KW-2108 looking really bad
+KW-2109 looking they're looking
+KW-2110 looks like nothing's
+KW-2111 low hanging fruit
+KW-2112 low lung health
+KW-2113 m may need
+KW-2114 mad roller today
+KW-2115 makes sense alright
+KW-2116 master bath checking
+KW-2117 master bath master
+KW-2118 master bath working
+KW-2119 master bathroom wall
+KW-2120 michelle michelle's sister
+KW-2121 michelle's sister molly
+KW-2122 might actually head
+KW-2123 mind never mind
+KW-2124 mm hm hm
+KW-2125 move one tile
+KW-2126 move one unit
+KW-2127 names tarzan's jane
+KW-2128 need our third
+KW-2129 never mind never
+KW-2130 never mind yeah
+KW-2131 new potential victim
+KW-2132 new smoke found
+KW-2133 new smoke rather
+KW-2134 next turn hopefully
+KW-2135 next turn let
+KW-2136 next turn let's
+KW-2137 okay fair enough
+KW-2138 okay looks like
+KW-2139 old adage roger
+KW-2140 one false alarm
+KW-2141 one space closer
+KW-2142 only fifteen seconds
+KW-2143 only really given
+KW-2144 oof man down
+KW-2145 orange firefighter entering
+KW-2146 orange firefighter reentering
+KW-2147 per block okay
+KW-2148 pet has been
+KW-2149 places make knock
+KW-2150 places plus also
+KW-2151 possible hopefully extinguishing
+KW-2152 potential victim potential
+KW-2153 pretty bad isn't
+KW-2154 pretty much catching
+KW-2155 pretty much engulfed
+KW-2156 pretty sensitive situation
+KW-2157 pretty smoky too
+KW-2158 ran away crap
+KW-2159 real fast alright
+KW-2160 real hep cat
+KW-2161 really smokes nearby
+KW-2162 really spreading from
+KW-2163 red firefighter's going
+KW-2164 red shirted female
+KW-2165 repeat bravo eight
+KW-2166 repeat false alarm
+KW-2167 roger moving towards
+KW-2168 romeo four great
+KW-2169 romeo six nope
+KW-2170 room door blown
+KW-2171 room start putting
+KW-2172 room working towards
+KW-2173 room's getting kind
+KW-2174 room's getting smoky
+KW-2175 room's looking pretty
+KW-2176 running back toward
+KW-2177 same thing excellent
+KW-2178 same tile does
+KW-2179 saved three people
+KW-2180 seeing fire sign
+KW-2181 seeing who's who's
+KW-2182 seems still seems
+KW-2183 seventy percent engulfed
+KW-2184 several explosions which
+KW-2185 short little while
+KW-2186 should make our
+KW-2187 sign finding fire
+KW-2188 since you're near
+KW-2189 sister twin sisters
+KW-2190 six little bit
+KW-2191 small bathroom copy
+KW-2192 small bathroom door
+KW-2193 small bathroom full
+KW-2194 small bedroom small
+KW-2195 smelling something burning
+KW-2196 smoke next time
+KW-2197 smoke right behind
+KW-2198 smoke right near
+KW-2199 something else happening
+KW-2200 something you're interested
+KW-2201 sounds good copy
+KW-2202 sounds good okay
+KW-2203 spend one spend
+KW-2204 spending another point
+KW-2205 spoke too soon
+KW-2206 spreads bravo eight
+KW-2207 start swinging away
+KW-2208 stepping forward removing
+KW-2209 still haven't gotten
+KW-2210 still seems fine
+KW-2211 structural damage betwixt
+KW-2212 suggestion yellow maybe
+KW-2213 suzanne somers' sister
+KW-2214 taken her hand
+KW-2215 taking twin number
+KW-2216 talk about your
+KW-2217 thank god they
+KW-2218 thanks thanks red
+KW-2219 these walls they
+KW-2220 they keep popping
+KW-2221 they're under us
+KW-2222 those places plus
+KW-2223 three four almost
+KW-2224 three looks like
+KW-2225 three points left
+KW-2226 tile without being
+KW-2227 time i'll still
+KW-2228 too far from
+KW-2229 too many holes
+KW-2230 too much danger
+KW-2231 too surprised by
+KW-2232 toxic little area
+KW-2233 turn green guy
+KW-2234 turn let's see
+KW-2235 two action tokens
+KW-2236 two moves left
+KW-2237 two points remaining
+KW-2238 two potential victims
+KW-2239 unfortunately has taken
+KW-2240 update bravo seven
+KW-2241 us whoever gets
+KW-2242 use four points
+KW-2243 using another action
+KW-2244 very serious situation
+KW-2245 very very close
+KW-2246 victim potential victim
+KW-2247 video too much
+KW-2248 wait never mind
+KW-2249 walls collapsing all
+KW-2250 want backup dude
+KW-2251 well done blue
+KW-2252 where they're keeping
+KW-2253 which has resulted
+KW-2254 while because they're
+KW-2255 while they aren't
+KW-2256 whoever gets outside
+KW-2257 whole kid's bedroom
+KW-2258 why don't they
+KW-2259 won't spread too
+KW-2260 work fire fighter
+KW-2261 work romeo five
+KW-2262 worth taking care
+KW-2263 yeah sounds good
+KW-2264 yellow sounds good
+KW-2265 yellow tank top
+KW-2266 yikes youch papa
+KW-2267 you're already carrying
+KW-2268 you're very generous
+KW-2269 young girl appears
+KW-2270 young man probably
+KW-2271 your rescue underway
+KW-2272 almost seventy-five percent engulfed
+KW-2273 alright good work blue
+KW-2274 alright red firefighter moving
+KW-2275 another potential victim potential
+KW-2276 barack's brother ben obama
+KW-2277 bedroom's pretty smoky too
+KW-2278 boop boop boop boop
+KW-2279 can't carry two people
+KW-2280 can't support your weight
+KW-2281 cat has been saved
+KW-2282 dining room fully engulfed
+KW-2283 dining room moving towards
+KW-2284 doesn't seem too concerning
+KW-2285 don't know if they're
+KW-2286 door gets blown open
+KW-2287 everybody keeps showing up
+KW-2288 explosions which has resulted
+KW-2289 false alarm false alarm
+KW-2290 fire's spreading bravo five
+KW-2291 fire's spreading bravo six
+KW-2292 four five six seven
+KW-2293 goes bravo eight romeo
+KW-2294 good job green firefighter
+KW-2295 good point good point
+KW-2296 good work fire fighter
+KW-2297 green fire fighter alright
+KW-2298 huge conflagration truly spectacular
+KW-2299 interesting how they keep
+KW-2300 know low hanging fruit
+KW-2301 last two action points
+KW-2302 let's see bravo eight
+KW-2303 let's see one two
+KW-2304 little bit smoky making
+KW-2305 living room dining room
+KW-2306 living room living room
+KW-2307 looking pretty bad isn't
+KW-2308 looks like another explosion
+KW-2309 master bath right next
+KW-2310 master bedroom looks like
+KW-2311 master bedroom master bath
+KW-2312 master bedroom right next
+KW-2313 michelle michelle's sister molly
+KW-2314 michelle's sister molly obama
+KW-2315 never mind never mind
+KW-2316 new blaze pop up
+KW-2317 one action point banked
+KW-2318 one remaining action point
+KW-2319 our e m ts
+KW-2320 peace good piano player
+KW-2321 place another potential victim
+KW-2322 possible situation coming up
+KW-2323 potential victim potential victim
+KW-2324 quick boom boom gone
+KW-2325 raises interesting questions about
+KW-2326 really quick boom boom
+KW-2327 red fire fighter attempting
+KW-2328 repeat chief how much
+KW-2329 romeo five looks like
+KW-2330 romeo four looks like
+KW-2331 room's looking pretty bad
+KW-2332 sally field's sister judy
+KW-2333 seven romeo five seven
+KW-2334 sign finding fire sign
+KW-2335 small bathroom right next
+KW-2336 small bathroom two three
+KW-2337 small bedroom small bathroom
+KW-2338 somebody very very close
+KW-2339 spreads bravo eight romeo
+KW-2340 take another step closer
+KW-2341 they keep popping up
+KW-2342 they're keeping their meth
+KW-2343 they're looking they're looking
+KW-2344 three four five six
+KW-2345 two action points left
+KW-2346 using another action point
+KW-2347 walls collapsing all around
+KW-2348 work fire fighter red
+KW-2349 would rescue her because
+KW-2350 yellow sounds good yellow

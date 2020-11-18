@@ -10,7 +10,7 @@ set -e
 
 dir=exp/chain_finetune/tdnn_finetune
 
-src_mdl=exp/chain_all/tdnn_all//final.mdl # Input chain model
+src_mdl=exp/chain_all/tdnn_all/final.mdl # Input chain model
                                                    # trained on source dataset (icsi and ami).
                                                    # This model is transfered to the target domain.
 
@@ -26,7 +26,7 @@ src_tree_dir=exp/chain_all/tree_bi_all # chain tree-dir for src data;
                                          # the alignment in target domain is
                                          # converted using src-tree
 
-primary_lr_factor=0.70 # The learning-rate factor for transferred layers from source
+primary_lr_factor=0.40 # The learning-rate factor for transferred layers from source
                        # model. e.g. if 0, the paramters transferred from source model
                        # are fixed.
                        # The learning-rate factor for new added layers is 1.0.
@@ -40,12 +40,12 @@ stage=0
 nj=100
 train_set=train_safet
 gmm=tri3
-num_epochs=1
+num_epochs=1.5
 
 # The rest are configs specific to this script.  Most of the parameters
 # are just hardcoded at this level, in the commands below.
 train_stage=-10
-tdnn_affix=_finetune_70_100  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_finetune_40_100_finalmdl  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 nnet3_affix=_finetune
 common_egs_dir=
 dropout_schedule='0,0@0.20,0.5@0.50,0'

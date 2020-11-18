@@ -14,7 +14,7 @@
 
 # Begin configuration section.
 decode_nj=20
-gss_nj=50
+gss_nj=20
 stage=0
 enhancement=gss        # for a new enhancement method,
                        # change this variable and stage 4
@@ -99,7 +99,7 @@ if [ $stage -le 1 ] && [[ ${enhancement} == *gss* ]]; then
     )
   fi
 
-  for dset in dev eval; do
+  for dset in train; do
     local/run_gss.sh \
       --cmd "$train_cmd --max-jobs-run $gss_nj" --nj 160 \
       ${dset} \
@@ -107,12 +107,12 @@ if [ $stage -le 1 ] && [[ ${enhancement} == *gss* ]]; then
       ${enhanced_dir} || exit 1
   done
 
-  for dset in dev eval; do
-    local/prepare_data.sh --mictype gss ${enhanced_dir}/audio/${dset} \
-      ${json_dir}/${dset} data/${dset}_${enhancement} || exit 1
-  done
+#  for dset in dev eval; do
+#    local/prepare_data.sh --mictype gss ${enhanced_dir}/audio/${dset} \
+#      ${json_dir}/${dset} data/${dset}_${enhancement} || exit 1
+#  done
 fi
-
+exit
 #######################################################################
 # Prepare the dev and eval data with dereverberation (WPE) and
 # beamforming.
