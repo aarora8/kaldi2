@@ -87,6 +87,9 @@ GSYMS
 /egs/*/*/enhanced_multiarray_decode
 /egs/*/*/rir_distribution
 /egs/*/*/rirs_noises.zip
+/egs/*/*/chime6-synchronisation
+/egs/*/*/pb_chime5
+
 # /tools/
 /tools/pocolm/
 /tools/ATLAS/

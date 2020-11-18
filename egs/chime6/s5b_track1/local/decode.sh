@@ -51,7 +51,7 @@ if [[ ${enhancement} == *beamformit* ]]; then
 fi
 
 enhanced_dir=$(utils/make_absolute.sh $enhanced_dir) || exit 1
-test_sets="dev_${enhancement} eval_${enhancement}"
+test_sets="eval_${enhancement}"
 
 # This script also needs the phonetisaurus g2p, srilm, beamformit
 ./local/check_tools.sh || exit 1
@@ -62,12 +62,12 @@ test_sets="dev_${enhancement} eval_${enhancement}"
 # which is installed via miniconda in ./local/check_tools.sh
 ###########################################################################
 
-#if [ $stage -le 0 ]; then
-#  local/generate_chime6_data.sh \
-#    --cmd "$train_cmd" \
-#    ${chime5_corpus} \
-#    ${chime6_corpus}
-#fi
+if [ $stage -le 0 ]; then
+  local/generate_chime6_data.sh \
+    --cmd "$train_cmd" \
+    ${chime5_corpus} \
+    ${chime6_corpus}
+fi
 
 #########################################################################################
 # In stage 1, we perform GSS based enhancement or beamformit for the test sets. multiarray = true
