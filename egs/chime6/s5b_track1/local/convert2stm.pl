@@ -1,0 +1,1 @@
+../../../OpenSAT2020/s5/local/convert2stm.pl

@@ -45,7 +45,8 @@ enhancement=${enhancement}
 
 test_sets="eval_${enhancement}"
 train_set=train_worn_simu_u400k
-
+ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech
+AMI_DIR=/export/corpora5/amicorpus/
 if [ $stage -le 1 ]; then
   echo "$0:  prepare data..."
   for dataset in train dev; do
@@ -95,9 +96,9 @@ if [ $stage -le 6 ]; then
     utils/data/modify_speaker_info.sh --seconds-per-spk-max 180 data/${dset}_nosplit data/${dset}
   done
 fi
-exit
+
 if [ $stage -le 7 ]; then
-  local/icsi_run_prepare_shared.sh
+  #local/icsi_run_prepare_shared.sh
   local/icsi_ihm_data_prep.sh $ICSI_DIR
   local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR dev
   local/icsi_ihm_scoring_data_prep.sh $ICSI_DIR eval
@@ -136,30 +137,9 @@ if [ $stage -le 10 ]; then
 fi
 
 if [ $stage -le 11 ] ; then
-  local/safet_train_lms_srilm.sh \
-    --train_text data/train_safet/text --dev_text data/safe_t_dev1/text  \
-    data/ data/local/srilm
-  utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
-    data/local/lexicon.txt  data/lang_nosp_test
+  utils/data/combine_data.sh data/train_all data/${train_set} data/AMI/train data/ICSI/train
 fi
-
-if [ $stage -le 2 ]; then
-  echo "$0:  train lm ..."
-  local/prepare_dict.sh data/local/dict_nosp
-
-  utils/prepare_lang.sh \
-    data/local/dict_nosp "<unk>" data/local/lang_nosp data/lang_nosp
-
-  local/train_lms_srilm.sh \
-    --train-text data/train_worn/text --dev-text data/dev_worn/text \
-    --oov-symbol "<unk>" --words-file data/lang_nosp/words.txt \
-    data/ data/srilm
-fi
-
-if [ $stage -le 12 ] ; then
-  utils/data/combine_data.sh data/train_all data/train_safet data/AMI/train data/ICSI/train
-fi
-
+exit
 # Feature extraction,
 if [ $stage -le 13 ]; then
   steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/train_all

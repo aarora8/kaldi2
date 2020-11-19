@@ -126,7 +126,6 @@ done
 
 #Produce STMs for sclite scoring
 local/convert2stm.pl $dir | sort +0 -1 +1 -2 +3nb -4 > $odir/stm
-cp local/english.glm $odir/glm
 
 utils/validate_data_dir.sh --no-feats $odir || exit 1;
 

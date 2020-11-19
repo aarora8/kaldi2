@@ -1,0 +1,1 @@
+../../../OpenSAT2020/s5/local/icsi_ihm_scoring_data_prep.sh
