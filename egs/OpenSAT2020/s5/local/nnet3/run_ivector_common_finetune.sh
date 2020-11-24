@@ -21,12 +21,12 @@ extractor=
 gmm_dir=exp/${gmm}_${train_set}
 ali_dir=exp/${gmm}_${train_set}_ali_sp
 
-#for f in ${gmm_dir}/final.mdl; do
-#  if [ ! -f $f ]; then
-#    echo "$0: expected file $f to exist"
-#    exit 1
-#  fi
-#done
+for f in ${gmm_dir}/final.mdl; do
+  if [ ! -f $f ]; then
+    echo "$0: expected file $f to exist"
+    exit 1
+  fi
+done
 
 if [ $stage -le 1 ]; then
   # Although the nnet will be trained by high resolution data, we still have to

@@ -3,14 +3,14 @@
 # This script uses weight transfer as a transfer learning method to transfer
 # already trained neural net model on ICSI+AMI to safet
 
-# %WER 45.91 [ 8956 / 19507, 445 ins, 6660 del, 1851 sub ] exp/chain_train_icsiami/tdnn_train_icsiami/decode_safe_t_dev1_train_tl/wer_8_0.0
-# %WER 14.19 [ 2768 / 19507, 281 ins, 1183 del, 1304 sub ] exp/chain_finetune/tdnn_finetune_40_100/decode_safe_t_dev1_finetune_tl/wer_8_0.0
-# %WER 13.94 [ 2720 / 19507, 289 ins, 1108 del, 1323 sub ] exp/chain_finetune/tdnn_finetune_40_100_ep2/decode_safe_t_dev1_finetune_tl/wer_8_0.0
+# %WER 38.17 [ 7445 / 19507, 512 ins, 5278 del, 1655 sub ] exp/chain_train_icsiami/tdnn_train_icsiami_renorm/decode_safe_t_dev1_train_tl/wer_7_0.0
+# %WER 12.34 [ 2408 / 19507, 295 ins, 934 del, 1179 sub ] exp/chain_finetune/tdnn_finetune_40_100_ep1.5/decode_safe_t_dev1_finetune_tl/wer_8_0.0
+# %WER 12.01 [ 2343 / 19507, 260 ins, 918 del, 1165 sub ] exp/chain_finetune/tdnn_finetune_40_100_ep2_2.5/decode_safe_t_dev1_finetune_tl/wer_8_0.0
 set -e
 
-dir=exp/chain_all/tdnn_all_old/
+dir=exp/chain_all/tdnn_all/
 
-src_mdl=exp/chain_all/tdnn_all_old/final.mdl # Input chain model
+src_mdl=exp/chain_all/tdnn_all/final.mdl # Input chain model
                                                    # trained on source dataset (icsi and ami).
                                                    # This model is transfered to the target domain.
 
@@ -88,7 +88,7 @@ if [ $stage -le 5 ]; then
   $lores_train_data_dir  $lang_dir $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz
 fi
-
+echo "completed stage 5"
 if [ $stage -le 6 ]; then
   # Set the learning-rate-factor for all transferred layers but the last output
   # layer to primary_lr_factor.
@@ -97,6 +97,7 @@ if [ $stage -le 6 ]; then
       $src_mdl $dir/input.raw || exit 1;
 fi
 
+echo "completed stage 6"
 if [ $stage -le 7 ]; then
   echo "$0: compute {den,normalization}.fst using weighted phone LM with icsi,ami and safet weight $phone_lm_scales."
   steps/nnet3/chain/make_weighted_den_fst.sh --cmd "$train_cmd" \
@@ -115,7 +116,7 @@ if [ $stage -le 8 ]; then
   # exclude phone_LM and den.fst generation training stages
   if [ $train_stage -lt -4 ]; then train_stage=-4 ; fi
   steps/nnet3/chain/train.py --stage $train_stage \
-    --cmd "$decode_cmd" \
+    --cmd "$gpu_cmd" \
     --trainer.input-model $dir/input.raw \
     --feat.online-ivector-dir "$train_ivector_dir" \
     --feat.cmvn-opts "--norm-means=false --norm-vars=false" \
@@ -137,7 +138,7 @@ if [ $stage -le 8 ]; then
     --trainer.max-param-change 2.0 \
     --trainer.dropout-schedule $dropout_schedule \
     --trainer.add-option="--optimization.memory-compression-level=2" \
-    --cleanup.remove-egs $remove_egs \
+    --cleanup.remove-egs true \
     --feat-dir $train_data_dir \
     --tree-dir $src_tree_dir \
     --lat-dir $lat_dir \
