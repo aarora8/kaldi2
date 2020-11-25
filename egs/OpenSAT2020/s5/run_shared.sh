@@ -4,7 +4,7 @@
 . ./path.sh
 
 # Train systems,
-nj=30 # number of parallel jobs,
+nj=65 # number of parallel jobs,
 stage=0
 . utils/parse_options.sh
 
@@ -103,37 +103,39 @@ fi
 
 if [ $stage -le 8 ] ; then
   utils/data/combine_data.sh data/train_icsiami data/ICSI/train data/AMI/train
-  for dset in train_icsiami; do
-    steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/$dset
+  for dset in train_icsiami train_safet; do
+    echo "$0: creating MFCC for $dset."
+    steps/make_mfcc.sh --nj $nj --cmd "$train_cmd" data/$dset
     steps/compute_cmvn_stats.sh data/$dset
     utils/fix_data_dir.sh data/$dset
   done
+  utils/data/combine_data.sh data/train_all data/train_safet data/train_icsiami
 fi
 
-if [ $stage -le 9 ]; then
-  echo "$0: preparing directory for low-resolution speed-perturbed data"
-  utils/data/perturb_data_dir_speed_3way.sh data/train_safet data/train_safet_sp
-  echo "$0: making MFCC features for low-resolution speed-perturbed data"
-  steps/make_mfcc.sh --cmd "$train_cmd" --nj 75 data/train_safet_sp
-  steps/compute_cmvn_stats.sh data/train_safet_sp
-  utils/fix_data_dir.sh data/train_safet_sp
+#if [ $stage -le 9 ]; then
+#  echo "$0: preparing directory for low-resolution speed-perturbed data"
+#  utils/data/perturb_data_dir_speed_3way.sh data/train_safet data/train_safet_sp
+#  echo "$0: making MFCC features for low-resolution speed-perturbed data"
+#  steps/make_mfcc.sh --cmd "$train_cmd" --nj 75 data/train_safet_sp
+#  steps/compute_cmvn_stats.sh data/train_safet_sp
+#  utils/fix_data_dir.sh data/train_safet_sp
+#
+#  utils/data/combine_data.sh data/train_all data/train_safet_sp data/train_icsiami
+#fi
 
-  utils/data/combine_data.sh data/train_all data/train_safet_sp data/train_icsiami
-fi
-
-if [ $stage -le 10 ]; then
-  echo "$0: creating high-resolution MFCC features"
-  for datadir in ${train_set_sp}_sp; do
-    utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
-    utils/data/perturb_data_dir_volume.sh data/${datadir}_hires
-  done
-  for datadir in ${train_set_sp}_sp; do
-    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
-      --cmd "$train_cmd" data/${datadir}_hires || exit 1;
-    steps/compute_cmvn_stats.sh data/${datadir}_hires || exit 1;
-    utils/fix_data_dir.sh data/${datadir}_hires || exit 1;
-  done
-fi
+#if [ $stage -le 10 ]; then
+#  echo "$0: creating high-resolution MFCC features"
+#  for datadir in ${train_set_sp}_sp; do
+#    utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
+#    utils/data/perturb_data_dir_volume.sh data/${datadir}_hires
+#  done
+#  for datadir in ${train_set_sp}_sp; do
+#    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
+#      --cmd "$train_cmd" data/${datadir}_hires || exit 1;
+#    steps/compute_cmvn_stats.sh data/${datadir}_hires || exit 1;
+#    utils/fix_data_dir.sh data/${datadir}_hires || exit 1;
+#  done
+#fi
 
 suffix=all
 # monophone training

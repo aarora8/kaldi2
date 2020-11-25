@@ -7,16 +7,16 @@ train_set=train_all
 test_set=safe_t_dev1
 nnet3_affix=
 aug_list="reverb music noise babble clean"
-
+nj=65
 . ./cmd.sh
 . ./path.sh
 . utils/parse_options.sh
 
 gmm=tri3
 gmm_dir=exp/${gmm}_${train_set}
-clean_ali_dir=exp/${gmm}_${train_set}_ali
+clean_ali_dir=exp/${gmm}_${train_set}_clean_ali
 
-for f in data/${clean_set_sp}_sp/feats.scp data/${clean_set_aug}/feats.scp \
+for f in data/${clean_set_sp}/feats.scp data/${clean_set_aug}/feats.scp \
          ${gmm_dir}/final.mdl; do
   if [ ! -f $f ]; then
     echo "$0: expected file $f to exist"
@@ -81,30 +81,42 @@ fi
 
 if [ $stage -le 2 ]; then
   echo "$0: Extracting low-resolution MFCCs for the augmented data. Useful for generating alignments"
-  steps/make_mfcc.sh --cmd "$train_cmd" --nj 75 data/${clean_set_aug}_aug
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj data/${clean_set_aug}_aug
   steps/compute_cmvn_stats.sh data/${clean_set_aug}_aug
   utils/fix_data_dir.sh data/${clean_set_aug}_aug
 fi
 
 if [ $stage -le 3 ]; then
-  echo "$0: creating high-resolution MFCC features"
-  for datadir in ${clean_set_aug}_aug; do
+  echo "$0: preparing directory for low-resolution speed-perturbed data"
+  utils/data/perturb_data_dir_speed_3way.sh data/${clean_set_sp} data/${clean_set_sp}_sp
+  echo "$0: making MFCC features for low-resolution speed-perturbed data/${clean_set_sp}_sp"
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 75 data/${clean_set_sp}_sp
+  steps/compute_cmvn_stats.sh data/${clean_set_sp}_sp
+  utils/fix_data_dir.sh data/${clean_set_sp}_sp
+fi
+
+if [ $stage -le 4 ]; then
+  for datadir in ${clean_set_aug}_aug ${clean_set_sp}_sp; do
+
+    echo "$0: creating high-resolution MFCC features for $datadir"
     utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
     utils/data/perturb_data_dir_volume.sh data/${datadir}_hires
-  done
 
-  for datadir in ${clean_set_aug}_aug; do
-    steps/make_mfcc.sh --nj 75 --mfcc-config conf/mfcc_hires.conf \
+    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
       --cmd "$train_cmd" data/${datadir}_hires
     steps/compute_cmvn_stats.sh data/${datadir}_hires
     utils/fix_data_dir.sh data/${datadir}_hires
   done
 fi
 
-if [ $stage -le 4 ]; then
-  echo "$0: aligning with the perturbed low-resolution data"
+if [ $stage -le 5 ]; then
+  echo "$0: obtain the alignment for the clean data"
+  utils/data/combine_data.sh data/${train_set}_clean data/${clean_set_sp}_sp data/${clean_set_aug}
+  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
+    data/${train_set}_clean data/lang_nosp_test exp/${gmm}_${train_set} $clean_ali_dir
+
+  echo "$0: aligning augmented data with clean data"
   utils/data/combine_data.sh data/${train_set}_aug data/${clean_set_sp}_sp data/${clean_set_aug}_aug
-  # obtain the alignment of augmented data from clean data
   include_original=false
   prefixes=""
   for n in $aug_list; do
@@ -113,19 +125,18 @@ if [ $stage -le 4 ]; then
     elif [ "$n" != "clean" ]; then
       prefixes="$prefixes "$n
     else
-      # The original train directory will not have any prefix
       include_original=true
     fi
   done
   echo "$0: Creating alignments of aug data by copying alignments of clean data"
-  steps/copy_ali_dir.sh --nj 10 --cmd "$train_cmd" \
+  steps/copy_ali_dir.sh --nj $nj --cmd "$train_cmd" \
     --include-original "$include_original" --prefixes "$prefixes" \
-    data/${train_set}_aug exp/${clean_ali} exp/${clean_ali}_aug
+    data/${train_set}_aug $clean_ali_dir ${clean_ali_dir}_aug
 
   utils/data/combine_data.sh data/${train_set}_aug_hires data/${clean_set_sp}_sp_hires data/${clean_set_aug}_aug_hires
 fi
 
-if [ $stage -le 5 ]; then
+if [ $stage -le 6 ]; then
   echo "$0: computing a subset of data to train the diagonal UBM."
   mkdir -p exp/nnet3${nnet3_affix}/diag_ubm
   temp_data_root=exp/nnet3${nnet3_affix}/diag_ubm
@@ -142,26 +153,26 @@ if [ $stage -le 5 ]; then
 
   echo "$0: training the diagonal UBM."
   # Use 512 Gaussians in the UBM.
-  steps/online/nnet2/train_diag_ubm.sh --cmd "$train_cmd" --nj 75 \
+  steps/online/nnet2/train_diag_ubm.sh --cmd "$train_cmd" --nj $nj \
     --num-frames 700000 \
     --num-threads 8 \
     ${temp_data_root}/${train_set}_aug_hires_subset 512 \
     exp/nnet3${nnet3_affix}/pca_transform exp/nnet3${nnet3_affix}/diag_ubm
 fi
 
-if [ $stage -le 6 ]; then
+if [ $stage -le 7 ]; then
   echo "$0: training the iVector extractor"
-  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj 75 \
+  steps/online/nnet2/train_ivector_extractor.sh --cmd "$train_cmd" --nj $nj \
      data/${train_set}_aug_hires exp/nnet3${nnet3_affix}/diag_ubm \
      exp/nnet3${nnet3_affix}/extractor || exit 1;
 fi
 
-if [ $stage -le 7 ]; then
+if [ $stage -le 8 ]; then
   ivectordir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_aug_hires
   temp_data_root=${ivectordir}
   utils/data/modify_speaker_info.sh --utts-per-spk-max 2 \
     data/${train_set}_aug_hires ${temp_data_root}/${train_set}_aug_hires_max2
-  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 75 \
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj $nj \
     ${temp_data_root}/${train_set}_aug_hires_max2 \
     exp/nnet3${nnet3_affix}/extractor $ivectordir
 fi
