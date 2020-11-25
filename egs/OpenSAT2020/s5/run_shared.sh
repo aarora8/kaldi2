@@ -102,50 +102,73 @@ if [ $stage -le 7 ] ; then
 fi
 
 if [ $stage -le 8 ] ; then
-  utils/data/combine_data.sh data/train_all data/train_safet data/AMI/train data/ICSI/train
+  utils/data/combine_data.sh data/train_icsiami data/ICSI/train data/AMI/train
+  for dset in train_icsiami; do
+    steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/$dset
+    steps/compute_cmvn_stats.sh data/$dset
+    utils/fix_data_dir.sh data/$dset
+  done
 fi
 
-# Feature extraction,
 if [ $stage -le 9 ]; then
-  steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/train_all
-  steps/compute_cmvn_stats.sh data/train_all
-  utils/fix_data_dir.sh data/train_all
+  echo "$0: preparing directory for low-resolution speed-perturbed data"
+  utils/data/perturb_data_dir_speed_3way.sh data/train_safet data/train_safet_sp
+  echo "$0: making MFCC features for low-resolution speed-perturbed data"
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 75 data/train_safet_sp
+  steps/compute_cmvn_stats.sh data/train_safet_sp
+  utils/fix_data_dir.sh data/train_safet_sp
+
+  utils/data/combine_data.sh data/train_all data/train_safet_sp data/train_icsiami
 fi
 
-suffix=_all
-# monophone training
 if [ $stage -le 10 ]; then
-  utils/subset_data_dir.sh data/train_all 15000 data/train_15k
+  echo "$0: creating high-resolution MFCC features"
+  for datadir in ${train_set_sp}_sp; do
+    utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
+    utils/data/perturb_data_dir_volume.sh data/${datadir}_hires
+  done
+  for datadir in ${train_set_sp}_sp; do
+    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
+      --cmd "$train_cmd" data/${datadir}_hires || exit 1;
+    steps/compute_cmvn_stats.sh data/${datadir}_hires || exit 1;
+    utils/fix_data_dir.sh data/${datadir}_hires || exit 1;
+  done
+fi
+
+suffix=all
+# monophone training
+if [ $stage -le 11 ]; then
+  utils/subset_data_dir.sh data/train_${suffix} 15000 data/train_15k
   steps/train_mono.sh --nj $nj --cmd "$train_cmd" \
     data/train_15k data/lang_nosp_test exp/mono_train_${suffix}
   steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/train_all data/lang_nosp_test exp/mono_train_${suffix} exp/mono_train_${suffix}_ali
+    data/train_${suffix} data/lang_nosp_test exp/mono_train_${suffix} exp/mono_train_${suffix}_ali
 fi
 
 # context-dep. training with delta features.
-if [ $stage -le 11 ]; then
-  steps/train_deltas.sh --cmd "$train_cmd" \
-    5000 80000 data/train_all data/lang_nosp_test exp/mono_train_${suffix}_ali exp/tri1_train_${suffix}
-  steps/align_si.sh --nj $nj --cmd "$train_cmd" \
-    data/train_all data/lang_nosp_test exp/tri1_train_${suffix} exp/tri1_train_${suffix}_ali
-fi
-
 if [ $stage -le 12 ]; then
-  steps/train_lda_mllt.sh --cmd "$train_cmd" \
-    --splice-opts "--left-context=3 --right-context=3" \
-    5000 80000 data/train_all data/lang_nosp_test exp/tri1_train_${suffix}_ali exp/tri2_train_${suffix}
-  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/train_all data/lang_nosp_test exp/tri2_train_${suffix} exp/tri2_train_${suffix}_ali
+  steps/train_deltas.sh --cmd "$train_cmd" \
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/mono_ali exp/tri1_train_${suffix}
+  steps/align_si.sh --nj $nj --cmd "$train_cmd" \
+    data/train_${suffix} data/lang_nosp_test exp/tri1_train_${suffix} exp/tri1_train_${suffix}_ali
 fi
 
 if [ $stage -le 13 ]; then
-  steps/train_sat.sh --cmd "$train_cmd" \
-    5000 80000 data/train_all data/lang_nosp_test exp/tri2_train_${suffix}_ali exp/tri3_train_${suffix}
+  steps/train_lda_mllt.sh --cmd "$train_cmd" \
+    --splice-opts "--left-context=3 --right-context=3" \
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri1_train_${suffix}_ali exp/tri2_train_${suffix}
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/train_all data/lang_nosp_test exp/tri3_train_${suffix} exp/tri3_train_${suffix}_ali
+    data/train_${suffix} data/lang_nosp_test exp/tri2_train_${suffix} exp/tri2_train_${suffix}_ali
 fi
 
 if [ $stage -le 14 ]; then
+  steps/train_sat.sh --cmd "$train_cmd" \
+    5000 80000 data/train_$suffix data/lang_nosp_test exp/tri2_train_${suffix}_ali exp/tri3_train_${suffix}
+  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
+    data/train_${suffix} data/lang_nosp_test exp/tri3_train_${suffix} exp/tri3_train_${suffix}_ali
+fi
+
+if [ $stage -le 15 ]; then
   local/chain/run_cnn_tdnn_shared.sh
 fi
 

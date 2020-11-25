@@ -2,66 +2,43 @@
 
 set -e -o pipefail
 stage=0
-nj=90
-train_set=train_all
-gmm=tri3
+nj=75
 num_epochs=10
-
-# The rest are configs specific to this script.  Most of the parameters
-# are just hardcoded at this level, in the commands below.
 train_stage=-10
 xent_regularize=0.1
 get_egs_stage=-10
-tree_affix=_all  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
-tdnn_affix=_all  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
+tree_affix=_all
+tdnn_affix=_all
 nnet3_affix=_all
 common_egs_dir= 
 dropout_schedule='0,0@0.20,0.5@0.50,0'
 remove_egs=true
 chunk_width=140,100,160
-# End configuration section.
 echo "$0 $@"
 
-. ./cmd.sh
-. ./path.sh
-. ./utils/parse_options.sh
-
-if ! cuda-compiled; then
-  cat <<EOF && exit 1
-This script is intended to be used with GPUs but you have not compiled Kaldi with CUDA
-If you want to use GPUs (and have them), go to src/, and configure and make on a machine
-where "nvcc" is installed.
-EOF
-fi
-
-local/nnet3/run_ivector_common.sh --stage $stage \
-                                  --nj $nj \
-                                  --train-set $train_set \
-                                  --gmm $gmm \
-                                  --nnet3-affix "$nnet3_affix"
-
-gmm_dir=exp/${gmm}_${train_set}
-ali_dir=exp/${gmm}_${train_set}_ali_sp
-lores_train_data_dir=data/${train_set}
-train_data_dir=data/${train_set}_sp_hires
-lang_dir=data/lang_nosp_test
+aug_list="reverb babble music noise clean" # Original train dir is referred to as `clean`
+gmm=tri3
+train_set=train_all
+gmm_dir=exp/${gmm}_${train_set}_aug
+clean_ali=exp/tri3_${train_set}_ali
+ali_dir=exp/tri3_${train_set}_ali_aug
 tree_dir=exp/chain${nnet3_affix}/tree_bi${tree_affix}
-lat_dir=exp/tri3_${train_set}_lats_sp
-dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
-train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
-
-for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
-   $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp; do
-  [ ! -f $f ] && echo "$0: expected file $f to exist" && exit 1
-done
+lang_dir=data/lang_nosp_test
+lores_train_data_dir=data/${train_set}_aug
+train_data_dir=data/${train_set}_aug_hires
+clean_lat=exp/${gmm}_${train_set}_lats
+lat_dir=exp/${gmm}_${train_set}_lats_aug
+dir=exp/chain${nnet3_affix}/cnn_tdnn${tdnn_affix}
+train_ivector_dir=exp/nnet3/ivectors_${train_set}_aug_hires
+clean_set_aug=train_icsiami
+clean_set_sp=train_safet
 
 
 # First creates augmented data and then extracts features for it data
 # The script also creates alignments for aug data by copying clean alignments
 local/nnet3/multi_condition/run_aug_common.sh --stage $stage \
-  --aug-list "$aug_list" --num-reverb-copies $num_reverb_copies \
-  --use-ivectors "$use_ivectors" \
-  --train-set $clean_set --clean-ali $clean_ali || exit 1;
+  --aug-list "$aug_list" --clean-set-aug $clean_set_aug --clean-set-sp $clean_set_sp \
+  --train-set $train_set --clean-ali $clean_ali || exit 1;
 
 if [ $stage -le 11 ]; then
   # Get the alignments as lattices (gives the LF-MMI training more freedom).
@@ -81,20 +58,13 @@ if [ $stage -le 11 ]; then
       include_original=true
     fi
   done
-  nj=$(cat exp/tri4_ali_nodup$suffix/num_jobs) || exit 1;
-  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" data/${clean_set} \
-    data/lang exp/tri4 exp/tri4_lats_nodup${suffix}_clean
-  rm exp/tri4_lats_nodup${suffix}_clean/fsts.*.gz # save space
+  nj=$(cat exp/tri3_${train_set}_ali_aug/num_jobs) || exit 1;
+  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" data/${train_set} \
+    $lang_dir exp/${gmm}_${train_set} $clean_lat
+  rm $clean_lat/fsts.*.gz # save space
   steps/copy_lat_dir.sh --nj $nj --cmd "$train_cmd" \
     --include-original "$include_original" --prefixes "$prefixes" \
-    data/${train_set} exp/tri4_lats_nodup${suffix}_clean exp/tri4_lats_nodup${suffix} || exit 1;
-fi
-
-if [ $stage -le 11 ]; then
-  nj=$(cat $ali_dir/num_jobs) || exit 1;
-  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" $lores_train_data_dir \
-    $lang_dir $gmm_dir $lat_dir
-  rm $lat_dir/fsts.*.gz
+    data/${train_set}_aug $clean_lat $lat_dir || exit 1;
 fi
 
 if [ $stage -le 12 ]; then
