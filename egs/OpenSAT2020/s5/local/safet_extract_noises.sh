@@ -55,7 +55,7 @@ fi
 
 ## it reads a audio wav files, wav time stamps and audio list file and creates noises
 if [ $stage -le 3 ]; then
-  local/safet_extract_noises.py $indir/wav_files $indir/time_stamp data/local/audio_list distant_noises
+  local/safet_extract_noises.py $indir/wav_files $indir/time_stamp data/local/audio_list data/safe_t_noise_wavfiles
 fi
 
 # it will give to 10050 noise wav files, its total duration is 55hrs
@@ -67,18 +67,46 @@ fi
 
 # it will give to 10050 noise wav files, its total duration is 55hrs
 # utt2spk: <utterance-id> <speaker-id>: noise1 noise1
-# wav.scp <recording-id> <wav-path> : noise1 distant_noises/noise1.wav
+# wav.scp <recording-id> <wav-path> : noise1 data/safet_noise_wavfiles/noise1.wav
 # segments:  <utterance-id> <recording-id> <segment-begin> <segment-end> segments: noise1 noise1 0 20
 if [ $stage -le 5 ]; then
-  mkdir -p noise/
-  for wav_name in distant_noises/*.wav; do
-    recording_id=$(echo "$wav_name" | cut -d"/" -f 2)
+  mkdir -p data/safe_t_noise
+  for wav_name in data/safe_t_noise_wavfiles/*.wav; do
+    recording_id=$(echo "$wav_name" | cut -d"/" -f 3)
     utt_id=$(echo "$recording_id" | cut -d"." -f 1)
-    echo $utt_id $wav_name >> noise/wav.scp
-    echo $utt_id $utt_id >> noise/utt2spk
-    echo $utt_id $utt_id >> noise/spk2utt
-    echo $utt_id $utt_id 0 20 >> noise/segments
+    echo $utt_id $wav_name >> data/safe_t_noise/wav.scp
+    echo $utt_id $utt_id >> data/safe_t_noise/utt2spk
+    echo $utt_id $utt_id >> data/safe_t_noise/spk2utt
+    echo $utt_id $utt_id 0 20 >> data/safe_t_noise/segments
   done
-  awk '{ sum += $4 - $3 } END { print sum/3600 }' noise/segments
+  awk '{ sum += $4 - $3 } END { print sum/3600 }' data/safe_t_noise/segments
+  utils/data/get_reco2dur.sh --nj 6 --cmd "$train_cmd" data/safe_t_noise
 fi
 
+# # it will apply VAD to noise to find those noise wavfiles which have silence
+if [ $stage -le 6 ]; then
+  steps/make_mfcc.sh --cmd "$train_cmd" --nj 60 data/safe_t_noise
+  steps/compute_cmvn_stats.sh data/safe_t_noise
+  sid/compute_vad_decision.sh --nj 40 --cmd "$train_cmd" data/safe_t_noise
+  copy-vector --binary=false scp:data/safe_t_noise/vad.scp ark,t:data/safe_t_noise/vad.txt
+fi
+
+
+if [ $stage -le 7 ]; then
+  mkdir -p data/safe_t_noise_filtered
+  local/get_percent_overlap.py data/safe_t_noise > data/safe_t_noise/percentage_speech
+  while read -r line;
+  do
+    percentage_speech=$(echo "$line" | cut -d" " -f 2)
+    uttid=$(echo "$line" | cut -d" " -f 1)
+    if [ "$percentage_speech" -gt 80 ]; then
+      echo $uttid >> data/safe_t_noise/filtered_noises
+    fi
+  done < data/safe_t_noise/percentage_speech
+
+  #sort -k2 -n data/safe_t_noise/filtered_noises > data/safe_t_noise/sorted_filtered_noises
+  utils/copy_data_dir.sh data/safe_t_noise data/safe_t_noise_filtered
+  for f in utt2spk wav.scp feats.scp spk2utt reco2dur cmvn.scp utt2dur utt2num_frames vad.scp; do
+    utils/filter_scp.pl data/safe_t_noise/filtered_noises data/safe_t_noise/$f > data/safe_t_noise_filtered/$f
+  done
+fi
