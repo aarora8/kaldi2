@@ -18,11 +18,19 @@ def get_args():
                 /export/b05/zhiqiw/noise/""".format(sys.argv[0]))
 
     parser.add_argument("--segment-length", default=20)
+    parser.add_argument("audio_dir", help="""Location of the CHiME5 Audio files. e.g. /export/corpora4/CHiME5/audio/train/""")
+    parser.add_argument("trans_dir", help="""Location of the CHiME5 Transcriptions. e.g. /export/corpora4/CHiME5/transcriptions/train/""")
+    parser.add_argument("audio_list", help="""List of ids of the CHiME5 recordings from which noise is extracted. e.g. local/distant_audio_list""")
     parser.add_argument("out_dir", help="Output directory to write noise files. e.g. /export/b05/zhiqiw/noise/")
 
     args = parser.parse_args()
     return args
 
+""" 
+audio_dir = "/export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train/wav_files2"
+trans_dir = "/export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train/time_stamp"
+audio_list = "data/local/audio_list"
+"""
 
 def Get_time(conf, tag, fs):
     for line in conf:
@@ -45,21 +53,21 @@ def write_noise(out_dir, seg, audio, sig, tag, fs, cnt):
 
 def main():
     args = get_args()
-
-    audio_dir = "/export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train/wav_files2"
-    trans_dir = "/export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train/time_stamp"
-    audio_list = "data/local/audio_list"
     if not os.path.exists(args.out_dir):
         os.makedirs(args.out_dir)
 
-    wav_list = open(audio_list).readlines()
+    print(args.audio_list)
+    print(args.audio_dir)
+    print(args.trans_dir)
+    print(args.out_dir)
+    wav_list = open(args.audio_list).readlines()
 
     cnt = 1
     for i, audio in enumerate(wav_list):
         audio = audio.strip()
-        fs, sig = siw.read(audio_dir + "/" + audio + '.wav')
+        fs, sig = siw.read(args.audio_dir + "/" + audio + '.wav')
         tag = np.ones(len(sig))
-        time_stamp = open(trans_dir + "/" + audio).readlines()
+        time_stamp = open(args.trans_dir + "/" + audio).readlines()
         tag = Get_time(time_stamp, tag, fs)
         cnt = write_noise(args.out_dir, args.segment_length, audio, sig, tag, fs, cnt)
 
