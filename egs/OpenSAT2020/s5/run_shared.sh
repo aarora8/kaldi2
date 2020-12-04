@@ -171,7 +171,8 @@ if [ $stage -le 14 ]; then
 fi
 
 if [ $stage -le 15 ]; then
-  local/chain/run_cnn_tdnn_shared.sh
+  local/chain/multi_condition/run_cnn_tdnn_shared.sh --stage 5
+  #local/chain/run_cnn_tdnn_shared.sh
 fi
 
 exit 0

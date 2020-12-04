@@ -23,13 +23,6 @@ for x in $*; do
 done
 echo
 
-echo -n "# CER                        "
-for x in $*; do
-  cer=$(cat $x/decode_safe_t_dev1/scoring_kaldi/best_cer | awk '{print $2}')
-  printf "% 10s" $cer
-done
-echo
-
 echo -n "# Final train prob           "
 for x in $*; do
   prob=$(grep Overall $x/log/compute_prob_train.final.log | grep -v xent | awk '{printf("%.4f", $8)}')
