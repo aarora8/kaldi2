@@ -1,3 +1,4 @@
+#!/bin/bash
 export KALDI_ROOT=`pwd`/../../..
 [ -f $KALDI_ROOT/tools/env.sh ] && . $KALDI_ROOT/tools/env.sh
 export PATH=$PWD/utils/:$KALDI_ROOT/tools/openfst/bin:$PWD:$PATH
@@ -5,9 +6,7 @@ export PATH=$PWD/utils/:$KALDI_ROOT/tools/openfst/bin:$PWD:$PATH
 . $KALDI_ROOT/tools/config/common_path.sh
 export LC_ALL=C
 
-LMBIN=$KALDI_ROOT/tools/irstlm/bin
-SRILM=$KALDI_ROOT/tools/srilm/bin/i686-m64
-BEAMFORMIT=$KALDI_ROOT/tools/BeamformIt
-
-export PATH=$PATH:$LMBIN:$BEAMFORMIT:$SRILM
-
+DATA_DIR=$PWD/data
+LEXICON=$DATA_DIR/local/dict/lexicon.txt
+EXP_DIR="dev test"
+TRAIN_DIR="train"
