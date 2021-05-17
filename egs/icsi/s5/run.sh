@@ -27,7 +27,7 @@ set -euo pipefail
 
 # Path where ICSI gets downloaded (or where locally available):
 # Note: provide the path to a subdirectory with meeting folders (i.e. B* ones)
-ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech # Default
+ICSI_DIR=/export/common/data/corpora/LDC/LDC2004S02 # Default
 
 [ ! -r data/local/lm/final_lm ] && echo "Please, run 'run_prepare_shared.sh' first!" && exit 1
 final_lm=$(cat data/local/lm/final_lm)
@@ -53,7 +53,7 @@ if [ $stage -le 2 ]; then
   local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic dev
   local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic eval
 fi
-
+exit
 if [ $stage -le 3 ]; then
   for dset in train dev eval; do
     # this splits up the speakers (which for sdm and mdm just correspond
@@ -70,10 +70,6 @@ if [ $stage -le 3 ]; then
     utils/data/modify_speaker_info.sh --seconds-per-spk-max 30 \
       data/$mic/${dset}_orig data/$mic/$dset
   done
-fi
-
-if [ $stage -le 4 ] ; then
-  utils/data/combine_data.sh data/$mic/train /export/c02/aarora8/kaldi2/egs/opensat2020/s5b_aug/data/train_cleaned_sp /export/c02/aarora8/kaldi/egs/ami/s5b/data/ihm/train /export/c02/aarora8/kaldi/egs/icsi/s5/data/ihm/train_icsi
 fi
 
 # Feature extraction,
@@ -112,13 +108,13 @@ if [ $stage -le 7 ]; then
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
     data/$mic/train data/lang exp/$mic/tri2 exp/$mic/tri2_ali
   # Decode
-  graph_dir=exp/$mic/tri2/graph_${LM}
-  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
-    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri2 $graph_dir
-  steps/decode.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/dev exp/$mic/tri2/decode_dev_${LM}
-  steps/decode.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/eval exp/$mic/tri2/decode_eval_${LM}
+#  graph_dir=exp/$mic/tri2/graph_${LM}
+#  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
+#    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri2 $graph_dir
+#  steps/decode.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
+#    $graph_dir data/$mic/dev exp/$mic/tri2/decode_dev_${LM}
+#  steps/decode.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
+#    $graph_dir data/$mic/eval exp/$mic/tri2/decode_eval_${LM}
 fi
 
 
@@ -130,16 +126,16 @@ if [ $stage -le 8 ]; then
     data/$mic/train data/lang exp/$mic/tri3 exp/$mic/tri3_ali
 fi
 
-if [ $stage -le 9 ]; then
-  # Decode the fMLLR system.
-  graph_dir=exp/$mic/tri3/graph_${LM}
-  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
-    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri3 $graph_dir
-  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/dev exp/$mic/tri3/decode_dev_${LM}
-  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/eval exp/$mic/tri3/decode_eval_${LM}
-fi
+#if [ $stage -le 9 ]; then
+#  # Decode the fMLLR system.
+#  graph_dir=exp/$mic/tri3/graph_${LM}
+#  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
+#    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri3 $graph_dir
+#  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
+#    $graph_dir data/$mic/dev exp/$mic/tri3/decode_dev_${LM}
+#  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
+#    $graph_dir data/$mic/eval exp/$mic/tri3/decode_eval_${LM}
+#fi
 
 if [ $stage -le 10 ]; then
   # The following script cleans the data and produces cleaned data
@@ -153,7 +149,7 @@ if [ $stage -le 10 ]; then
   #but perhaps running such experiment would make sense, for now I want to keep this recipe as
   #close to the baseline one as possibe
 fi
-
+exit
 train_set=train_icsiami
 aug_list="noise_low noise_high clean"
 

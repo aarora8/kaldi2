@@ -17,7 +17,7 @@ mic=ihm
 
 # Train systems,
 nj=30 # number of parallel jobs,
-stage=1
+stage=8
 . utils/parse_options.sh
 
 base_mic=$(echo $mic | sed 's/[0-9]//g') # sdm, ihm or mdm
@@ -32,7 +32,7 @@ case $(hostname -d) in
   clsp.jhu.edu) AMI_DIR=/export/corpora4/ami/amicorpus ;; # JHU,
   cstr.ed.ac.uk) AMI_DIR= ;; # Edinburgh,
 esac
-
+AMI_DIR=/export/common/data/corpora/amicorpus
 [ ! -r data/local/lm/final_lm ] && echo "Please, run 'run_prepare_shared.sh' first!" && exit 1
 final_lm=`cat data/local/lm/final_lm`
 LM=$final_lm.pr1-7
@@ -142,16 +142,16 @@ if [ $stage -le 8 ]; then
     data/$mic/train data/lang exp/$mic/tri3 exp/$mic/tri3_ali
 fi
 
-if [ $stage -le 9 ]; then
-  # Decode the fMLLR system.
-  graph_dir=exp/$mic/tri3/graph_${LM}
-  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
-    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri3 $graph_dir
-  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/dev exp/$mic/tri3/decode_dev_${LM}
-  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
-    $graph_dir data/$mic/eval exp/$mic/tri3/decode_eval_${LM}
-fi
+#if [ $stage -le 9 ]; then
+#  # Decode the fMLLR system.
+#  graph_dir=exp/$mic/tri3/graph_${LM}
+#  $decode_cmd --mem 4G $graph_dir/mkgraph.log \
+#    utils/mkgraph.sh data/lang_${LM} exp/$mic/tri3 $graph_dir
+#  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
+#    $graph_dir data/$mic/dev exp/$mic/tri3/decode_dev_${LM}
+#  steps/decode_fmllr.sh --nj $nj --cmd "$decode_cmd" --config conf/decode.conf \
+#    $graph_dir data/$mic/eval exp/$mic/tri3/decode_eval_${LM}
+#fi
 
 if [ $stage -le 10 ]; then
   # The following script cleans the data and produces cleaned data
@@ -162,7 +162,7 @@ if [ $stage -le 10 ]; then
   # you can reduce it using the --nj option if you want.
   local/run_cleanup_segmentation.sh --mic $mic
 fi
-
+exit
 if [ $stage -le 11 ]; then
   ali_opt=
   [ "$mic" != "ihm" ] && ali_opt="--use-ihm-ali true"
