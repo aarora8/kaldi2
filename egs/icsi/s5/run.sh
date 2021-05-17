@@ -27,7 +27,7 @@ set -euo pipefail
 
 # Path where ICSI gets downloaded (or where locally available):
 # Note: provide the path to a subdirectory with meeting folders (i.e. B* ones)
-ICSI_DIR=/export/common/data/corpora/LDC/LDC2004S02 # Default
+ICSI_DIR=/export/common/data/corpora/LDC/LDC2004S02/speech # Default
 
 [ ! -r data/local/lm/final_lm ] && echo "Please, run 'run_prepare_shared.sh' first!" && exit 1
 final_lm=$(cat data/local/lm/final_lm)
@@ -53,7 +53,7 @@ if [ $stage -le 2 ]; then
   local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic dev
   local/icsi_${base_mic}_scoring_data_prep.sh $PROCESSED_ICSI_DIR $mic eval
 fi
-exit
+
 if [ $stage -le 3 ]; then
   for dset in train dev eval; do
     # this splits up the speakers (which for sdm and mdm just correspond
