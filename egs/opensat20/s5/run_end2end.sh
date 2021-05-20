@@ -9,13 +9,16 @@ stage=0
 . utils/parse_options.sh
 
 set -euo pipefail
-SAFE_T_AUDIO_R20=/exp/aarora/corpora/safet/LDC2020E10
-SAFE_T_TEXTS_R20=/exp/aarora/corpora/safet/LDC2020E09
-SAFE_T_AUDIO_R11=/exp/aarora/corpora/safet/LDC2019E37
-SAFE_T_TEXTS_R11=/exp/aarora/corpora/safet/LDC2019E36
-SAFE_T_AUDIO_DEV1=/exp/aarora/corpora/safet/LDC2019E53
-SAFE_T_TEXTS_DEV1=/exp/aarora/corpora/safet/LDC2019E53
-SAFE_T_AUDIO_EVAL1=/exp/aarora/corpora/safet/LDC2020E07
+opensat_corpora=/export/corpora5/opensat_corpora
+SAFE_T_AUDIO_R20=/export/corpora5/opensat_corpora/LDC2020E10
+SAFE_T_TEXTS_R20=/export/corpora5/opensat_corpora/LDC2020E09
+SAFE_T_AUDIO_R11=/export/corpora5/opensat_corpora/LDC2019E37
+SAFE_T_TEXTS_R11=/export/corpora5/opensat_corpora/LDC2019E36
+SAFE_T_AUDIO_DEV1=/export/corpora5/opensat_corpora/LDC2019E53
+SAFE_T_TEXTS_DEV1=/export/corpora5/opensat_corpora/LDC2019E53
+SAFE_T_AUDIO_EVAL1=/export/corpora5/opensat_corpora/LDC2020E07
+ICSI_DIR=/export/corpora5/LDC/LDC2004S02/meeting_speech/speech
+AMI_DIR=/export/corpora5/amicorpus/
 
 if [ $stage -le 0 ]; then
   echo ============================================================================
