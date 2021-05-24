@@ -56,11 +56,12 @@ if [ $stage -le 3 ] ; then
   echo ============================================================================
   echo "              Obtain LM from SAFE-T train text"
   echo ============================================================================
-  local/safet_train_lms_srilm.sh \
-    --train_text data/train/text --dev_text data/safe_t_dev1/text  \
-    data/ data/local/srilm
-  utils/format_lm.sh  data/lang_nosp/ data/local/srilm/lm.gz\
-    data/local/lexicon.txt  data/lang_nosp_test
+  #local/safet_train_lms_srilm.sh \
+  #  --train_text data/train/text --dev_text data/safe_t_dev1/text  \
+  #  data/ data/local/srilm
+  local2/train_lm_srilm.sh
+  utils/format_lm.sh  data/lang_nosp/ data/local/lm/lm.gz \
+    data/local/dict_nosp/lexicon/lexicon_raw_nosil.txt  data/lang_nosp_test
 fi
 
 # Feature extraction,
