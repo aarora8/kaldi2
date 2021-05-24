@@ -9,11 +9,14 @@ echo "-------------------------------------"
 
 
 tgtdir=data/local/lm
-train_text=exp/data/lm_train_text
-dev_text=exp/data/lm_dev_text
+train_text=data/local/lm_train_text
+dev_text=data/local/lm_dev_text
 words_file=data/lang_nosp/words.txt
 oov_symbol="<UNK>"
 ##End of configuration
+
+cat data/train/text | cut -d " " -f 2-  > $train_text
+cat data/dev_clean/text | cut -d " " -f 2-  > $dev_text
 
 mkdir -p $tgtdir
 for f in $words_file $train_text $dev_text; do
@@ -22,9 +25,6 @@ done
 
 echo "Using train text: $train_text"
 echo "Using dev text  : $dev_text"
-
-cat data/train/text | cut -d " " -f 2-  > $train_text
-cat data/dev_clean/text | cut -d " " -f 2-  > $dev_text
 
 # Extract the word list from the training dictionary; exclude special symbols
 sort $words_file | awk '{print $1}' | grep -v '\#0' | grep -v '<eps>' | grep -v -F "$oov_symbol" > $tgtdir/vocab
