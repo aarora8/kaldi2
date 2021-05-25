@@ -171,7 +171,6 @@ if [ $stage -le 16 ]; then
     --chain.apply-deriv-weights=false \
     --chain.lm-opts="--num-extra-lm-states=2000" \
     --trainer.dropout-schedule $dropout_schedule \
-    --trainer.srand=$srand \
     --trainer.max-param-change=2.0 \
     --trainer.num-epochs=8 \
     --trainer.frames-per-iter=3000000 \
