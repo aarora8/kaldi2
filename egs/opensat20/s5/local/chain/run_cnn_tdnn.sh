@@ -61,7 +61,7 @@ dir=exp/chain${nnet3_affix}/cnn_tdnn${tdnn_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 
 for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
-   $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp; do
+   $train_data_dir/feats.scp; do
   [ ! -f $f ] && echo "$0: expected file $f to exist" && exit 1
 done
 
@@ -97,9 +97,9 @@ fi
 
 if [ $stage -le 14 ]; then
   steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
-      --context-opts "--context-width=2 --central-position=1" \
+      --context-opts "--context-width=1 --central-position=0" \
       --leftmost-questions-truncate -1 \
-      --cmd "$train_cmd" 5000 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
+      --cmd "$train_cmd" 200 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
 fi
 
 if [ $stage -le 15 ]; then
@@ -127,11 +127,8 @@ if [ $stage -le 15 ]; then
   # are more compressible so we prefer to dump the MFCCs to disk rather
   # than filterbanks.
   idct-layer name=idct input=input dim=40 cepstral-lifter=22 affine-transform-file=$dir/configs/idct.mat
-  linear-component name=ivector-linear $ivector_affine_opts dim=200 input=ReplaceIndex(ivector, t, 0)
-  batchnorm-component name=ivector-batchnorm target-rms=0.025
   batchnorm-component name=idct-batchnorm input=idct
   spec-augment-layer name=idct-spec-augment freq-max-proportion=0.5 time-zeroed-proportion=0.2 time-mask-max-frames=20
-  combine-feature-maps-layer name=combine_inputs input=Append(idct-spec-augment, ivector-batchnorm) num-filters1=1 num-filters2=5 height=40
   conv-relu-batchnorm-layer name=cnn1 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=48 learning-rate-factor=0.333 max-change=0.25
   conv-relu-batchnorm-layer name=cnn2 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=48
   conv-relu-batchnorm-layer name=cnn3 $cnn_opts height-in=40 height-out=20 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
@@ -166,8 +163,7 @@ if [ $stage -le 16 ]; then
   fi
 
   steps/nnet3/chain/train.py --stage=$train_stage \
-    --cmd="$decode_cmd" \
-    --feat.online-ivector-dir=$train_ivector_dir \
+    --cmd="$gpu_cmd" \
     --feat.cmvn-opts="--norm-means=false --norm-vars=false" \
     --chain.xent-regularize $xent_regularize \
     --chain.leaky-hmm-coefficient=0.1 \
@@ -187,7 +183,7 @@ if [ $stage -le 16 ]; then
     --trainer.optimization.momentum=0.0 \
     --egs.chunk-width=$chunk_width \
     --egs.dir="$common_egs_dir" \
-    --egs.opts="--frames-overlap-per-eg 0" \
+    --egs.opts="--frames-overlap-per-eg 0 --constrained false" \
     --cleanup.remove-egs=$remove_egs \
     --use-gpu=true \
     --reporting.email="$reporting_email" \
@@ -197,20 +193,12 @@ if [ $stage -le 16 ]; then
     --dir=$dir  || exit 1;
 fi
 
-if [ $stage -le 17 ]; then
-
-  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
-    data/safe_t_dev1_hires exp/nnet3${nnet3_affix}/extractor \
-    exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires
-
-  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
-fi
-
 if [ $stage -le 18 ]; then
-    steps/nnet3/decode.sh --num-threads 4 --nj 20 --cmd "$decode_cmd" \
-        --acwt 1.0 --post-decode-acwt 10.0 \
-        --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_safe_t_dev1_hires \
-       $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
+  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
+
+  steps/nnet3/decode.sh --nj 20 --cmd "$decode_cmd" \
+      --acwt 1.0 --post-decode-acwt 10.0 \
+     $dir/graph data/safe_t_dev1_hires $dir/decode_safe_t_dev1 || exit 1;
 fi
 exit 0
 
