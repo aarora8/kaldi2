@@ -20,8 +20,8 @@ num_epochs=10
 train_stage=-10
 xent_regularize=0.1
 get_egs_stage=-10
-tree_affix=_mono
-tdnn_affix=_1b_3
+tree_affix=_mono  # affix for tree directory, e.g. "a" or "b", in case we change the configuration.
+tdnn_affix=_1b_4  #affix for TDNN directory, e.g. "a" or "b", in case we change the configuration.
 nnet3_affix=_1a
 common_egs_dir= 
 dropout_schedule='0,0@0.20,0.5@0.50,0'
@@ -47,7 +47,7 @@ fi
 #                                  --train-set $train_set \
 #                                  --gmm $gmm \
 #                                  --nnet3-affix "$nnet3_affix"
-#
+
 gmm_dir=exp/${gmm}_${train_set}
 ali_dir=exp/${gmm}_${train_set}_ali_sp
 lores_train_data_dir=data/${train_set}_sp
@@ -55,7 +55,7 @@ train_data_dir=data/${train_set}_sp_hires
 lang_dir=data/lang_nosp_test
 tree_dir=exp/chain${nnet3_affix}/tree${tree_affix}
 lat_dir=exp/tri3_${train_set}_lats_sp
-dir=exp/chain${nnet3_affix}/cnn_tdnn${tdnn_affix}
+dir=exp/chain${nnet3_affix}/tdnn${tdnn_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 
 for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
@@ -70,7 +70,6 @@ done
 #    $lang_dir $gmm_dir $lat_dir
 #  rm $lat_dir/fsts.*.gz
 #fi
-#
 #if [ $stage -le 12 ]; then
 #  echo "$0: creating lang directory with one state per phone."
 #  # Create a version of the lang/ directory that has one state per phone in the
@@ -92,11 +91,11 @@ done
 #    steps/nnet3/chain/gen_topo.py $nonsilphonelist $silphonelist >data/lang_chain/topo
 #  fi
 #fi
-
 #if [ $stage -le 14 ]; then
 #  steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 \
 #      --context-opts "--context-width=1 --central-position=0" \
-#      --cmd "$train_cmd" 42 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
+#      --leftmost-questions-truncate -1 \
+#      --cmd "$train_cmd" 200 ${lores_train_data_dir} data/lang_chain $ali_dir $tree_dir
 #fi
 
 if [ $stage -le 15 ]; then
@@ -105,11 +104,7 @@ if [ $stage -le 15 ]; then
 
   num_targets=$(tree-info $tree_dir/tree |grep num-pdfs|awk '{print $2}')
   learning_rate_factor=$(echo "print (0.5/$xent_regularize)" | python)
-
-  cnn_opts="l2-regularize=0.03"
-  ivector_affine_opts="l2-regularize=0.03"
-  tdnn_opts="l2-regularize=0.03 dropout-proportion=0.0 dropout-per-dim-continuous=true"
-  tdnnf_first_opts="l2-regularize=0.03 dropout-proportion=0.0 bypass-scale=0.0"
+  affine_opts="l2-regularize=0.01 dropout-proportion=0.0 dropout-per-dim=true dropout-per-dim-continuous=true"
   tdnnf_opts="l2-regularize=0.03 dropout-proportion=0.0 bypass-scale=0.66"
   linear_opts="l2-regularize=0.03 orthonormal-constraint=-1.0"
   prefinal_opts="l2-regularize=0.03"
@@ -120,23 +115,23 @@ if [ $stage -le 15 ]; then
   input dim=40 name=input
   idct-layer name=idct input=input dim=40 cepstral-lifter=22 affine-transform-file=$dir/configs/idct.mat
   spec-augment-layer name=idct-spec-augment freq-max-proportion=0.5 time-zeroed-proportion=0.2 time-mask-max-frames=20
-  conv-relu-batchnorm-layer name=cnn1 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=48 learning-rate-factor=0.333 max-change=0.25
-  conv-relu-batchnorm-layer name=cnn2 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=48
-  conv-relu-batchnorm-layer name=cnn3 $cnn_opts height-in=40 height-out=20 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
-  conv-relu-batchnorm-layer name=cnn4 $cnn_opts height-in=20 height-out=20 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
-  conv-relu-batchnorm-layer name=cnn5 $cnn_opts height-in=20 height-out=10 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
-  conv-relu-batchnorm-layer name=cnn6 $cnn_opts height-in=10 height-out=5 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=128
-  tdnnf-layer name=tdnnf7 $tdnnf_first_opts dim=1024 bottleneck-dim=256 time-stride=0
-  tdnnf-layer name=tdnnf8 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf9 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf10 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf11 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf12 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf13 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf14 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  tdnnf-layer name=tdnnf15 $tdnnf_opts dim=1024 bottleneck-dim=128 time-stride=3
-  linear-component name=prefinal-l dim=192 $linear_opts
-  prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts big-dim=1024 small-dim=192
+  relu-batchnorm-layer name=tdnn1 $affine_opts dim=1536
+  tdnnf-layer name=tdnnf2 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=1
+  tdnnf-layer name=tdnnf3 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=1
+  tdnnf-layer name=tdnnf4 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=1
+  tdnnf-layer name=tdnnf5 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=0
+  tdnnf-layer name=tdnnf6 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf7 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf8 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf9 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf10 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf11 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf12 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf13 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf14 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf15 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  linear-component name=prefinal-l dim=256 $linear_opts
+  prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts big-dim=1536 small-dim=256
   output-layer name=output include-log-softmax=false dim=$num_targets $output_opts
 EOF
   steps/nnet3/xconfig_to_configs.py --xconfig-file $dir/configs/network.xconfig --config-dir $dir/configs/
@@ -144,11 +139,6 @@ fi
 
 
 if [ $stage -le 16 ]; then
-  if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $dir/egs/storage ]; then
-    utils/create_split_dir.pl \
-     /export/b0{3,4,5,6}/$USER/kaldi-data/egs/opensat-$(date +'%m_%d_%H_%M')/s5/$dir/egs/storage $dir/egs/storage
-  fi
-
   steps/nnet3/chain/train.py --stage=$train_stage \
     --cmd="$gpu_cmd" \
     --feat.cmvn-opts="--norm-means=false --norm-vars=false" \
@@ -178,7 +168,7 @@ if [ $stage -le 16 ]; then
     --dir=$dir  || exit 1;
 fi
 
-if [ $stage -le 18 ]; then
+if [ $stage -le 17 ]; then
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
 
   steps/nnet3/decode.sh --nj 20 --cmd "$decode_cmd" \

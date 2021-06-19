@@ -110,6 +110,12 @@ if [ $stage -le 8 ]; then
 fi
 
 if [ $stage -le 9 ]; then
+  steps/cleanup/clean_and_segment_data.sh --nj 10 --cmd "$train_cmd" \
+    --segmentation-opts "--min-segment-length 0.3 --min-new-segment-length 0.6" \
+    data/train data/lang_nosp_test exp/tri3_train exp/tri3_train_cleaned data/train_cleaned
+fi
+exit
+if [ $stage -le 10 ]; then
   echo ============================================================================
   echo "              augmentation, i-vector extraction, and chain model training"
   echo ============================================================================
