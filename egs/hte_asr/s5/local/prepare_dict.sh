@@ -12,7 +12,7 @@ echo SIL > $optional_silence
 
 local/get_phones_from_lexicon.py data/local/lexicon.txt $nonsil_phones data/local/lexicon2.txt
 
-(echo '!SIL SIL'; echo '<UNK> SIL'; echo '<Noise> SIL'; ) |\
+(echo '!SIL SIL'; echo '<UNK> SIL'; echo '<Noise/> SIL'; ) |\
 cat - data/local/lexicon2.txt | sort | uniq >$dst_dir/lexicon.txt
 echo "Lexicon text file saved as: $dst_dir/lexicon.txt"
 
