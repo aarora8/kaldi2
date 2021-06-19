@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-export LC_ALL=C
 echo "$0 $@"
 [ -f path.sh ]  && . ./path.sh
 
@@ -16,7 +15,7 @@ oov_symbol="<UNK>"
 ##End of configuration
 
 cat data/train/text | cut -d " " -f 2-  > $train_text
-cat data/dev_clean/text | cut -d " " -f 2-  > $dev_text
+cat data/dev/text | cut -d " " -f 2-  > $dev_text
 
 mkdir -p $tgtdir
 for f in $words_file $train_text $dev_text; do
@@ -41,5 +40,3 @@ echo $tgtdir/dev.txt contains `cat $tgtdir/dev.txt | perl -ane 'BEGIN{$w=$s=0;}{
 ngram-count -lm $tgtdir/lm.gz -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 1 -kndiscount3 -gt3min 2 -order 3 -text $tgtdir/train.txt -vocab $tgtdir/vocab -unk -sort -map-unk "$oov_symbol"
 
 ngram -order 3 -lm $tgtdir/lm.gz -unk -map-unk "<UNK>" -ppl $dev_text
-#file exp/data/lm_dev_text: 2100 sentences, 21134 words, 0 OOVs
-#0 zeroprobs, logprob= -33550.65 ppl= 27.79922 ppl1= 38.68301
