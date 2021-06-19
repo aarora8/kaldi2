@@ -20,6 +20,8 @@ def main():
     for line in lexicon_data:
         parts = line.strip().split()
         word = parts[0]
+        if '<Noise/>' in word:
+            continue
         if '(2)' in word or '(3)' in word or '(4)' in word or '(5)' in word:
             word = word[:-3]
             output_lexicon_handle.write(word + ' ' + ' '.join(parts[1:]) + '\n')

@@ -10,6 +10,7 @@ stage=0
 set -euo pipefail
 
 if [ $stage -le 1 ]; then
+  cp -r corpora_data/data .
   local/prepare_dict.sh
   utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
   utils/validate_lang.pl data/lang_nosp
@@ -18,7 +19,7 @@ fi
 if [ $stage -le 3 ] ; then
   local/prepare_lm.sh
   utils/format_lm.sh  data/lang_nosp/ data/local/lm/lm.gz \
-    data/local/dict_nosp/lexicon/lexicon_raw_nosil.txt  data/lang_nosp_test
+    data/local/lexicon2.txt  data/lang_nosp_test
 fi
 
 # Feature extraction,
