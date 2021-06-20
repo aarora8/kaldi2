@@ -14,8 +14,11 @@ words_file=data/lang_nosp/words.txt
 oov_symbol="<UNK>"
 ##End of configuration
 
-cat data/train/text | cut -d " " -f 2-  > $train_text
-cat data/dev/text | cut -d " " -f 2-  > $dev_text
+#cat data/train/text | cut -d " " -f 2-  > $train_text
+#cat data/dev/text | cut -d " " -f 2-  > $dev_text
+
+local/get_text_from_transcript.py data/train/text $train_text
+local/get_text_from_transcript.py data/dev/text $dev_text
 
 mkdir -p $tgtdir
 for f in $words_file $train_text $dev_text; do
