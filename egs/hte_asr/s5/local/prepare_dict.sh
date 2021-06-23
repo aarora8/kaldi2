@@ -10,7 +10,7 @@ echo "Preparing phone lists"
 echo SIL > $silence_phones
 echo SIL > $optional_silence
 
-local/get_phones_from_lexicon.py data/local/lexicon.txt $nonsil_phones data/local/lexicon2.txt
+local/create_graphemic_lexicon.py data/local/lexicon.txt $nonsil_phones data/local/lexicon2.txt
 
 (echo '!SIL SIL'; echo '<UNK> SIL'; echo '<Noise/> SIL'; ) |\
 cat - data/local/lexicon2.txt | sort | uniq >$dst_dir/lexicon.txt
