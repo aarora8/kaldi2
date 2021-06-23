@@ -10,7 +10,7 @@ set -euo pipefail
 
 stage=0
 nj=60
-train_set=train_all
+train_set=train
 gmm=tri3
 nnet3_affix=_all
 
@@ -29,7 +29,7 @@ for f in ${gmm_dir}/final.mdl; do
 done
 
 if [ $stage -le 1 ] ; then
-  for dset in train; do
+  for dset in $train_set; do
     utils/data/perturb_data_dir_speed_3way.sh data/${dset} data/${dset}_sp
     steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/${dset}_sp
     steps/compute_cmvn_stats.sh data/${dset}_sp
@@ -45,7 +45,7 @@ fi
 
 if [ $stage -le 3 ]; then
   echo "$0: creating high-resolution MFCC features"
-  for datadir in dev train_sp; do
+  for datadir in safe_t_dev1 train_sp; do
     utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
     utils/data/perturb_data_dir_volume.sh data/${datadir}_hires
     steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
@@ -76,7 +76,6 @@ if [ $stage -le 4 ]; then
   # Use 512 Gaussians in the UBM.
   steps/online/nnet2/train_diag_ubm.sh --cmd "$train_cmd" --nj $nj \
     --num-frames 700000 \
-    --num-threads 8 \
     ${temp_data_root}/${train_set}_sp_hires_subset 512 \
     exp/nnet3${nnet3_affix}/pca_transform exp/nnet3${nnet3_affix}/diag_ubm
 fi
