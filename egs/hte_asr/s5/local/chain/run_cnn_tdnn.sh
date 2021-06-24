@@ -3,7 +3,7 @@
 set -e -o pipefail
 stage=0
 nj=60
-train_set=train
+train_set=train_cleaned
 gmm=tri3
 num_epochs=10
 

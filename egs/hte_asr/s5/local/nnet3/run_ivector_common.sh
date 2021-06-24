@@ -45,7 +45,7 @@ fi
 
 if [ $stage -le 3 ]; then
   echo "$0: creating high-resolution MFCC features"
-  for datadir in safe_t_dev1 train_sp; do
+  for datadir in dev ${train_set}_sp; do
     utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
     utils/data/perturb_data_dir_volume.sh data/${datadir}_hires
     steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
@@ -103,11 +103,6 @@ if [ $stage -le 6 ]; then
   # valid for the non-'max2' data, the utterance list is the same.
 
   ivectordir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
-  if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $ivectordir/storage ]; then
-    utils/create_split_dir.pl /export/b0{5,6,7,8}/$USER/kaldi-data/ivectors/opensat-$(date +'%m_%d_%H_%M')/s5/$ivectordir/storage $ivectordir/storage
-  fi
-
-
   # having a larger number of speakers is helpful for generalization, and to
   # handle per-utterance decoding well (iVector starts at zero).
   temp_data_root=${ivectordir}

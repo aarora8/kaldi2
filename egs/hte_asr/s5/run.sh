@@ -71,5 +71,5 @@ if [ $stage -le 10 ]; then
   echo ============================================================================
   echo "              augmentation, i-vector extraction, and chain model training"
   echo ============================================================================
-  local/chain/run_cnn_tdnn.sh
+  local/chain/run_cnn_tdnn_shared.sh
 fi
