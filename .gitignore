@@ -77,6 +77,8 @@ GSYMS
 /egs/*/*/plp
 /egs/*/*/exp
 /egs/*/*/data
+/egs/*/*/corpora_data
+/egs/*/*/archive
 /egs/*/*/wav
 /egs/*/*/enhan
 
