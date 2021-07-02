@@ -2,7 +2,6 @@
 ROOT=/export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database
 language=Hindi
 
-mkdir data
 cd data
 cp -r ${ROOT}/${language}/transcription/train_${language} .
 cd ..
