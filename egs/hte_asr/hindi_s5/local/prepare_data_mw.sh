@@ -4,7 +4,7 @@ language=Hindi
 
 mkdir data
 cd data
-cp -r ${ROOT}/${language}/transcription/{train}_${language} .
+cp -r ${ROOT}/${language}/transcription/train_${language} .
 cd ..
 for d in train; do
   mv data/${d}_${language}/wav.scp data/${d}_${language}/wav.scp.bk && \

@@ -10,7 +10,8 @@ stage=0
 set -euo pipefail
 
 if [ $stage -le 1 ]; then
-  cp -r corpora_data/data .
+  mkdir -p data/local/dict
+  cp -r /export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database/Hindi/dictionary/Hindi_lexicon.txt data/local/lexicon.txt
   local/prepare_dict.sh
   utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
   utils/validate_lang.pl data/lang_nosp
