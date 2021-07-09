@@ -13,18 +13,18 @@ if [ $stage -le 1 ]; then
   mkdir -p data/local
   cp -r /export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database/Hindi/dictionary/Hindi_lexicon.txt data/local/lexicon.txt
   local/prepare_data_mw.sh
-  local/create_train_test_split.sh
+  #local/create_train_test_split.sh
   local/prepare_dict.sh
-  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
-  utils/validate_lang.pl data/lang_nosp
+  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp_test
+  utils/validate_lang.pl data/lang_nosp_test
 fi
 
 if [ $stage -le 3 ] ; then
   local/prepare_lm.sh
-  utils/format_lm.sh  data/lang_nosp/ data/local/lm/lm.gz \
+  utils/format_lm.sh  data/lang_nosp_test data/local/lm/lm.gz \
     data/local/lexicon2.txt  data/lang_nosp_test
 fi
-exit
+
 # Feature extraction,
 if [ $stage -le 4 ]; then
   steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/train
