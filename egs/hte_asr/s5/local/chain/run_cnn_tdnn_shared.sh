@@ -186,21 +186,15 @@ fi
 
 if [ $stage -le 17 ]; then
 
-#  ./local/prepare_data.sh
-#
-#  for datadir in dev_nodup dev_dup; do
-#    utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
-#    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
-#      --cmd "$train_cmd" data/${datadir}_hires || exit 1
-#  done
+  for datadir in dev; do
+    utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
+    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
+      --cmd "$train_cmd" data/${datadir}_hires || exit 1
+  done
 
   steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
-    data/dev_nodup_hires exp/nnet3${nnet3_affix}/extractor \
-    exp/nnet3${nnet3_affix}/ivectors_dev_nodup_hires
-
-  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
-    data/dev_dup_hires exp/nnet3${nnet3_affix}/extractor \
-    exp/nnet3${nnet3_affix}/ivectors_dev_dup_hires
+    data/dev_hires exp/nnet3${nnet3_affix}/extractor \
+    exp/nnet3${nnet3_affix}/ivectors_dev_hires
 
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
 fi
@@ -208,14 +202,7 @@ fi
 if [ $stage -le 18 ]; then
   steps/nnet3/decode.sh --nj 40 --cmd "$decode_cmd" \
       --acwt 1.0 --post-decode-acwt 10.0 \
-      --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_dev_nodup_hires \
-     $dir/graph data/dev_nodup_hires $dir/decode_dev_nodup || exit 1;
-
-
-  steps/nnet3/decode.sh --nj 40 --cmd "$decode_cmd" \
-      --acwt 1.0 --post-decode-acwt 10.0 \
-      --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_dev_dup_hires \
-     $dir/graph data/dev_dup_hires $dir/decode_dev_dup || exit 1;
-
+      --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_dev_hires \
+     $dir/graph data/dev_hires $dir/decode_dev || exit 1;
 fi
 exit 0

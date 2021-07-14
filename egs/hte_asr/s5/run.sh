@@ -10,15 +10,19 @@ stage=0
 set -euo pipefail
 
 if [ $stage -le 1 ]; then
-  cp -r corpora_data/data .
+  mkdir -p data/local
+  cp -r /export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database/English/dictionary/English_lexicon.txt data/local/lexicon.txt
+  local/prepare_data.sh
+  mv data/train_English_final_hybrid data/train
+  mv data/dev_English_jhu data/dev
   local/prepare_dict.sh
-  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp
-  utils/validate_lang.pl data/lang_nosp
+  utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp_test
+  utils/validate_lang.pl data/lang_nosp_test
 fi
 
 if [ $stage -le 3 ] ; then
   local/prepare_lm.sh
-  utils/format_lm.sh  data/lang_nosp/ data/local/lm/lm.gz \
+  utils/format_lm.sh  data/lang_nosp_test data/local/lm/lm.gz \
     data/local/lexicon2.txt  data/lang_nosp_test
 fi
 
@@ -59,12 +63,6 @@ if [ $stage -le 8 ]; then
     5000 80000 data/train data/lang_nosp_test exp/tri2_train_ali exp/tri3_train
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
     data/train data/lang_nosp_test exp/tri3_train exp/tri3_train_ali
-fi
-
-if [ $stage -le 9 ]; then
-  steps/cleanup/clean_and_segment_data.sh --nj 10 --cmd "$train_cmd" \
-    --segmentation-opts "--min-segment-length 0.3 --min-new-segment-length 0.6" \
-    data/train data/lang_nosp_test exp/tri3_train exp/tri3_train_cleaned data/train_cleaned
 fi
 
 if [ $stage -le 10 ]; then

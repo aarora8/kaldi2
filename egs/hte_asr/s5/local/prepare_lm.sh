@@ -10,7 +10,7 @@ echo "-------------------------------------"
 tgtdir=data/local/lm
 train_text=data/local/lm_train_text
 dev_text=data/local/lm_dev_text
-words_file=data/lang_nosp/words.txt
+words_file=data/lang_nosp_test/words.txt
 oov_symbol="<UNK>"
 ##End of configuration
 
