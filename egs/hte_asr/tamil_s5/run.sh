@@ -13,8 +13,8 @@ if [ $stage -le 1 ]; then
   mkdir -p data/local
   cp -r /export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database/Tamil/dictionary/Tamil_lexicon.txt data/local/lexicon.txt
   local/prepare_data.sh
-  mv data/train_Hindi_jhu data/train
-  mv data/dev_Hindi_jhu data/dev
+  mv data/train_Tamil_final_hybrid data/train
+  mv data/dev_Tamil_jhu data/dev
   local/prepare_dict.sh
   utils/prepare_lang.sh data/local/dict_nosp '<UNK>' data/local/lang_nosp data/lang_nosp_test
   utils/validate_lang.pl data/lang_nosp_test
