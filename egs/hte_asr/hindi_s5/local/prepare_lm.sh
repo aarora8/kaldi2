@@ -17,8 +17,8 @@ oov_symbol="<UNK>"
 #cat data/train/text | cut -d " " -f 2-  > $train_text
 #cat data/dev/text | cut -d " " -f 2-  > $dev_text
 
-local/get_text_from_transcript.py data/train/text $train_text
-local/get_text_from_transcript.py data/dev/text $dev_text
+local/get_text_from_transcript.py data/train_Hindi_final/text $train_text
+local/get_text_from_transcript.py data/dev_Hindi_jhu_ho_spk/text $dev_text
 
 mkdir -p $tgtdir
 for f in $words_file $train_text $dev_text; do
