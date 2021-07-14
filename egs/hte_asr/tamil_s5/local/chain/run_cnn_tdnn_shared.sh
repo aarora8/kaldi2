@@ -192,7 +192,7 @@ if [ $stage -le 17 ]; then
       --cmd "$train_cmd" data/${datadir}_hires || exit 1
   done
 
-  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 7 \
     data/dev_Tamil_jhu_ho_spk_hires exp/nnet3${nnet3_affix}/extractor \
     exp/nnet3${nnet3_affix}/ivectors_dev_Tamil_jhu_ho_spk_hires
 
@@ -200,7 +200,7 @@ if [ $stage -le 17 ]; then
 fi
 
 if [ $stage -le 18 ]; then
-  steps/nnet3/decode.sh --nj 40 --cmd "$decode_cmd" \
+  steps/nnet3/decode.sh --nj 7 --cmd "$decode_cmd" \
       --acwt 1.0 --post-decode-acwt 10.0 \
       --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_dev_Tamil_jhu_ho_spk_hires \
      $dir/graph data/dev_Tamil_jhu_ho_spk_hires $dir/decode_dev_Tamil_jhu_ho_spk || exit 1;
