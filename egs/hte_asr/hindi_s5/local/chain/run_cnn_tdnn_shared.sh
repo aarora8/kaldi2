@@ -186,15 +186,15 @@ fi
 
 if [ $stage -le 17 ]; then
 
-  for datadir in dev_Tamil_jhu_ho_spk; do
+  for datadir in dev_Hindi_jhu_ho_spk; do
     utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
     steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
       --cmd "$train_cmd" data/${datadir}_hires || exit 1
   done
 
   steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 7 \
-    data/dev_Tamil_jhu_ho_spk_hires exp/nnet3${nnet3_affix}/extractor \
-    exp/nnet3${nnet3_affix}/ivectors_dev_Tamil_jhu_ho_spk_hires
+    data/dev_Hindi_jhu_ho_spk_hires exp/nnet3${nnet3_affix}/extractor \
+    exp/nnet3${nnet3_affix}/ivectors_dev_Hindi_jhu_ho_spk_hires
 
   utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
 fi
@@ -202,7 +202,7 @@ fi
 if [ $stage -le 18 ]; then
   steps/nnet3/decode.sh --nj 7 --cmd "$decode_cmd" \
       --acwt 1.0 --post-decode-acwt 10.0 \
-      --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_dev_Tamil_jhu_ho_spk_hires \
-     $dir/graph data/dev_Tamil_jhu_ho_spk_hires $dir/decode_dev_Tamil_jhu_ho_spk || exit 1;
+      --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_dev_Hindi_jhu_ho_spk_hires \
+     $dir/graph data/dev_Hindi_jhu_ho_spk_hires $dir/decode_dev_Hindi_jhu_ho_spk || exit 1;
 fi
 exit 0

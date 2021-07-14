@@ -8,7 +8,7 @@ hybrid=True
 . ./utils/parse_options.sh
 
 ROOT=/export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database
-language=Tamil
+language=Hindi
 
 mkdir -p data
 cd data
