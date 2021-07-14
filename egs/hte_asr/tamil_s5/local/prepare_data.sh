@@ -3,12 +3,12 @@
 . ./cmd.sh
 
 max_dups=10
-hybrid=false
+hybrid=True
 
 . ./utils/parse_options.sh
 
-ROOT=$1 #/export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database
-language=$2
+ROOT=/export/common/data/corpora/ASR/IITM_Indian_ASR_Challenge_2021/Indian_Language_Database
+language=Tamil
 
 mkdir -p data
 cd data
