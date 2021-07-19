@@ -99,7 +99,7 @@ fi
 if [ $stage -le 3 ]; then
   rnnlm/train_rnnlm.sh --num-jobs-initial 1 --num-jobs-final 1 \
                        --embedding_l2 $embedding_l2 \
-                       --stage $train_stage --num-epochs 60 --cmd "$train_cmd" $dir
+                       --stage $train_stage --num-epochs 60 --cmd "$gpu_cmd" $dir
 fi
 if [ $stage -le 4 ] && $run_lat_rescore; then
   echo "$0: Perform lattice-rescoring on $ac_model_dir"
