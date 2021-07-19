@@ -26,8 +26,8 @@ pruned_rescore=true
 . ./cmd.sh
 . ./utils/parse_options.sh
 
-train_text=data/train_English_final/text
-dev_text=data/dev_English_jhu_ho_spk/text
+train_text=data/train_Tamil_final/text
+dev_text=data/dev_Tamil_jhu_ho_spk/text
 text_dir=data/rnnlm/text
 mkdir -p $dir/config
 set -e
@@ -98,7 +98,7 @@ if [ $stage -le 4 ] && $run_lat_rescore; then
   if $pruned_rescore; then
     pruned=_pruned
   fi
-  for decode_set in dev_English_jhu_ho_spk; do
+  for decode_set in dev_Tamil_jhu_ho_spk; do
     decode_dir=${ac_model_dir}/decode_${decode_set}
 
     # Lattice rescoring

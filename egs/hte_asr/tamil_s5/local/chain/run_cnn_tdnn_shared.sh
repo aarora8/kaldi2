@@ -206,8 +206,8 @@ if [ $stage -le 18 ]; then
      $dir/graph data/dev_Tamil_jhu_ho_spk_hires $dir/decode_dev_Tamil_jhu_ho_spk || exit 1;
 fi
 
+eval_set=eval_Tamil
 if [ $stage -le 19 ]; then
-  eval_set=eval_Tamil
   utils/copy_data_dir.sh data/$eval_set data/${eval_set}_hires
   steps/make_mfcc.sh --nj 10 --mfcc-config conf/mfcc_hires.conf \
     --cmd "$train_cmd" data/${eval_set}_hires || exit 1
@@ -220,12 +220,12 @@ if [ $stage -le 19 ]; then
 fi
 
 if [ $stage -le 20 ]; then
-  steps/nnet3/decode.sh --nj 10 --cmd "$decode_cmd" \
+  steps/nnet3/decode.sh --stage 3 --nj 10 --cmd "$decode_cmd" \
       --acwt 1.0 --post-decode-acwt 10.0 \
       --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${eval_set}_hires \
      $dir/graph data/${eval_set}_hires $dir/decode_${eval_set}_hires || exit 1;
 fi
-
+exit
 if [ $stage -le 21 ]; then
   eval_set=dev_Tamil
   utils/copy_data_dir.sh data/$eval_set data/${eval_set}_hires
