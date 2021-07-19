@@ -39,9 +39,9 @@ dir=$3
 
 symtab=$lang_or_graph/words.txt
 
-for f in $symtab $dir/lat.1.gz $data/text; do
-  [ ! -f $f ] && echo "score.sh: no such file $f" && exit 1;
-done
+#for f in $symtab $dir/lat.1.gz $data/text; do
+#  [ ! -f $f ] && echo "score.sh: no such file $f" && exit 1;
+#done
 
 
 ref_filtering_cmd="cat"

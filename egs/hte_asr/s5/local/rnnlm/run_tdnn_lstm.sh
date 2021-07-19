@@ -1,11 +1,4 @@
 #!/usr/bin/env bash
-
-# Copyright 2012  Johns Hopkins University (author: Daniel Povey)
-#           2015  Guoguo Chen
-#           2017  Hainan Xu
-#           2017  Xiaohui Zhang
-#           2020  Ke Li
-
 # This script trains LSTM based LMs on transcription and perform lattice rescoring
 # on 1st pass decoding results.
 # Begin configuration section.
@@ -13,14 +6,12 @@ dir=exp/rnnlm_lstm_1b
 embedding_dim=512
 lstm_rpd=128
 lstm_nrpd=128
-embedding_l2=0.003 # embedding layer l2 regularize
-comp_l2=0.003 # component-level l2 regularize
+embedding_l2=0.002 # embedding layer l2 regularize
+comp_l2=0.002 # component-level l2 regularize
 output_l2=0.001 # output-layer l2 regularize
 stage=-10
 train_stage=-10
 score_stage=0
-
-# variables for lattice rescoring
 run_lat_rescore=true
 run_nbest_rescore=true
 run_backward_rnnlm=false
