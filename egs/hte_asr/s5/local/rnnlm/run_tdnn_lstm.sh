@@ -59,21 +59,21 @@ if [ $stage -le 1 ]; then
 
   # words that are not present in words.txt but are in the training or dev data, will be
   # mapped to <unk> during training.
-  echo "<unk>" >$dir/config/oov.txt
+  echo "<UNK>" >$dir/config/oov.txt
 
   cat > $dir/config/data_weights.txt <<EOF
 train   1   1.0
 EOF
 
   rnnlm/get_unigram_probs.py --vocab-file=$dir/config/words.txt \
-                             --unk-word="<unk>" \
+                             --unk-word="<UNK>" \
                              --data-weights-file=$dir/config/data_weights.txt \
                              $text_dir | awk 'NF==2' >$dir/config/unigram_probs.txt
 
   # choose features
   rnnlm/choose_features.py --unigram-probs=$dir/config/unigram_probs.txt \
                            --use-constant-feature=true \
-                           --special-words='<s>,</s>,<brk>,<unk>,[inaudible],[noise],[laughs]' \
+                           --special-words='<s>,</s>,<brk>,<UNK>,<Noise/>' \
                            $dir/config/words.txt > $dir/config/features.txt
 
 lstm_opts="l2-regularize=$comp_l2"
