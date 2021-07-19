@@ -24,13 +24,8 @@ score_stage=0
 run_lat_rescore=true
 run_nbest_rescore=true
 run_backward_rnnlm=false
-
-ac_model_dir=exp/chain_train_worn_simu_u400k_cleaned_rvb/tdnn1b_cnn_sp
+ac_model_dir=exp/chain_1a/cnn_tdnn_1a/
 decode_dir_suffix=rnnlm_1b
-enhancement=gss_multiarray
-
-chime6_corpus=${PWD}/CHiME6
-json_dir=${chime6_corpus}/transcriptions
 ngram_order=4 # approximate the lattice-rescoring by limiting the max-ngram-order
               # if it's set, it merges histories in the lattice if they share
               # the same ngram history and this prevents the lattice from 
@@ -40,8 +35,8 @@ pruned_rescore=true
 . ./cmd.sh
 . ./utils/parse_options.sh
 
-train_text=data/train_worn/text
-dev_text=data/dev_worn/text
+train_text=data/train_English_final/text
+dev_text=data/dev_English_jhu_ho_spk/text
 text_dir=data/rnnlm/text
 mkdir -p $dir/config
 set -e
@@ -58,7 +53,7 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  cp data/lang/words.txt $dir/config/
+  cp data/lang_nosp_test/words.txt $dir/config/
   n=`cat $dir/config/words.txt | wc -l`
   echo "<brk> $n" >> $dir/config/words.txt
 
@@ -106,23 +101,21 @@ if [ $stage -le 3 ]; then
                        --embedding_l2 $embedding_l2 \
                        --stage $train_stage --num-epochs 60 --cmd "$train_cmd" $dir
 fi
-
-# old 3-gram LM is data/lang/G.fst 
 if [ $stage -le 4 ] && $run_lat_rescore; then
   echo "$0: Perform lattice-rescoring on $ac_model_dir"
   pruned=
   if $pruned_rescore; then
     pruned=_pruned
   fi
-  for decode_set in dev_${enhancement} eval_${enhancement}; do
-    decode_dir=${ac_model_dir}/decode_${decode_set}_2stage
+  for decode_set in dev_English_jhu_ho_spk; do
+    decode_dir=${ac_model_dir}/decode_${decode_set}
 
     # Lattice rescoring
     rnnlm/lmrescore$pruned.sh \
       --cmd "$decode_cmd --mem 4G" \
       --acwt 0.1 \
       --weight 0.4 --max-ngram-order $ngram_order \
-      data/lang $dir \
+      data/lang_nosp_test $dir \
       data/${decode_set}_hires ${decode_dir} \
       ${decode_dir}_${decode_dir_suffix}_0.4
   done
