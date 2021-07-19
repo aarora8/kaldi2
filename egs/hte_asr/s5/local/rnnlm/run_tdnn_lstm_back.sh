@@ -91,14 +91,14 @@ fi
 if [ $stage -le 3 ]; then
   rnnlm/train_rnnlm.sh --num-jobs-initial 1 --num-jobs-final 1 \
                        --embedding_l2 $embedding_l2 \
-                       --stage $train_stage --num-epochs 60 --cmd "$train_cmd" $dir
+                       --stage $train_stage --num-epochs 60 --cmd "$gpu_cmd" $dir
 fi
 
 if [ $stage -le 4 ] && $run_lat_rescore; then
   echo "$0: Perform lattice-rescoring on $ac_model_dir"
 
   for decode_set in dev_English_jhu_ho_spk; do
-    decode_dir=${ac_model_dir}/decode_${decode_set}_2stage
+    decode_dir=${ac_model_dir}/decode_${decode_set}
     # Lattice rescoring
     rnnlm/lmrescore_back.sh \
       --cmd "$decode_cmd --mem 4G" \
