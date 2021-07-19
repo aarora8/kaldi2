@@ -111,4 +111,24 @@ if [ $stage -le 4 ] && $run_lat_rescore; then
       ${decode_dir}_${decode_dir_suffix}_0.4
   done
 fi
+
+if [ $stage -le 5 ] && $run_lat_rescore; then
+  echo "$0: Perform lattice-rescoring on $ac_model_dir"
+  pruned=
+  if $pruned_rescore; then
+    pruned=_pruned
+  fi
+  for decode_set in dev_Hindi_hires; do
+    decode_dir=${ac_model_dir}/decode_${decode_set}
+
+    # Lattice rescoring
+    rnnlm/lmrescore$pruned.sh \
+      --cmd "$decode_cmd --mem 4G" \
+      --acwt 0.1 \
+      --weight 0.4 --max-ngram-order $ngram_order \
+      data/lang_nosp_test $dir \
+      data/${decode_set}_hires ${decode_dir} \
+      ${decode_dir}_${decode_dir_suffix}_0.4
+  done
+fi
 exit 0
