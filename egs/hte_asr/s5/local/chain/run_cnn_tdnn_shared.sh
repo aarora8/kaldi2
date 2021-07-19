@@ -208,26 +208,25 @@ fi
 
 eval_set=eval_English
 if [ $stage -le 19 ]; then
-  utils/copy_data_dir.sh data/$eval_set data/${eval_set}_hires
-  steps/make_mfcc.sh --nj 10 --mfcc-config conf/mfcc_hires.conf \
-    --cmd "$train_cmd" data/${eval_set}_hires || exit 1
+#  utils/copy_data_dir.sh data/$eval_set data/${eval_set}_hires
+#  steps/make_mfcc.sh --nj 10 --mfcc-config conf/mfcc_hires.conf \
+#    --cmd "$train_cmd" data/${eval_set}_hires || exit 1
+#
+#  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 10 \
+#    data/${eval_set}_hires exp/nnet3${nnet3_affix}/extractor \
+#    exp/nnet3${nnet3_affix}/ivectors_${eval_set}_hires
 
-  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 10 \
-    data/${eval_set}_hires exp/nnet3${nnet3_affix}/extractor \
-    exp/nnet3${nnet3_affix}/ivectors_${eval_set}_hires
-
-  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
+  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test_5grm $dir $dir/graph_5grm
 fi
 
 if [ $stage -le 20 ]; then
   steps/nnet3/decode.sh --stage 3 --nj 10 --cmd "$decode_cmd" \
       --acwt 1.0 --post-decode-acwt 10.0 \
       --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${eval_set}_hires \
-     $dir/graph data/${eval_set}_hires $dir/decode_${eval_set}_hires || exit 1;
+     $dir/graph_5grm data/${eval_set}_hires $dir/decode_${eval_set}_5grm || exit 1;
 fi
-exit
+eval_set=dev_English
 if [ $stage -le 21 ]; then
-  eval_set=dev_English
   utils/copy_data_dir.sh data/$eval_set data/${eval_set}_hires
   steps/make_mfcc.sh --nj 10 --mfcc-config conf/mfcc_hires.conf \
     --cmd "$train_cmd" data/${eval_set}_hires || exit 1
@@ -243,6 +242,6 @@ if [ $stage -le 22 ]; then
   steps/nnet3/decode.sh --nj 10 --cmd "$decode_cmd" \
       --acwt 1.0 --post-decode-acwt 10.0 \
       --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${eval_set}_hires \
-     $dir/graph data/${eval_set}_hires $dir/decode_${eval_set}_hires || exit 1;
+     $dir/graph_5grm data/${eval_set}_hires $dir/decode_${eval_set}_5grm || exit 1;
 fi
 exit 0

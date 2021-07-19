@@ -127,7 +127,7 @@ if [ $stage -le 5 ] && $run_lat_rescore; then
       --acwt 0.1 \
       --weight 0.4 --max-ngram-order $ngram_order \
       data/lang_nosp_test $dir \
-      data/${decode_set}_hires ${decode_dir} \
+      data/${decode_set} ${decode_dir} \
       ${decode_dir}_${decode_dir_suffix}_0.4
   done
 fi
