@@ -71,3 +71,7 @@ if [ $stage -le 10 ]; then
   echo ============================================================================
   local/chain/run_cnn_tdnn_shared.sh
 fi
+
+if [ $stage -le 11 ]; then
+  local/rnnlm/run_tdnn_lstm_1a.sh
+fi
