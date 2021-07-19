@@ -47,7 +47,7 @@ train_data_dir=data/${train_set}_sp_hires
 lang_dir=data/lang_nosp_test
 tree_dir=exp/chain${nnet3_affix}/tree${tree_affix}
 lat_dir=exp/tri3_${train_set}_lats_sp
-dir=exp/chain${nnet3_affix}/cnn_tdnn${tdnn_affix}
+dir=exp/chain${nnet3_affix}/cnn_tdnn_sa${tdnn_affix}
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 
 for f in $gmm_dir/final.mdl $lores_train_data_dir/feats.scp \
@@ -110,22 +110,21 @@ if [ $stage -le 15 ]; then
   cat <<EOF > $dir/configs/network.xconfig
   input dim=100 name=ivector
   input dim=40 name=input
+
   idct-layer name=idct input=input dim=40 cepstral-lifter=22 affine-transform-file=$dir/configs/idct.mat
   linear-component name=ivector-linear $ivector_affine_opts dim=200 input=ReplaceIndex(ivector, t, 0)
   batchnorm-component name=ivector-batchnorm target-rms=0.025
   batchnorm-component name=idct-batchnorm input=idct
   spec-augment-layer name=idct-spec-augment freq-max-proportion=0.5 time-zeroed-proportion=0.2 time-mask-max-frames=20
   combine-feature-maps-layer name=combine_inputs input=Append(idct-spec-augment, ivector-batchnorm) num-filters1=1 num-filters2=5 height=40
-  conv-relu-batchnorm-layer name=cnn1 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
+  conv-relu-batchnorm-layer name=cnn1 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64 learning-rate-factor=0.333 max-change=0.25
   conv-relu-batchnorm-layer name=cnn2 $cnn_opts height-in=40 height-out=40 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=64
   conv-relu-batchnorm-layer name=cnn3 $cnn_opts height-in=40 height-out=20 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=128
   conv-relu-batchnorm-layer name=cnn4 $cnn_opts height-in=20 height-out=20 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=128
   conv-relu-batchnorm-layer name=cnn5 $cnn_opts height-in=20 height-out=10 height-subsample-out=2 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=256
-  conv-relu-batchnorm-layer name=cnn6 $cnn_opts height-in=10 height-out=10  time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=256
+  conv-relu-batchnorm-layer name=cnn6 $cnn_opts height-in=10 height-out=10 time-offsets=-1,0,1 height-offsets=-1,0,1 num-filters-out=256
   # the first TDNN-F layer has no bypass (since dims don't match), and a larger bottleneck so the
-  # information bottleneck doesn't become a problem.  (we use time-stride=0 so no splicing, to
-  # limit the num-parameters).
-
+  # information bottleneck doesn't become a problem.
   tdnnf-layer name=tdnnf7 $tdnnf_first_opts dim=1536 bottleneck-dim=256 time-stride=0
   tdnnf-layer name=tdnnf8 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
   tdnnf-layer name=tdnnf9 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
@@ -135,8 +134,13 @@ if [ $stage -le 15 ]; then
   tdnnf-layer name=tdnnf13 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
   tdnnf-layer name=tdnnf14 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
   tdnnf-layer name=tdnnf15 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  tdnnf-layer name=tdnnf16 $tdnnf_opts dim=1536 bottleneck-dim=160 time-stride=3
+  attention-relu-renorm-layer name=attention1 num-heads=30 value-dim=30 key-dim=15 time-stride=3 num-left-inputs=15 num-right-inputs=6
+  tdnnf-layer name=tdnnf17 $tdnnf_opts dim=1560 bottleneck-dim=160 time-stride=3
+  fast-lstmp-layer name=lstm1 cell-dim=1024 recurrent-projection-dim=256 non-recurrent-projection-dim=256 decay-time=20 delay=-3
+  tdnnf-layer name=tdnnf18 $tdnnf_opts dim=512 bottleneck-dim=160 time-stride=3
+  fast-lstmp-layer name=lstm2 cell-dim=1024 recurrent-projection-dim=256 non-recurrent-projection-dim=256 decay-time=20 delay=-3
   linear-component name=prefinal-l dim=256 $linear_opts
-
   ## adding the layers for chain branch
   prefinal-layer name=prefinal-chain input=prefinal-l $prefinal_opts small-dim=256 big-dim=1536
   output-layer name=output include-log-softmax=false dim=$num_targets $output_opts
