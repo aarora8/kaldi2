@@ -25,7 +25,7 @@ if [ $stage -le 3 ] ; then
   utils/format_lm.sh  data/lang_nosp_test data/local/lm/lm.gz \
     data/local/lexicon2.txt  data/lang_nosp_test
 fi
-exit
+
 # Feature extraction,
 if [ $stage -le 4 ]; then
   steps/make_mfcc.sh --nj 75 --cmd "$train_cmd" data/train

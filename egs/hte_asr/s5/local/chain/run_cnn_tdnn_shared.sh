@@ -188,11 +188,11 @@ if [ $stage -le 17 ]; then
 
   for datadir in dev_English_jhu_ho_spk; do
     utils/copy_data_dir.sh data/$datadir data/${datadir}_hires
-    steps/make_mfcc.sh --nj $nj --mfcc-config conf/mfcc_hires.conf \
+    steps/make_mfcc.sh --nj 10 --mfcc-config conf/mfcc_hires.conf \
       --cmd "$train_cmd" data/${datadir}_hires || exit 1
   done
 
-  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 20 \
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 10 \
     data/dev_English_jhu_ho_spk_hires exp/nnet3${nnet3_affix}/extractor \
     exp/nnet3${nnet3_affix}/ivectors_dev_English_jhu_ho_spk_hires
 
@@ -200,9 +200,29 @@ if [ $stage -le 17 ]; then
 fi
 
 if [ $stage -le 18 ]; then
-  steps/nnet3/decode.sh --nj 40 --cmd "$decode_cmd" \
+  steps/nnet3/decode.sh --nj 10 --cmd "$decode_cmd" \
       --acwt 1.0 --post-decode-acwt 10.0 \
       --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_dev_English_jhu_ho_spk_hires \
      $dir/graph data/dev_English_jhu_ho_spk_hires $dir/decode_dev_English_jhu_ho_spk || exit 1;
+fi
+
+if [ $stage -le 19 ]; then
+  eval_set=eval_English
+  utils/copy_data_dir.sh data/$eval_set data/${eval_set}_hires
+  steps/make_mfcc.sh --nj 10 --mfcc-config conf/mfcc_hires.conf \
+    --cmd "$train_cmd" data/${eval_set}_hires || exit 1
+
+  steps/online/nnet2/extract_ivectors_online.sh --cmd "$train_cmd" --nj 10 \
+    data/${eval_set}_hires exp/nnet3${nnet3_affix}/extractor \
+    exp/nnet3${nnet3_affix}/ivectors_${eval_set}_hires
+
+  utils/mkgraph.sh --self-loop-scale 1.0 data/lang_nosp_test $dir $dir/graph
+fi
+
+if [ $stage -le 20 ]; then
+  steps/nnet3/decode.sh --nj 10 --cmd "$decode_cmd" \
+      --acwt 1.0 --post-decode-acwt 10.0 \
+      --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${eval_set}_hires \
+     $dir/graph data/${eval_set}_hires $dir/decode_${eval_set}_hires || exit 1;
 fi
 exit 0
